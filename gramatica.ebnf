@@ -1,0 +1,190 @@
+- Start Symbol
+// a definir
+
+- Statement
+
+stmt-list     ::= { stmt }
+
+stmt          ::= null-stmt
+                  |return-stmt
+                  |continue-stmt
+                  |break-stmt
+                  |if-stmt
+                  |while-stmt
+                  |goto-stmt
+
+block-stmt    ::= "_/" stmt-list "\_"
+
+null-stmt     ::= "..."
+
+return-stmt   ::= #TODO "..."
+
+continue-stmt ::= kw-continue "..."
+
+break-stmt    ::= kw-break "..."
+
+if-stmt       ::= kw-if expr block-stmt [kw-else block-stmt]
+
+while-stmt    ::= kw-while expr block-stmt
+
+goto-stmt     ::= #TODO "..."
+
+switch-stmt   ::= kw-switch expr block-stmt
+
+decl-stmt     ::= declare-var "..."
+                  |func-decl 
+
+- Identifiers
+
+index         ::= "; tutorando " expr " "
+
+
+
+- Declare Function
+
+func-decl     ::=  func-sign block-stmt
+
+func-sign     ::= "preparar " type identifier [", componentes: " params] "."
+
+
+
+- Declare Variable
+declareVar    ::= type identifier "..."
+
+- Assign Value
+assign        ::= 
+
+- Assing Inplace
+
+- Types
+
+typ-base      ::= kw-void
+                  |kw-int
+                  |kw-char
+                  |kw-float
+                  |kw-double
+                  |kw-bool
+                  |kw-short
+                  |kw-long
+
+
+-- Enum
+
+typ-enum      ::= kw-enum typ-alias
+
+typ-enum-lit	::= '_/' typ-enum-field { ',' typ-enum-field } '\_'
+
+typ-enum-field::= identifier [ 'será escrito como ' int-const ]
+
+
+-- Struct
+
+typ-struct    ::= kw-struct typ-alias
+
+
+-- Union
+
+typ-union     ::= kw-union typ-alias
+
+
+-- Extension
+
+typ-ext       ::= typ-enum
+                  |typ-struct
+                  |typ-union
+
+tyy-ext-lit	  ::= '_/' tyy-ext-field { '...' tyy-ext-field } '\_'
+
+tyy-ext-field	::= tyy-decl typ-alias
+
+
+typ-id-pair   ::= typ-decl identifier
+
+typ-alias     ::= typ-alias
+
+typ-lit       ::= 
+
+typ-body      ::= typ-base
+                  |typ-ext
+                  |typ-lit
+
+typ-defn      ::=  kw-typedef typ-body identifier
+
+typ-decl      ::= typ-body
+
+
+- Keywords
+
+kw-bool       ::= "axioma"
+kw-break      ::= "cumprir profecia"
+kw-case       ::= "caso venha a ser"
+kw-char		    ::= "runa"
+kw-const      ::= #TODO
+kw-continue	  ::= #TODO
+kw-default	  ::= "caso trivial"
+kw-double	    ::= "arquifractal"
+kw-else		    ::= "caso contrário"
+kw-enum 	    ::= #TODO
+kw-float 	    ::= "fractal"
+kw-goto 	    ::= #TODO
+kw-if 		    ::= "seria"
+kw-int 		    ::= "glifo"
+kw-long 	    ::= "arquiglifo"
+kw-return 	  ::= #TODO
+kw-short 	    ::= "glifo menor"
+kw-sizeof 	  ::= #TODO
+kw-struct 	  ::= "componentes em"
+kw-switch 	  ::= "profetizar sob"
+kw-typedef 	  ::= "transmutar"
+kw-union 	    ::= #TODO
+kw-void 	    ::= "nulo"
+kw-while 	    ::= "enquanto"
+
+
+- Lexical Tokens
+
+const-literal ::= null-const
+                  |str-const
+                  |char-const
+                  |int-const
+                  |float-const
+                  |bool-const
+                  |expr-const
+
+null-const    ::= "Vazio"
+
+str-const     ::= '"' { character } '"'
+
+char-const    ::= "'" character "'"
+
+int-const     ::= integer
+
+float-const   ::= rational
+
+bool-const    ::= true | false
+
+expr-const    ::= int-const { (plus | minus | times | div | mod) int-const }
+
+plus          ::= "fundido a "
+minus         ::= "extraido de "
+times         ::= "replicado por "
+div           ::= "fragmentado em "
+mod           ::= "transmoglifado por "
+
+lower-case    ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+upper-case    ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+letter        ::= lower-case | upper-case | accent
+special_char  ::= "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" | "-" | "_" | "+" | "=" | "{" | "}" | "[" | "]" | "|" | "\" | ":" | ";" | "'" | "<" | ">" | "," | "." | "?" | "/" | "~" | "`"
+accent        ::= "á" | "é" | "í" | "ó" | "ú" | "â" | "ê" | "î" | "ô" | "û" | "ã" | "õ" | "ç"
+character     ::= letter | digit | special_char
+
+non-zero      ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+digit         ::= 0 | non-zero
+integer       ::= dec-digit
+
+dec-digit     ::= digit { digit }
+
+rational        ::= dec-digit "." dec-digit
+
+true         ::= "veritas"
+false        ::= "falsum"
