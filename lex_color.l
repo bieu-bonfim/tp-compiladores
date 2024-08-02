@@ -1,0 +1,150 @@
+%{ 
+/* C Code */
+
+#include <stdio.h>
+
+%} 
+
+/* Name Definition */ 
+%option noyywrap 
+
+
+delim		 [ \t\n\r] 
+ws		   {delim}+ 
+
+end_line  (\.\.\.)
+
+/* identificação de dígitos */
+digito [0-9]
+caractere [a-zA-Z]
+digito_positivo [+]?{digito}+
+digito_negativo [-]{digito}+
+float_negat [-]?{digito}+\.{digito}+
+float_posit [+]?{digito}+\.{digito}+
+
+palavra [a-zA-Z]+
+
+true Veritas
+false Falsum
+void Nulo
+
+/* variavel */
+variavel {caractere}({caractere}|{digito})*
+
+/* aritméticos */
+soma fundido[ ]a[ ]
+subtracao extraido[ ]de[ ]
+igual equivale[ ]a[ ]
+multiplicacao replicado[ ]de[ ]
+divisao se[ ]fragmenta[ ]em[ ]
+mod transmoglifado[ ]a[ ]
+
+/* lógicos */
+maior for[ ]superior[ ]a[ ]
+menor for[ ]inferior[ ]a[ ]
+maior_igual é[ ]superequivalente[ ]a[ ]
+menor_igual é[ ]infraequivalente[ ]a[ ]
+ou ou[ ]entao[ ]
+e assim[ ]como[ ]
+diferente distinto[ ]de[ ]
+atribuicao será[ ]
+
+/* Tipos Primitivos */
+tipoInt Glifo[ ]
+tipoFloat Fractal[ ]
+tipoBool Axioma[ ]
+tipoChar Runa[ ]
+tipoVoid Nulo[ ]
+
+/* hierarquias e blocos */
+abre_bloco \_\/
+fecha_bloco \\\_
+abre \[
+fecha \]
+
+
+/* Comandos? nao sei o nome dessas coisa */
+while Enquanto[ ]
+if Seria[ ]
+profetizar (?i:profetizar)
+sob        (?i:sob)
+switch   {profetizar}{delim}{sob}{delim}
+
+
+
+caso  (?i:caso)
+venha (?i:venha)
+ser   (?i:ser)
+case {caso}{delim}{venha}{delim}{ser}{delim}
+
+trivial (?i:trivial)
+default {caso}{delim}{trivial}
+
+
+
+
+
+
+/* Pattern Action */ 
+%% 
+
+
+{ws}		  { } 
+{end_line} {printf("(fim de linha)\n");}
+
+
+{digito_positivo} {printf("\033[0;35m%s \033[0m", yytext);}
+{digito_negativo} {printf("\033[0;35m%s \033[0m", yytext);}
+{float_posit} {printf("\033[0;35m%s \033[0m", yytext);}
+{float_negat} {printf("\033[0;35m%s \033[0m", yytext);}
+{true} {printf("\033[0;35m%s \033[0m", yytext);}
+{false} {printf("\033[0;35m%s \033[0m", yytext);}
+{void} {printf("\033[0;35m%s \033[0m", yytext);}
+
+{soma} {printf("\033[0;34m%s \033[0m", yytext);}
+{subtracao} {printf("\033[0;34m%s \033[0m", yytext);}
+{igual} {printf("\033[0;34m%s \033[0m", yytext);}
+{multiplicacao} {printf("\033[0;34m%s \033[0m", yytext);}
+{divisao} {printf("\033[0;34m%s \033[0m", yytext);}
+{mod} {printf("\033[0;34m%s \033[0m", yytext);}
+
+{maior} {printf("\033[0;36m%s \033[0m", yytext);}
+{menor} {printf("\033[0;36m%s \033[0m", yytext);}
+{maior_igual} {printf("\033[0;36m%s \033[0m", yytext);}
+{menor_igual} {printf("\033[0;36m%s \033[0m", yytext);}
+{ou} {printf("\033[0;36m%s \033[0m", yytext);}
+{e} {printf("\033[0;36m%s \033[0m", yytext);}
+{diferente} {printf("\033[0;36m%s \033[0m", yytext);}
+{atribuicao} {printf("\033[0;36m%s \033[0m", yytext);}
+
+
+{tipoInt} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoFloat} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoBool} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoChar} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoVoid} {printf("\033[0;32m%s \033[0m", yytext);}
+
+{abre_bloco} {printf("\nabre bloco %s\n", yytext);}
+{fecha_bloco} {printf("fecha bloco %s\n", yytext);}
+{abre} {printf(" %s ", yytext);}
+{fecha} {printf(" %s ", yytext);}
+
+{while} {printf("\033[0;33m%s \033[0m", yytext);}
+{if} {printf("\033[0;33m%s \033[0m", yytext);}
+
+{variavel} {printf("\033[0;31m%s \033[0m", yytext);}
+
+
+
+.         { }
+
+
+%% 
+
+/* C Code */
+
+int main(void) 
+{ 
+    yylex(); 
+    return 0; 
+}
