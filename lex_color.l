@@ -51,6 +51,8 @@ atribuicao será[ ]
 
 /* Tipos Primitivos */
 tipoInt Glifo[ ]
+tipoLongInt Arquiglifo[ ]
+tipoShortInt Semiglifo[ ]
 tipoFloat Fractal[ ]
 tipoBool Axioma[ ]
 tipoChar Runa[ ]
@@ -65,10 +67,17 @@ fecha \]
 
 /* Comandos? nao sei o nome dessas coisa */
 while Enquanto[ ]
-if Seria[ ]
+if Se[ ]
 profetizar (?i:profetizar)
 sob        (?i:sob)
 switch   {profetizar}{delim}{sob}{delim}
+return Regressus[ ]
+typedef Transmutar[ ]
+struct Componentes[ ]em[ ]
+union Conjuntura[ ]em[ ]
+callFunc Conjurar[ ]
+nomeFunc {variavel}\[
+
 
 
 
@@ -126,11 +135,12 @@ default {caso}{delim}{trivial}
 
 {abre_bloco} {printf("\nabre bloco %s\n", yytext);}
 {fecha_bloco} {printf("fecha bloco %s\n", yytext);}
-{abre} {printf(" %s ", yytext);}
-{fecha} {printf(" %s ", yytext);}
+{abre} {printf("%s ", yytext);}
+{fecha} {printf("%s ", yytext);}
 
 {while} {printf("\033[0;33m%s \033[0m", yytext);}
 {if} {printf("\033[0;33m%s \033[0m", yytext);}
+{return} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {variavel} {printf("\033[0;31m%s \033[0m", yytext);}
 

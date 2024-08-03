@@ -16,16 +16,16 @@ end_line  (\.\.\.)
 
 /* identificação de dígitos */
 digito [0-9]
-digito_positivo [+]?[digit]+
-digito_negativo [-][digit]+
-float_negat [-]?[digit]+\.[digit]+
-float_posit [+]?[digit]+\.[digit]+
+digito_positivo [+]?[digit]+[ ]
+digito_negativo [-][digit]+[ ]
+float_negat [-]?[digit]+\.[digit]+[ ]
+float_posit [+]?[digit]+\.[digit]+[ ]
 
 palavra [a-zA-Z]+
 
-true Veritas
-false Falsum
-void Nulo
+true Veritas[ ]
+false Falsum[ ]
+void Nulo[ ]
 
 /* aritméticos */
 soma fundido[ ]
@@ -54,19 +54,19 @@ tipoVoid Nulo[ ]
 
 
 
-profetizar (?i:profetizar)
-sob        (?i:sob)
-switch   {profetizar}{delim}{sob}{delim}
+profetizar (?i:profetizar)[ ]
+sob        (?i:sob)[ ]
+switch   {profetizar}{delim}{sob}{delim}[ ]
 
 
 
-caso  (?i:caso)
-venha (?i:venha)
-ser   (?i:ser)
-case {caso}{delim}{venha}{delim}{ser}{delim}
+caso  (?i:caso)[ ]
+venha (?i:venha)[ ]
+ser   (?i:ser)[ ]
+case {caso}{delim}{venha}{delim}{ser}{delim}[ ]
 
-trivial (?i:trivial)
-default {caso}{delim}{trivial}
+trivial (?i:trivial)[ ]
+default {caso}{delim}{trivial}[ ]
 
 
 
