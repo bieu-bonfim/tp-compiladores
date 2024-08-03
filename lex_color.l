@@ -14,21 +14,21 @@ ws		   {delim}+
 
 end_line  (\.\.\.)
 
-/* identificação de dígitos */
+/* identificação */
 digito [0-9]
 caractere [a-zA-Z]
 digito_positivo [+]?{digito}+
 digito_negativo [-]{digito}+
 float_negat [-]?{digito}+\.{digito}+
 float_posit [+]?{digito}+\.{digito}+
-
 palavra [a-zA-Z]+
 
-true Veritas[]
-false Falsum[ ]
-void Nulo[ ]
+true Veritas
+false Falsum
+void Nulo
 break Que[ ]assim[ ]seja
-default Cumprir[ ]profecia
+continue Prossiga
+
 
 /* variavel */
 variavel {caractere}({caractere}|{digito})*
@@ -36,7 +36,6 @@ variavel {caractere}({caractere}|{digito})*
 /* aritméticos */
 soma fundido[ ]a[ ]
 subtracao dissolvido[ ]de[ ]
-igual equivale[ ]a[ ]
 multiplicacao replicado[ ]de[ ]
 divisao fragmentado[ ]em[ ]
 mod transmoglifado[ ]a[ ]
@@ -49,7 +48,7 @@ menor_igual for[ ]infraequivalente[ ]a[ ]
 ou ou[ ]entao[ ]
 e assim[ ]como[ ]
 igualdade for[ ]equivalente[ ]a[ ]
-diferente distinto[ ]de[ ]
+diferente for[ ]distinto[ ]de[ ]
 atribuicao será[ ]
 
 /* Tipos Primitivos */
@@ -57,9 +56,11 @@ tipoInt Glifo[ ]
 tipoLongInt Arquiglifo[ ]
 tipoShortInt Semiglifo[ ]
 tipoFloat Fractal[ ]
+tipoDouble Arquifractal[ ]
 tipoBool Axioma[ ]
 tipoChar Runa[ ]
 tipoVoid Nulo[ ]
+
 
 /* hierarquias e blocos */
 abre_bloco \_\/
@@ -71,28 +72,35 @@ delimitadorChar [\" | \"]
 
 
 /* Comandos? nao sei o nome dessas coisa */
-while Enquanto[ ]
+while Dilatar[ ]tempo[ ]enquanto[ ]
+for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
-switch   Iniciar[ ]Profecia[ ]de[ ]
+else Ou[ ]optar[ ]por[ ]
+elseif Ou[ ]optar[ ]por[ ]ponderar[ ]se[ ]
+switch   Iniciar[ ]profecia[ ]de[ ]
 case Profetizar[ ]que[ ]se[ ]
-return Regressus[ ]
+default Cumprir[ ]profecia[ ]
+goto Translocar[ ]para[ ]
+
+
+
+/* Estruturas */
 typedef Transmutar[ ]
 struct Componentes[ ]em[ ]
 union Conjuntura[ ]em[ ]
-callFunc Conjurar[ ]
-declFunc Preparar[ ]
+instanciar Convocar[ ]
+
+/* Funções */
+declFunc Preparar[ ]magia[ ]de[ ]
+chamarFunc Conjurar[ ]
 parametros Componentes:[ ]
+return Regressus[ ]
 
 
+/* Unários */
+adicionarUm Encantar[ ]
+subtrairUm Desencantar[ ]
 
-
-caso  (?i:caso)
-venha (?i:venha)
-ser   (?i:ser)
-case {caso}{delim}{venha}{delim}{ser}{delim}
-
-trivial (?i:trivial)
-default {caso}{delim}{trivial}
 
 
 
@@ -149,7 +157,7 @@ default {caso}{delim}{trivial}
 {if} {printf("\033[0;33m%s \033[0m", yytext);}
 {return} {printf("\033[0;33m%s \033[0m", yytext);}
 {parametros} {printf("\033[0;33m%s \033[0m", yytext);}
-{callFunc} {printf("\033[0;33m%s \033[0m", yytext);}
+{chamarFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 {declFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {variavel} {printf("\033[0;31m%s \033[0m", yytext);}
