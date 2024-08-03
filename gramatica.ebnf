@@ -1,6 +1,6 @@
 START               ::=  { DECL-STMT | FUNCTION }
 
-VARIABLE            ::=  ID [ INDEX-OPT ]
+VARIABLE            ::=  ID [ ACCESSES ] { ( '.' VARIABLE ) | ( '->' VARIABLE) }
 
 FUNCTION            ::=  'preparar' TYPE ID ', componentes:' ARGS STMT-BLOCK
 
@@ -63,14 +63,31 @@ TIMES               ::= 'replicado por '
 DIV                 ::= 'fragmentado em '
 MOD                 ::= 'transmoglifado por ' 
 
+GT                  ::= 'for superior a '
+LT                  ::= 'for inferior a '
+GE                  ::= 'for superior ou equivalente a '
+LE                  ::= 'for inferior ou equivalente a '
+EQ                  ::= 'for equivalente a '
+NE                  ::= 'for distinto de '
+
+AND                 ::= 'assim como '
+OR                  ::= 'ou '
+NOT                 ::= 'nao e '
+
 EXPR                ::=  TERM { OPERATOR TERM }
 
 TERM                ::=  FACTOR { OPERATOR FACTOR }
 
-FACTOR              ::=  '(' EXPR ')'
+FACTOR              ::=  '[' EXPR ']'
+                      |  EXPR
                       |  VARIABLE
                       |  INTEGER
                       |  RATIONAL
+                      |  BOOL
+                      |  LITERAL
+                      |  FUNCTION-CALL
+                      |  TERNARY-EXPR
+                      |  UNARY-EXPR
                       
 OPERATOR            ::=  ARIT | REL | LOGIC
 
@@ -80,9 +97,32 @@ ARIT                ::=  PLUS
                       |  DIV
                       |  MOD
 
-REL                 ::=  #TODO
+REL                 ::=  GT
+                      |  LT
+                      |  GE
+                      |  LE
+                      |  EQ
+                      |  NE
 
 LOGIC               ::=  #TODO
+
+TERNARY-EXPR        ::=  TERM '?' TERM ':' TERM
+
+UNARY-EXPR          ::= UNARY-POS-MINUS
+                      |  UNARY-POS-SUM
+                      |  UNARY-PRE-MINUS
+                      |  UNARY-POS-SUM
+                      |  UNARY-DEREF
+                      |  UNARY-REF
+                      |  UNARY-NOT
+
+UNARY-POS-MINUS    	::= VARIABLE "--"
+UNARY-POS-SUM     	::= VARIABLE "++"
+UNARY-PRE-MINUS     ::= "--" VARIABLE
+UNARY-POS-SUM     	::= "++" VARIABLE
+UNARY-DEREF       	::= '*' VARIABLE
+UNARY-REF          	::= '&' VARIABLE
+UNARY-NOT          	::= '!' VARIABLE
 
 TYPE                ::=  'runa'
                       |  'glifo'
@@ -133,7 +173,9 @@ ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
 
 ASSIGNMENT          ::=  [ TYPE ] VARIABLE [ 'sera' EXPR ]
 
-INDEX-OPT           ::=  '<' EXPR '>'
+ACCESSES            ::=  { ACCESS }
+
+ACCESS              ::=  '<' EXPR '>' 
 
 
 
@@ -174,3 +216,5 @@ NULL-CONST          ::=  'Vazio'
 STR-CONST           ::=  '"' { CHAR } '"'
 
 CHAR-CONST          ::=  "'" CHAR "'"
+
+LITERAL             ::=  STR-CONST | CHAR-CONST | NULL-CONST
