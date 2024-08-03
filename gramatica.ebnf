@@ -3,9 +3,9 @@
 
 - Statement
 
-stmt-list     ::= { stmt }
+stmt-list         ::= { stmt }
 
-stmt          ::= null-stmt
+stmt              ::= null-stmt
                   |return-stmt
                   |continue-stmt
                   |break-stmt
@@ -13,52 +13,54 @@ stmt          ::= null-stmt
                   |while-stmt
                   |goto-stmt
 
-block-stmt    ::= "_/" stmt-list "\_"
+block-stmt        ::= "_/" stmt-list "\_"
 
-null-stmt     ::= "..."
+null-stmt         ::= "..."
 
-return-stmt   ::= #TODO "..."
+return-stmt       ::= kw-return expr "..."
 
-continue-stmt ::= kw-continue "..."
+continue-stmt     ::= kw-continue "..."
 
-break-stmt    ::= kw-break "..."
+break-stmt        ::= kw-break "..."
 
-if-stmt       ::= kw-if expr block-stmt [kw-else block-stmt]
+if-stmt           ::= kw-if expr block-stmt [kw-else block-stmt]
 
-while-stmt    ::= kw-while expr block-stmt
+while-stmt        ::= kw-while expr block-stmt
 
-goto-stmt     ::= #TODO "..."
+goto-stmt         ::= kw-goto identifier "..."
 
-switch-stmt   ::= kw-switch expr block-stmt
+switch-stmt       ::= kw-switch expr block-stmt
 
-decl-stmt     ::= declare-var "..."
-                  |func-decl 
+decl-stmt         ::= assign-list '...'
+                  | typ-defn '...'
+                  | func-sign '...'
+
++Syntax::Assignment
+
+assign-stmt       ::= dynamic-assign
+                  | const-assign
+
+dynamic-assign    ::= [ typ-decl ] identifier [ "será " expr ]
+
+const-assign      ::= [ typ-decl ] identifier [ "será " const-literal ]
+
+assign-list       ::= assign-stmt { ', ' assign-stmt }
 
 - Identifiers
 
-index         ::= "; tutorando " expr " "
 
 
 
 - Declare Function
 
-func-decl     ::=  func-sign block-stmt
+func-decl         ::=  func-sign block-stmt
 
-func-sign     ::= "preparar " type identifier [", componentes: " params] "."
+func-sign         ::= "preparar " type identifier [", componentes: " params] "."
 
-
-
-- Declare Variable
-declareVar    ::= type identifier "..."
-
-- Assign Value
-assign        ::= 
-
-- Assing Inplace
 
 - Types
 
-typ-base      ::= kw-void
+typ-base          ::= kw-void
                   |kw-int
                   |kw-char
                   |kw-float
@@ -67,83 +69,88 @@ typ-base      ::= kw-void
                   |kw-short
                   |kw-long
 
-
--- Enum
-
-typ-enum      ::= kw-enum typ-alias
-
-typ-enum-lit	::= '_/' typ-enum-field { ',' typ-enum-field } '\_'
-
-typ-enum-field::= identifier [ 'será escrito como ' int-const ]
+typ-literal       ::= typ-enum-lit
+                  |typ-struct-lit
+                  |typ-union-lit
 
 
--- Struct
+typ-enum          ::= kw-enum typ-alias
 
-typ-struct    ::= kw-struct typ-alias
+typ-enum-lit	    ::= "_/" typ-enum-field { ',' typ-enum-field } "\_"
 
-
--- Union
-
-typ-union     ::= kw-union typ-alias
+typ-enum-field    ::= identifier [ "será escrito como o glifo " int-const ]
 
 
--- Extension
+typ-struct        ::= kw-struct typ-alias
 
-typ-ext       ::= typ-enum
+typ-struct-lit    ::= "_/" typ-struct-field { '...' typ-struct-field } "\_"
+
+typ-struct-field    ::= typ-decl identifier
+
+
+typ-union         ::= kw-union typ-alias
+
+typ-union-lit	    ::= "_/" typ-union-field { '...' typ-union-field } "\_"
+
+typ-union-field   ::= typ-decl identifier
+
+
+typ-ext           ::= typ-enum
                   |typ-struct
                   |typ-union
 
-tyy-ext-lit	  ::= '_/' tyy-ext-field { '...' tyy-ext-field } '\_'
 
-tyy-ext-field	::= tyy-decl typ-alias
+typ-id-pair       ::= typ-decl [ kw-const ] [ '*' ] identifier
 
+typ-alias         ::= identifier
 
-typ-id-pair   ::= typ-decl identifier
-
-typ-alias     ::= typ-alias
-
-typ-lit       ::= 
-
-typ-body      ::= typ-base
+typ-body          ::= typ-base
+                  |typ-literal
                   |typ-ext
-                  |typ-lit
 
-typ-defn      ::=  kw-typedef typ-body identifier
+typ-defn          ::= kw-typedef typ-body typ-alias
 
-typ-decl      ::= typ-body
+typ-decl          ::= [ typ-qualifier ] [ '*' ] typ-body
 
-
-- Keywords
-
-kw-bool       ::= "axioma"
-kw-break      ::= "cumprir profecia"
-kw-case       ::= "caso venha a ser"
-kw-char		    ::= "runa"
-kw-const      ::= #TODO
-kw-continue	  ::= #TODO
-kw-default	  ::= "caso trivial"
-kw-double	    ::= "arquifractal"
-kw-else		    ::= "caso contrário"
-kw-enum 	    ::= #TODO
-kw-float 	    ::= "fractal"
-kw-goto 	    ::= #TODO
-kw-if 		    ::= "seria"
-kw-int 		    ::= "glifo"
-kw-long 	    ::= "arquiglifo"
-kw-return 	  ::= #TODO
-kw-short 	    ::= "glifo menor"
-kw-sizeof 	  ::= #TODO
-kw-struct 	  ::= "componentes em"
-kw-switch 	  ::= "profetizar sob"
-kw-typedef 	  ::= "transmutar"
-kw-union 	    ::= #TODO
-kw-void 	    ::= "nulo"
-kw-while 	    ::= "enquanto"
+typ-qualifier     ::= kw-const
 
 
-- Lexical Tokens
 
-const-literal ::= null-const
+
+Grammar::Lexical
+
++Lexical::Keywords
+
+kw-bool           ::= "axioma"
+kw-break          ::= "cumprir profecia"
+kw-case           ::= "caso venha a ser"
+kw-char		        ::= "runa"
+kw-const          ::= "imutável"
+kw-continue	      ::= "manter profecia"
+kw-default	      ::= "caso trivial"
+kw-double	        ::= "arquifractal"
+kw-else		        ::= "caso contrário"
+kw-enum 	        ::= "glifos em"
+kw-float 	        ::= "fractal"
+kw-goto 	        ::= "translocar para"
+kw-if 		        ::= "seria"
+kw-int 		        ::= "glifo"
+kw-long 	        ::= "arquiglifo"
+kw-return 	      ::= "regressum"
+kw-short 	        ::= "glifo menor"
+kw-sizeof 	      ::= #TODO
+kw-struct 	      ::= "componentes em"
+kw-switch 	      ::= "profetizar sob"
+kw-typedef 	      ::= "transmutar"
+kw-union 	        ::= "conjuntura em"
+kw-void 	        ::= "nulo"
+kw-while 	        ::= "enquanto"
+
+
+
++Lexical::Literals
+
+const-literal     ::= null-const
                   |str-const
                   |char-const
                   |int-const
@@ -151,40 +158,51 @@ const-literal ::= null-const
                   |bool-const
                   |expr-const
 
-null-const    ::= "Vazio"
+null-const        ::= "Vazio"
 
-str-const     ::= '"' { character } '"'
+str-const         ::= '"' { character } '"'
 
-char-const    ::= "'" character "'"
+char-const        ::= "'" character "'"
 
-int-const     ::= integer
+int-const         ::= integer
 
-float-const   ::= rational
+float-const       ::= rational
 
-bool-const    ::= true | false
+num-const         ::= integer | rational
 
-expr-const    ::= int-const { (plus | minus | times | div | mod) int-const }
+bool-const        ::= true | false
 
-plus          ::= "fundido a "
-minus         ::= "extraido de "
-times         ::= "replicado por "
-div           ::= "fragmentado em "
-mod           ::= "transmoglifado por "
+expr-const        ::= int-const { (plus | minus | times | div | mod) int-const }
 
-lower-case    ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
-upper-case    ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
-letter        ::= lower-case | upper-case | accent
-special_char  ::= "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" | "-" | "_" | "+" | "=" | "{" | "}" | "[" | "]" | "|" | "\" | ":" | ";" | "'" | "<" | ">" | "," | "." | "?" | "/" | "~" | "`"
-accent        ::= "á" | "é" | "í" | "ó" | "ú" | "â" | "ê" | "î" | "ô" | "û" | "ã" | "õ" | "ç"
-character     ::= letter | digit | special_char
+plus              ::= "fundido a "
+minus             ::= "extraido de "
+times             ::= "replicado por "
+div               ::= "fragmentado em "
+mod               ::= "transmoglifado por "
 
-non-zero      ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-digit         ::= 0 | non-zero
-integer       ::= dec-digit
+lower-case        ::= 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
 
-dec-digit     ::= digit { digit }
+upper-case        ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
 
-rational        ::= dec-digit "." dec-digit
+letter            ::= lower-case | upper-case | accent
 
-true         ::= "veritas"
-false        ::= "falsum"
+special_char      ::= "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" | "-" | "_" | "+" | "=" | "{" | "}" | "[" | "]" | "|" | "\" | ":" | ";" | "'" | "<" | ">" | "," | "." | "?" | "/" | "~" | "`"
+
+accent            ::= "á" | "é" | "í" | "ó" | "ú" | "â" | "ê" | "î" | "ô" | "û" | "ã" | "õ" | "ç"
+
+character         ::= letter | digit | special_char
+
+non-zero          ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+digit             ::= 0 | non-zero
+
+integer           ::= dec-digit
+
+dec-digit         ::= digit { digit }
+
+rational            ::= dec-digit "." dec-digit
+
+identifier        ::= letter { letter | digit }
+
+true            ::= "veritas"
+false           ::= "falsum"

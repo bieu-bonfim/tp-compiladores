@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+transmutar componentes em _/
+    glifo a...
+    glifo b...
+\_ duo
+
+transmutar glifo (*DuoGlifos)(glifo, glifo)...
+
+preparar glifo add, componentes: glifo a, glifo b _/
+    regressum a + b...
+\_
+
+
+
+preparar nulo grimorio, componentes: glifo argc, runa *argv[] _/
+    
+    duo t...
+    t.a será 1...
+    t.b será 2...
+    invocar EscritaMagica ["t.a = %d, t.b = %d\n", t.a, t.b]...
+
+    DuoGlifos addFunc será add;
+    invocar EscritaMagica ["addFunc(1, 2) = %d\n", addFunc(1, 2)];
+
+\_
