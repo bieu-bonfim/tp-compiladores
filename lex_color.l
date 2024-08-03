@@ -27,13 +27,15 @@ palavra [a-zA-Z]+
 true Veritas[]
 false Falsum[ ]
 void Nulo[ ]
+break Que[ ]assim[ ]seja
+default Cumprir[ ]profecia
 
 /* variavel */
 variavel {caractere}({caractere}|{digito})*
 
 /* aritméticos */
 soma fundido[ ]a[ ]
-subtracao extraido[ ]de[ ]
+subtracao dissolvido[ ]de[ ]
 igual equivale[ ]a[ ]
 multiplicacao replicado[ ]de[ ]
 divisao fragmentado[ ]em[ ]
@@ -65,13 +67,14 @@ fecha_bloco \\\_
 abre \[
 fecha \]
 divisor \,
-delimitadorChar [\" | \"] 
+delimitadorChar [\" | \"]
 
 
 /* Comandos? nao sei o nome dessas coisa */
 while Enquanto[ ]
-if Se[ ]
-switch   Profetizar[ ]que[ ]se[ ]
+if Ponderar[ ]se[ ]
+switch   Iniciar[ ]Profecia[ ]de[ ]
+case Profetizar[ ]que[ ]se[ ]
 return Regressus[ ]
 typedef Transmutar[ ]
 struct Componentes[ ]em[ ]
@@ -79,6 +82,7 @@ union Conjuntura[ ]em[ ]
 callFunc Conjurar[ ]
 declFunc Preparar[ ]
 parametros Componentes:[ ]
+
 
 
 
