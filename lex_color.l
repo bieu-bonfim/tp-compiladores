@@ -24,9 +24,9 @@ float_posit [+]?{digito}+\.{digito}+
 
 palavra [a-zA-Z]+
 
-true Veritas
-false Falsum
-void Nulo
+true Veritas[]
+false Falsum[ ]
+void Nulo[ ]
 
 /* variavel */
 variavel {caractere}({caractere}|{digito})*
@@ -36,16 +36,17 @@ soma fundido[ ]a[ ]
 subtracao extraido[ ]de[ ]
 igual equivale[ ]a[ ]
 multiplicacao replicado[ ]de[ ]
-divisao se[ ]fragmenta[ ]em[ ]
+divisao fragmentado[ ]em[ ]
 mod transmoglifado[ ]a[ ]
 
 /* lógicos */
 maior for[ ]superior[ ]a[ ]
 menor for[ ]inferior[ ]a[ ]
-maior_igual é[ ]superequivalente[ ]a[ ]
-menor_igual é[ ]infraequivalente[ ]a[ ]
+maior_igual for[ ]superequivalente[ ]a[ ]
+menor_igual for[ ]infraequivalente[ ]a[ ]
 ou ou[ ]entao[ ]
 e assim[ ]como[ ]
+igualdade for[ ]equivalente[ ]a[ ]
 diferente distinto[ ]de[ ]
 atribuicao será[ ]
 
@@ -70,9 +71,7 @@ delimitadorChar [\" | \"]
 /* Comandos? nao sei o nome dessas coisa */
 while Enquanto[ ]
 if Se[ ]
-profetizar (?i:profetizar)
-sob        (?i:sob)
-switch   {profetizar}{delim}{sob}{delim}
+switch   Profetizar[ ]que[ ]se[ ]
 return Regressus[ ]
 typedef Transmutar[ ]
 struct Componentes[ ]em[ ]
