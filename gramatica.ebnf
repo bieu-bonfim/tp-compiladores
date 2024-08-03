@@ -1,208 +1,176 @@
-- Start Symbol
-// a definir
+START               ::=  { DECL-STMT | FUNCTION }
 
-- Statement
+VARIABLE            ::=  ID [ INDEX-OPT ]
 
-stmt-list         ::= { stmt }
+FUNCTION            ::=  'preparar' TYPE ID ', componentes:' ARGS STMT-BLOCK
 
-stmt              ::= null-stmt
-                  |return-stmt
-                  |continue-stmt
-                  |break-stmt
-                  |if-stmt
-                  |while-stmt
-                  |goto-stmt
+FUNCTION-SIGNATURE  ::=  'preparar' TYPE ID ', componentes:' ARGS '...'
 
-block-stmt        ::= "_/" stmt-list "\_"
+FUNCTION-CALL       ::=  'conjurar' ID ' [' PARAMS ']'
 
-null-stmt         ::= "..."
+ARGS                ::=  [ ARG { ',' ARG } ]
 
-return-stmt       ::= kw-return expr "..."
+ARG                 ::=  TYPE ID
 
-continue-stmt     ::= kw-continue "..."
+PARAMS              ::=  [ PARAM { ',' PARAM } ]
 
-break-stmt        ::= kw-break "..."
+PARAM               ::=  EXPR
 
-if-stmt           ::= kw-if expr block-stmt [kw-else block-stmt]
+STMT-BLOCK          ::=  '_/' STMTS '\_'
 
-while-stmt        ::= kw-while expr block-stmt
+STMTS               ::=  { STMT }
 
-goto-stmt         ::= kw-goto identifier "..."
+STMT                ::=   NULL-STMT
+                      |   RETURN-STMT
+                      |   CONTINUE-STMT
+                      |   BREAK-STMT
+                      |   IF-STMT
+                      |   WHILE-STMT
+                      |   GOTO-STMT
+                      |   DECL-STMT
 
-switch-stmt       ::= kw-switch expr block-stmt
+NULL-STMT           ::=  '...'
 
-decl-stmt         ::= assign-list '...'
-                  | typ-defn '...'
-                  | func-sign '...'
+RETURN-STMT         ::=  'regressum ' EXPR '...'
 
-+Syntax::Assignment
+CONTINUE-STMT       ::=  'manter profecia' '...'
 
-assign-stmt       ::= dynamic-assign
-                  | const-assign
+BREAK-STMT          ::=  'cumprir profecia' '...'
 
-dynamic-assign    ::= [ typ-decl ] identifier [ "será " expr ]
+IF-STMT             ::=  'se ' EXPR '...' STMT-BLOCK { 'caso contrario' [ 'se' EXPR '...' ] STMT-BLOCK }
 
-const-assign      ::= [ typ-decl ] identifier [ "será " const-literal ]
+WHILE-STMT          ::=  'enquanto ' EXPR '...' STMT-BLOCK
 
-assign-list       ::= assign-stmt { ', ' assign-stmt }
+GOTO-STMT           ::=  'translocar para ' ID '...'
 
-- Identifiers
+SWITCH-STMT         ::=  'profetizar sob ' EXPR '...' SWITCH-BLOCK
 
+SWITCH-BLOCK        ::=  '_/' SWITCH-STMTS '\_'
 
+SWITCH-STMTS        ::=  { CASE CASE-STMT } [ 'caso trivial, ' CASE-STMT]
 
+CASE                ::=  'caso venha a ser ' EXPR ', '
 
-- Declare Function
+CASE-STMT           ::=  { STMT } BREAK-STMT
 
-func-decl         ::=  func-sign block-stmt
+DECL-STMT           ::= TYPE-DEFINITION '...'
+                      |  ASSIGNMENTS '...'
+                      |  FUNCTION-SIGNATURE '...'
 
-func-sign         ::= "preparar " type identifier [", componentes: " params] "."
+PLUS                ::= 'fundido a '
+MINUS               ::= 'extraido de '
+TIMES               ::= 'replicado por '
+DIV                 ::= 'fragmentado em '
+MOD                 ::= 'transmoglifado por ' 
 
+EXPR                ::=  TERM { OPERATOR TERM }
 
-- Types
+TERM                ::=  FACTOR { OPERATOR FACTOR }
 
-typ-base          ::= kw-void
-                  |kw-int
-                  |kw-char
-                  |kw-float
-                  |kw-double
-                  |kw-bool
-                  |kw-short
-                  |kw-long
+FACTOR              ::=  '(' EXPR ')'
+                      |  VARIABLE
+                      |  INTEGER
+                      |  RATIONAL
+                      
+OPERATOR            ::=  ARIT | REL | LOGIC
 
-typ-literal       ::= typ-enum-lit
-                  |typ-struct-lit
-                  |typ-union-lit
+ARIT                ::=  PLUS
+                      |  MINUS
+                      |  TIMES
+                      |  DIV
+                      |  MOD
 
+REL                 ::=  #TODO
 
-typ-enum          ::= kw-enum typ-alias
+LOGIC               ::=  #TODO
 
-typ-enum-lit	    ::= "_/" typ-enum-field { ',' typ-enum-field } "\_"
+TYPE                ::=  'runa'
+                      |  'glifo'
+                      |  'arquiglifo'
+                      |  'fractal'
+                      |  'arquifractal'
+                      |  'glifo menor'
+                      |  'nulo'
+                      |  'axioma'
+                      |  ENUM-DEFINITION
+                      |  STRUCT-DEFINITION
+                      |  UNION-DEFINITION
+                      |  TYPE-ENUM
+                      |  TYPE-STRUCT
+                      |  TYPE-UNION
 
-typ-enum-field    ::= identifier [ "será escrito como o glifo " int-const ]
+TYPE-QUALIFIER      ::=  'imutavel'
+                      |  'volatil'
 
+ENUM-DEFINITION     ::=  'glifos' ' em ' ID '_/' ENUM-FIELDS '\_'
 
-typ-struct        ::= kw-struct typ-alias
+ENUM-FIELDS         ::=  ENUM-FIELD { ',' ENUM-FIELD }
 
-typ-struct-lit    ::= "_/" typ-struct-field { '...' typ-struct-field } "\_"
+ENUM-FIELD          ::=  ID [ 'sera ' DEC-DIGIT ]
 
-typ-struct-field    ::= typ-decl identifier
+STRUCT-DEFINITION   ::=  'componentizacao' ' em ' [ ID ] '_/' STRUCT-FIELDS '\_'
 
+STRUCT-FIELDS       ::=  STRUCT-FIELD { '...' STRUCT-FIELD }
 
-typ-union         ::= kw-union typ-alias
+STRUCT-FIELD        ::=  TYPE-DECL ID
 
-typ-union-lit	    ::= "_/" typ-union-field { '...' typ-union-field } "\_"
+UNION-DEFINITION    ::=  'conjuntura' ' em ' ID '_/' UNION-FIELDS '\_'
 
-typ-union-field   ::= typ-decl identifier
+UNION-FIELDS        ::=  UNION-FIELD { '...' UNION-FIELD }
 
+UNION-FIELD         ::=  TYPE-DECL ID
 
-typ-ext           ::= typ-enum
-                  |typ-struct
-                  |typ-union
+TYPE-DEFINITION     ::=  'transmutar ' TYPE ID
 
+TYPE-ENUM           ::=  'glifos' ID
 
-typ-id-pair       ::= typ-decl [ kw-const ] [ '*' ] identifier
+TYPE-STRUCT         ::=  'componentizacao' ID
 
-typ-alias         ::= identifier
+TYPE-UNION          ::=  'conjuntura' ID
 
-typ-body          ::= typ-base
-                  |typ-literal
-                  |typ-ext
 
-typ-defn          ::= kw-typedef typ-body typ-alias
+ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
 
-typ-decl          ::= [ typ-qualifier ] [ '*' ] typ-body
+ASSIGNMENT          ::=  [ TYPE ] VARIABLE [ 'sera' EXPR ]
 
-typ-qualifier     ::= kw-const
+INDEX-OPT           ::=  '<' EXPR '>'
 
 
 
 
-Grammar::Lexical
 
-+Lexical::Keywords
+NON-ZERO            ::=  '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
-kw-bool           ::= "axioma"
-kw-break          ::= "cumprir profecia"
-kw-case           ::= "caso venha a ser"
-kw-char		        ::= "runa"
-kw-const          ::= "imutável"
-kw-continue	      ::= "manter profecia"
-kw-default	      ::= "caso trivial"
-kw-double	        ::= "arquifractal"
-kw-else		        ::= "caso contrário"
-kw-enum 	        ::= "glifos em"
-kw-float 	        ::= "fractal"
-kw-goto 	        ::= "translocar para"
-kw-if 		        ::= "seria"
-kw-int 		        ::= "glifo"
-kw-long 	        ::= "arquiglifo"
-kw-return 	      ::= "regressum"
-kw-short 	        ::= "glifo menor"
-kw-sizeof 	      ::= #TODO
-kw-struct 	      ::= "componentes em"
-kw-switch 	      ::= "profetizar sob"
-kw-typedef 	      ::= "transmutar"
-kw-union 	        ::= "conjuntura em"
-kw-void 	        ::= "nulo"
-kw-while 	        ::= "enquanto"
+DIGIT               ::=  '0' | NON-ZERO
 
+DEC-DIGIT           ::=  DIGIT { DIGIT }
 
+INTEGER             ::=  DEC-DIGIT
 
-+Lexical::Literals
+RATIONAL            ::=  DEC-DIGIT '.' DEC-DIGIT
 
-const-literal     ::= null-const
-                  |str-const
-                  |char-const
-                  |int-const
-                  |float-const
-                  |bool-const
-                  |expr-const
+LOWER-CASE          ::=  'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
 
-null-const        ::= "Vazio"
+UPPER-CASE          ::=  'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
 
-str-const         ::= '"' { character } '"'
+SPECIAL-CHAR        ::=  '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' | '(' | ')' | '-' | '_' | '+' | '=' | '{' | '}' | '[' | ']' | '|' | '\' | ':' | ';' | "'" | '<' | '>' | ',' | '.' | '?' | '/' | '~' | '`'
 
-char-const        ::= "'" character "'"
+ACCENT              ::=  'á' | 'é' | 'í' | 'ó' | 'ú' | 'â' | 'ê' | 'î' | 'ô' | 'û' | 'ã' | 'õ' | 'ç'
 
-int-const         ::= integer
+LETTER              ::=  LOWER-CASE | UPPER-CASE | ACCENT
 
-float-const       ::= rational
+CHAR                ::=  LETTER | DIGIT | SPECIAL-CHAR
 
-num-const         ::= integer | rational
+ID                  ::=  ( LETTER | '_' ) { LETTER | DIGIT | '_' }
 
-bool-const        ::= true | false
+TRUE                ::=  'veritas'
 
-expr-const        ::= int-const { (plus | minus | times | div | mod) int-const }
+FALSE               ::=  'falsum'
 
-plus              ::= "fundido a "
-minus             ::= "extraido de "
-times             ::= "replicado por "
-div               ::= "fragmentado em "
-mod               ::= "transmoglifado por "
+BOOL                ::=  TRUE | FALSE
 
-lower-case        ::= 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+NULL-CONST          ::=  'Vazio'
 
-upper-case        ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
+STR-CONST           ::=  '"' { CHAR } '"'
 
-letter            ::= lower-case | upper-case | accent
-
-special_char      ::= "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" | "-" | "_" | "+" | "=" | "{" | "}" | "[" | "]" | "|" | "\" | ":" | ";" | "'" | "<" | ">" | "," | "." | "?" | "/" | "~" | "`"
-
-accent            ::= "á" | "é" | "í" | "ó" | "ú" | "â" | "ê" | "î" | "ô" | "û" | "ã" | "õ" | "ç"
-
-character         ::= letter | digit | special_char
-
-non-zero          ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-digit             ::= 0 | non-zero
-
-integer           ::= dec-digit
-
-dec-digit         ::= digit { digit }
-
-rational            ::= dec-digit "." dec-digit
-
-identifier        ::= letter { letter | digit }
-
-true            ::= "veritas"
-false           ::= "falsum"
+CHAR-CONST          ::=  "'" CHAR "'"
