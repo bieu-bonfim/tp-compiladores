@@ -63,6 +63,8 @@ abre_bloco \_\/
 fecha_bloco \\\_
 abre \[
 fecha \]
+divisor \,
+delimitadorChar [\" | \"] 
 
 
 /* Comandos? nao sei o nome dessas coisa */
@@ -76,8 +78,8 @@ typedef Transmutar[ ]
 struct Componentes[ ]em[ ]
 union Conjuntura[ ]em[ ]
 callFunc Conjurar[ ]
-nomeFunc {variavel}\[
-
+declFunc Preparar[ ]
+parametros Componentes:[ ]
 
 
 
@@ -137,10 +139,15 @@ default {caso}{delim}{trivial}
 {fecha_bloco} {printf("fecha bloco %s\n", yytext);}
 {abre} {printf("%s ", yytext);}
 {fecha} {printf("%s ", yytext);}
+{divisor} {printf("%s ", yytext);}
+{delimitadorChar} {printf("%s ", yytext);}
 
 {while} {printf("\033[0;33m%s \033[0m", yytext);}
 {if} {printf("\033[0;33m%s \033[0m", yytext);}
 {return} {printf("\033[0;33m%s \033[0m", yytext);}
+{parametros} {printf("\033[0;33m%s \033[0m", yytext);}
+{callFunc} {printf("\033[0;33m%s \033[0m", yytext);}
+{declFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {variavel} {printf("\033[0;31m%s \033[0m", yytext);}
 
