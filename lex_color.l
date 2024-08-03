@@ -63,21 +63,16 @@ abre_bloco \_\/
 fecha_bloco \\\_
 abre \[
 fecha \]
+divisor \,
+delimitadorChar [\" | \"] 
 
 
 /* Comandos? nao sei o nome dessas coisa */
 while Enquanto[ ]
-if Se[ ]
+if Seria[ ]
 profetizar (?i:profetizar)
 sob        (?i:sob)
 switch   {profetizar}{delim}{sob}{delim}
-return Regressus[ ]
-typedef Transmutar[ ]
-struct Componentes[ ]em[ ]
-union Conjuntura[ ]em[ ]
-callFunc Conjurar[ ]
-nomeFunc {variavel}\[
-
 
 
 
