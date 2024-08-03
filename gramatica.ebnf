@@ -168,6 +168,8 @@ TYPE-STRUCT         ::=  'componentizacao' ID
 
 TYPE-UNION          ::=  'conjuntura' ID
 
+TYPE-DECL           ::=  [ '*' ] TYPE [ TYPE-QUALIFIER ]
+
 
 ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
 

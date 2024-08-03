@@ -40,9 +40,9 @@ decl-stmt         ::= assign-list '...'
 assign-stmt       ::= dynamic-assign
                   | const-assign
 
-dynamic-assign    ::= [ typ-decl ] identifier [ "será " expr ]
+dynamic-assign    ::= [ typ-decl ] identifier [ "sera " expr ]
 
-const-assign      ::= [ typ-decl ] identifier [ "será " const-literal ]
+const-assign      ::= [ typ-decl ] identifier [ "sera " const-literal ]
 
 assign-list       ::= assign-stmt { ', ' assign-stmt }
 

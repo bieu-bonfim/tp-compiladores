@@ -13,7 +13,7 @@ int add(int a, int b) {
 
 void main(int argc, char *argv[]) {
     
-    float f = .01;
+    const float f = .01;
     double d = .01;
 
     printf("%f\n", f);
@@ -27,7 +27,7 @@ void main(int argc, char *argv[]) {
     AddFunc addFunc = add;
     printf("addFunc(1, 2) = %d\n", addFunc(1, 2));
 
-    if (--(1 == 1) || (2 == 2))
+    if ((1 == 1) || (2 == 2))
     {
         /* code */
     }
