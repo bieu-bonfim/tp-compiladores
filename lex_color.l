@@ -35,20 +35,21 @@ variavel {caractere}({caractere}|{digito})*
 
 /* aritméticos */
 soma fundido[ ]a[ ]
-subtracao dissolvido[ ]de[ ]
-multiplicacao replicado[ ]de[ ]
+subtracao extraido[ ]de[ ]
+multiplicacao replicado[ ]por[ ]
 divisao fragmentado[ ]em[ ]
-mod transmoglifado[ ]a[ ]
+mod transmoglifado[ ]por[ ]
 
 /* lógicos */
-maior for[ ]superior[ ]a[ ]
-menor for[ ]inferior[ ]a[ ]
-maior_igual for[ ]superequivalente[ ]a[ ]
-menor_igual for[ ]infraequivalente[ ]a[ ]
+maior superior[ ]a[ ]
+menor inferior[ ]a[ ]
+maior_igual superequivalente[ ]a[ ]
+menor_igual infraequivalente[ ]a[ ]
 ou ou[ ]entao[ ]
 e assim[ ]como[ ]
-igualdade for[ ]equivalente[ ]a[ ]
-diferente for[ ]distinto[ ]de[ ]
+negado contrariando[ ]
+igualdade equivalente[ ]a[ ]
+diferente distinto[ ]de[ ]
 atribuicao será[ ]
 
 /* Tipos Primitivos */
@@ -86,7 +87,7 @@ goto Translocar[ ]para[ ]
 
 /* Estruturas */
 typedef Transmutar[ ]
-struct Componentes[ ]em[ ]
+struct Componentização[ ]em[ ]
 union Conjuntura[ ]em[ ]
 instanciar Convocar[ ]
 

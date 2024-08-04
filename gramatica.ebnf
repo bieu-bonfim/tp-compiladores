@@ -1,10 +1,10 @@
-START               ::=  { DECL-STMT | FUNCTION }
+START               ::=  { DECL-STMT | FUNCTION-DECL }
 
 VARIABLE            ::=  ID [ ACCESSES ] { ( '.' VARIABLE ) | ( '->' VARIABLE) }
 
-FUNCTION            ::=  'preparar' TYPE ID ', componentes:' ARGS STMT-BLOCK
+FUNCTION-DECL            ::=  'preparar magia de ' TYPE ID ', componentes:' ARGS STMT-BLOCK
 
-FUNCTION-SIGNATURE  ::=  'preparar' TYPE ID ', componentes:' ARGS '...'
+FUNCTION-SIGNATURE  ::=  'preparar magia de ' TYPE ID ', componentes:' ARGS '...'
 
 FUNCTION-CALL       ::=  'conjurar' ID ' [' PARAMS ']'
 
@@ -26,7 +26,10 @@ STMT                ::=   NULL-STMT
                       |   BREAK-STMT
                       |   IF-STMT
                       |   WHILE-STMT
+                      |   FOR-STMT
                       |   GOTO-STMT
+                      |   SWITCH-STMT  
+                      |   CASE-STMT
                       |   DECL-STMT
 
 NULL-STMT           ::=  '...'
@@ -37,19 +40,21 @@ CONTINUE-STMT       ::=  'manter profecia' '...'
 
 BREAK-STMT          ::=  'cumprir profecia' '...'
 
-IF-STMT             ::=  'se ' EXPR '...' STMT-BLOCK { 'caso contrario' [ 'se' EXPR '...' ] STMT-BLOCK }
+IF-STMT             ::=  'Ponderar se ' EXPR '...' STMT-BLOCK { 'ou optar por ' [ 'Ponderar se' EXPR '...' ] STMT-BLOCK }
 
-WHILE-STMT          ::=  'enquanto ' EXPR '...' STMT-BLOCK
+WHILE-STMT          ::=  'Dilatar tempo enquanto ' EXPR '...' STMT-BLOCK
+
+FOR-STMT            ::=  'Fraturar tempo se ' EXPR ',' EXPR '...' STMT-BLOCK
 
 GOTO-STMT           ::=  'translocar para ' ID '...'
 
-SWITCH-STMT         ::=  'profetizar sob ' EXPR '...' SWITCH-BLOCK
+SWITCH-STMT         ::=  'Iniciar profecia de ' EXPR '...' SWITCH-BLOCK
 
 SWITCH-BLOCK        ::=  '_/' SWITCH-STMTS '\_'
 
 SWITCH-STMTS        ::=  { CASE CASE-STMT } [ 'caso trivial, ' CASE-STMT]
 
-CASE                ::=  'caso venha a ser ' EXPR ', '
+CASE                ::=  'Profetizar que se  ' EXPR ', '
 
 CASE-STMT           ::=  { STMT } BREAK-STMT
 
@@ -63,16 +68,16 @@ TIMES               ::= 'replicado por '
 DIV                 ::= 'fragmentado em '
 MOD                 ::= 'transmoglifado por ' 
 
-GT                  ::= 'for superior a '
-LT                  ::= 'for inferior a '
-GE                  ::= 'for superior ou equivalente a '
-LE                  ::= 'for inferior ou equivalente a '
-EQ                  ::= 'for equivalente a '
-NE                  ::= 'for distinto de '
+GT                  ::= 'superior a '
+LT                  ::= 'inferior a '
+GE                  ::= 'superior ou equivalente a '
+LE                  ::= 'inferior ou equivalente a '
+EQ                  ::= 'equivalente a '
+NE                  ::= 'distinto de '
 
 AND                 ::= 'assim como '
-OR                  ::= 'ou '
-NOT                 ::= 'nao e '
+OR                  ::= 'ou entao '
+NOT                 ::= 'contrariando '
 
 EXPR                ::=  TERM { OPERATOR TERM }
 
@@ -104,34 +109,33 @@ REL                 ::=  GT
                       |  EQ
                       |  NE
 
-LOGIC               ::=  #TODO
+LOGIC               ::=  AND
+                      |  OR
+                      |  NOT
 
-TERNARY-EXPR        ::=  TERM '?' TERM ':' TERM
+TERNARY-EXPR        ::=  EXPR 'procede entao ' TERM 'caso contrario ' TERM
 
 UNARY-EXPR          ::= UNARY-POS-MINUS
-                      |  UNARY-POS-SUM
-                      |  UNARY-PRE-MINUS
                       |  UNARY-POS-SUM
                       |  UNARY-DEREF
                       |  UNARY-REF
                       |  UNARY-NOT
 
-UNARY-POS-MINUS    	::= VARIABLE "--"
-UNARY-POS-SUM     	::= VARIABLE "++"
-UNARY-PRE-MINUS     ::= "--" VARIABLE
-UNARY-POS-SUM     	::= "++" VARIABLE
-UNARY-DEREF       	::= '*' VARIABLE
-UNARY-REF          	::= '&' VARIABLE
-UNARY-NOT          	::= '!' VARIABLE
+UNARY-POS-MINUS    	::= "desencantar " VARIABLE
+UNARY-POS-SUM     	::= "encantar" VARIABLE
+UNARY-DEREF       	::= 'alma de ' VARIABLE
+UNARY-REF          	::= 'lembraça de ' VARIABLE
+UNARY-NOT          	::= 'contrariando ' VARIABLE  
 
-TYPE                ::=  'runa'
-                      |  'glifo'
-                      |  'arquiglifo'
-                      |  'fractal'
-                      |  'arquifractal'
-                      |  'glifo menor'
-                      |  'nulo'
-                      |  'axioma'
+TYPE                ::=  'Runa'
+                      |  'Glifo'
+                      |  'Arquiglifo'
+                      |  'Semiglifo'
+                      |  'Fractal'
+                      |  'Arquifractal'
+                      |  'SemiFractal'
+                      |  'Nulo'
+                      |  'Axioma'
                       |  ENUM-DEFINITION
                       |  STRUCT-DEFINITION
                       |  UNION-DEFINITION
@@ -146,7 +150,7 @@ ENUM-DEFINITION     ::=  'glifos' ' em ' ID '_/' ENUM-FIELDS '\_'
 
 ENUM-FIELDS         ::=  ENUM-FIELD { ',' ENUM-FIELD }
 
-ENUM-FIELD          ::=  ID [ 'sera ' DEC-DIGIT ]
+ENUM-FIELD          ::=  ID [ 'será ' DEC-DIGIT ]
 
 STRUCT-DEFINITION   ::=  'componentizacao' ' em ' [ ID ] '_/' STRUCT-FIELDS '\_'
 
@@ -168,12 +172,12 @@ TYPE-STRUCT         ::=  'componentizacao' ID
 
 TYPE-UNION          ::=  'conjuntura' ID
 
-TYPE-DECL           ::=  [ '*' ] TYPE [ TYPE-QUALIFIER ]
+TYPE-DECL           ::=  [ 'essencia de' ] TYPE [ TYPE-QUALIFIER ]
 
 
 ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
 
-ASSIGNMENT          ::=  [ TYPE ] VARIABLE [ 'sera' EXPR ]
+ASSIGNMENT          ::=  [ TYPE-DECL ] VARIABLE [ 'será' EXPR ]
 
 ACCESSES            ::=  { ACCESS }
 

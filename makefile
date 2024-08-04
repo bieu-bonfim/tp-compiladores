@@ -1,5 +1,5 @@
 # Nome do arquivo de entrada
-INPUT_FILE = input.txt
+INPUT_FILE = input2.txt
 
 # Nome dos arquivos gerados
 LEX_FILE = lex_color.l
