@@ -89,6 +89,7 @@ goto Translocar[ ]para[ ]
 typedef Transmutar[ ]
 struct Componentização[ ]em[ ]
 union Conjuntura[ ]em[ ]
+enum Glifos[ ]em[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -169,7 +170,6 @@ subtrairUm Desencantar[ ]
 {typedef} {printf("\033[0;33m%s \033[0m", yytext);}
 {struct} {printf("\033[0;33m%s \033[0m", yytext);}
 {union} {printf("\033[0;33m%s \033[0m", yytext);}
-{instanciar} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {parametros} {printf("\033[0;33m%s \033[0m", yytext);}
 {chamarFunc} {printf("\033[0;33m%s \033[0m", yytext);}

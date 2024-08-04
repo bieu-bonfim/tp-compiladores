@@ -1,8 +1,0 @@
-double farenheit;
-double celsius;
-
-float value = 35;
-
-celsius = (value - 32) * (5/9);
-farenheit = (value * 9/5) + 32;
-
