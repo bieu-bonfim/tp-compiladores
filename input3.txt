@@ -73,6 +73,7 @@ cumprir profecia;
 
 
 
+
 Glifo fragmento1 será 5...
 Glifo fragmento2 será 10...
 
@@ -102,7 +103,7 @@ Fraturar tempo se i for inferior a 10, Encantar i, Glifo i será 0 _/
 
 
 
-Transmutar componentes em golem _/
+Transmutar componentização em golem _/
   Glifo tamanho...
   Glifo poder...
   Fractal altura...

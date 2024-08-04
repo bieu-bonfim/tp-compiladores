@@ -89,7 +89,6 @@ goto Translocar[ ]para[ ]
 typedef Transmutar[ ]
 struct Componentização[ ]em[ ]
 union Conjuntura[ ]em[ ]
-instanciar Convocar[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -128,6 +127,8 @@ subtrairUm Desencantar[ ]
 {multiplicacao} {printf("\033[0;34m%s \033[0m", yytext);}
 {divisao} {printf("\033[0;34m%s \033[0m", yytext);}
 {mod} {printf("\033[0;34m%s \033[0m", yytext);}
+{adicionarUm} {printf("\033[0;34m%s \033[0m", yytext);}
+{subtrairUm} {printf("\033[0;34m%s \033[0m", yytext);}
 
 {maior} {printf("\033[0;36m%s \033[0m", yytext);}
 {menor} {printf("\033[0;36m%s \033[0m", yytext);}
