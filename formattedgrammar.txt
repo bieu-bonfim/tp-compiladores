@@ -1,25 +1,14 @@
 START               ::=  { DECL-STMT | FUNCTION-DECL }
-
 VARIABLE            ::=  ID [ ACCESSES ] { ( '>' VARIABLE ) | ( '>>' VARIABLE) }
-
 FUNCTION-DECL            ::=  'Preparar magia de ' TYPE ID ', componentes:' ARGS STMT-BLOCK
-
 FUNCTION-SIGNATURE  ::=  'Preparar magia de ' TYPE ID ', componentes:' ARGS '...'
-
 FUNCTION-CALL       ::=  'Conjurar ' ID '[' PARAMS ']'
-
 ARGS                ::=  [ ARG { ',' ARG } ]
-
 ARG                 ::=  TYPE ID
-
 PARAMS              ::=  [ PARAM { ',' PARAM } ]
-
 PARAM               ::=  EXPR
-
 STMT-BLOCK          ::=  '_/' STMTS '\_'
-
 STMTS               ::=  { STMT }
-
 STMT                ::=   NULL-STMT
                       |   RETURN-STMT
                       |   CONTINUE-STMT
@@ -31,58 +20,38 @@ STMT                ::=   NULL-STMT
                       |   SWITCH-STMT  
                       |   CASE-STMT
                       |   DECL-STMT
-
 NULL-STMT           ::=  '...'
-
 RETURN-STMT         ::=  'Regressus ' EXPR '...'
-
 CONTINUE-STMT       ::=  'Prossiga' '...'
-
 BREAK-STMT          ::=  'Que assim seja' '...'
-
 IF-STMT             ::=  'Ponderar se ' EXPR '...' STMT-BLOCK { 'Ou optar por ' [ 'Ponderar se' EXPR '...' ] STMT-BLOCK }
-
 WHILE-STMT          ::=  'Dilatar tempo enquanto ' EXPR '...' STMT-BLOCK
-
 FOR-STMT            ::=  'Fraturar tempo se ' EXPR ',' EXPR '...' STMT-BLOCK
-
 GOTO-STMT           ::=  'Translocar para ' ID '...'
-
 SWITCH-STMT         ::=  'Iniciar profecia de ' EXPR '...' SWITCH-BLOCK
-
 SWITCH-BLOCK        ::=  '_/' SWITCH-STMTS '\_'
-
 SWITCH-STMTS        ::=  { CASE CASE-STMT } [ 'Cumprir profecia;' CASE-STMT]
-
 CASE                ::=  'Profetizar que se  ' EXPR ';'
-
 CASE-STMT           ::=  { STMT } BREAK-STMT
-
 DECL-STMT           ::= TYPE-DEFINITION '...'
                       |  ASSIGNMENTS '...'
                       |  FUNCTION-SIGNATURE '...'
-
 PLUS                ::= 'fundido a '
 MINUS               ::= 'dissolvido de '
 TIMES               ::= 'replicado por '
 DIV                 ::= 'fragmentado em '
 MOD                 ::= 'transmoglifado por ' 
-
 GT                  ::= 'for superior a '
 LT                  ::= 'for inferior a '
 GE                  ::= 'for superequivalente a '
 LE                  ::= 'for infraequivalente a '
 EQ                  ::= 'for equivalente a '
 NE                  ::= 'for distinto de '
-
 AND                 ::= 'assim como '
 OR                  ::= 'ou entao '
 NOT                 ::= 'contrariando '
-
 EXPR                ::=  TERM { OPERATOR TERM }
-
 TERM                ::=  FACTOR { OPERATOR FACTOR }
-
 FACTOR              ::=  '[' EXPR ']'
                       |  EXPR
                       |  VARIABLE
@@ -93,40 +62,32 @@ FACTOR              ::=  '[' EXPR ']'
                       |  FUNCTION-CALL
                       |  TERNARY-EXPR
                       |  UNARY-EXPR
-                      
 OPERATOR            ::=  ARIT | REL | LOGIC
-
 ARIT                ::=  PLUS
                       |  MINUS
                       |  TIMES
                       |  DIV
                       |  MOD
-
 REL                 ::=  GT
                       |  LT
                       |  GE
                       |  LE
                       |  EQ
                       |  NE
-
 LOGIC               ::=  AND
                       |  OR
                       |  NOT
-
 TERNARY-EXPR        ::=  EXPR ' ? ' TERM ' > < ' TERM
-
 UNARY-EXPR          ::= UNARY-POS-MINUS
                       |  UNARY-POS-SUM
                       |  UNARY-DEREF
                       |  UNARY-REF
                       |  UNARY-NOT
-
 UNARY-POS-MINUS    	::= 'desencantar ' VARIABLE
 UNARY-POS-SUM     	::= 'encantar' VARIABLE
 UNARY-DEREF       	::= 'alma de ' VARIABLE
 UNARY-REF          	::= 'lembranca de ' VARIABLE
 UNARY-NOT          	::= 'contrariando ' VARIABLE  
-
 TYPE                ::=  'Runa'
                       |  'Glifo'
                       |  'Arquiglifo'
@@ -142,85 +103,43 @@ TYPE                ::=  'Runa'
                       |  TYPE-ENUM
                       |  TYPE-STRUCT
                       |  TYPE-UNION
-
 TYPE-QUALIFIER      ::=  'imutavel '
                       |  'volatil '
-
 ENUM-DEFINITION     ::=  'glifos' ' em ' ID '_/' ENUM-FIELDS '\_'
-
 ENUM-FIELDS         ::=  ENUM-FIELD { ',' ENUM-FIELD }
-
 ENUM-FIELD          ::=  ID [ 'sera ' DEC-DIGIT ]
-
 STRUCT-DEFINITION   ::=  'componentizacao' ' em ' [ ID ] '_/' STRUCT-FIELDS '\_'
-
 STRUCT-FIELDS       ::=  STRUCT-FIELD { '...' STRUCT-FIELD }
-
 STRUCT-FIELD        ::=  TYPE-DECL ID
-
 UNION-DEFINITION    ::=  'conjuntura' ' em ' ID '_/' UNION-FIELDS '\_'
-
 UNION-FIELDS        ::=  UNION-FIELD { '...' UNION-FIELD }
-
 UNION-FIELD         ::=  TYPE-DECL ID
-
 TYPE-DEFINITION     ::=  'Transmutar ' TYPE ID
-
 TYPE-ENUM           ::=  'glifos' ID
-
 TYPE-STRUCT         ::=  'componentizacao' ID
-
 TYPE-UNION          ::=  'conjuntura' ID
-
 TYPE-DECL           ::=  [ 'essencia de' ] TYPE [ TYPE-QUALIFIER ]
-
-
 ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
-
 ASSIGNMENT          ::=  [ TYPE-DECL ] VARIABLE [ 'sera' EXPR ]
-
 ACCESSES            ::=  { ACCESS }
-
 ACCESS              ::=  '-|' EXPR '|-' 
 
-
-
-
-
 NON-ZERO            ::=  '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-
 DIGIT               ::=  '0' | NON-ZERO
-
 DEC-DIGIT           ::=  DIGIT { DIGIT }
-
 INTEGER             ::=  DEC-DIGIT
-
 RATIONAL            ::=  DEC-DIGIT '.' DEC-DIGIT
-
 LOWER-CASE          ::=  'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-
 UPPER-CASE          ::=  'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
-
 SPECIAL-CHAR        ::=  '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' | '(' | ')' | '-' | '_' | '+' | '=' | '{' | '}' | '[' | ']' | '|' | '\' | ':' | ';' | "'" | '<' | '>' | ',' | '.' | '?' | '/' | '~' | '`'
-
 ACCENT              ::=  'á' | 'é' | 'í' | 'ó' | 'ú' | 'â' | 'ê' | 'î' | 'ô' | 'û' | 'ã' | 'õ' | 'ç'
-
 LETTER              ::=  LOWER-CASE | UPPER-CASE | ACCENT
-
 CHAR                ::=  LETTER | DIGIT | SPECIAL-CHAR
-
 ID                  ::=  ( LETTER | '_' ) { LETTER | DIGIT | '_' }
-
 TRUE                ::=  'veritas'
-
 FALSE               ::=  'falsum'
-
 BOOL                ::=  TRUE | FALSE
-
 NULL-CONST          ::=  'Vazio'
-
 STR-CONST           ::=  '"' { CHAR } '"'
-
 CHAR-CONST          ::=  "'" CHAR "'"
-
 LITERAL             ::=  STR-CONST | CHAR-CONST | NULL-CONST
