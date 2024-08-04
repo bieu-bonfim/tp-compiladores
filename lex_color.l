@@ -30,12 +30,18 @@ break Que[ ]assim[ ]seja
 continue Prossiga
 
 
-/* variavel */
+/* acesso */
 variavel {caractere}({caractere}|{digito})*
+abrearray \-\|
+fechaarray \|\-
+acessarValor \>
+acessarPonteiro \>\>
+ponteiro Essencia[ ]de[ ]
+
 
 /* aritméticos */
 soma fundido[ ]a[ ]
-subtracao extraido[ ]de[ ]
+subtracao dissolvido[ ]de[ ]
 multiplicacao replicado[ ]por[ ]
 divisao fragmentado[ ]em[ ]
 mod transmoglifado[ ]por[ ]
@@ -70,6 +76,7 @@ abre \[
 fecha \]
 divisor \,
 delimitadorChar [\" | \"]
+delimitadorCase \;
 
 
 /* Comandos? nao sei o nome dessas coisa */
@@ -90,6 +97,8 @@ typedef Transmutar[ ]
 struct Componentização[ ]em[ ]
 union Conjuntura[ ]em[ ]
 enum Glifos[ ]em[ ]
+const Imutável[ ]
+volatile Volátil[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -101,6 +110,10 @@ return Regressus[ ]
 /* Unários */
 adicionarUm Encantar[ ]
 subtrairUm Desencantar[ ]
+derreferenciar Alma[ ]de[ ]
+referenciar Lembrança[ ]de[ ]
+
+
 
 
 
@@ -128,8 +141,12 @@ subtrairUm Desencantar[ ]
 {multiplicacao} {printf("\033[0;34m%s \033[0m", yytext);}
 {divisao} {printf("\033[0;34m%s \033[0m", yytext);}
 {mod} {printf("\033[0;34m%s \033[0m", yytext);}
+
 {adicionarUm} {printf("\033[0;34m%s \033[0m", yytext);}
 {subtrairUm} {printf("\033[0;34m%s \033[0m", yytext);}
+{derreferenciar} {printf("\033[0;34m%s \033[0m", yytext);}
+{referenciar} {printf("\033[0;34m%s \033[0m", yytext);}
+
 
 {maior} {printf("\033[0;36m%s \033[0m", yytext);}
 {menor} {printf("\033[0;36m%s \033[0m", yytext);}
@@ -156,6 +173,7 @@ subtrairUm Desencantar[ ]
 {fecha} {printf("%s ", yytext);}
 {divisor} {printf("%s ", yytext);}
 {delimitadorChar} {printf("%s ", yytext);}
+{delimitadorCase} {printf("%s ", yytext);}
 
 {while} {printf("\033[0;33m%s \033[0m", yytext);}
 {for} {printf("\033[0;33m%s \033[0m", yytext);}
@@ -175,9 +193,15 @@ subtrairUm Desencantar[ ]
 {chamarFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 {declFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 {return} {printf("\033[0;33m%s \033[0m", yytext);}
+{const} {printf("\033[0;33m%s \033[0m", yytext);}
+{volatile} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {variavel} {printf("\033[0;31m%s \033[0m", yytext);}
-
+{abrearray} {printf("\033[0;31m%s \033[0m", yytext);}
+{fechaarray} {printf("\033[0;31m%s \033[0m", yytext);}
+{acessarValor} {printf("\033[0;31m%s \033[0m", yytext);}
+{acessarPonteiro} {printf("\033[0;31m%s \033[0m", yytext);}
+{ponteiro} {printf("\033[0;31m%s \033[0m", yytext);}
 
 
 .         { }
