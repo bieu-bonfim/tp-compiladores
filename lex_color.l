@@ -122,11 +122,9 @@ subtrairUm Desencantar[ ]
 {float_negat} {printf("\033[0;35m%s \033[0m", yytext);}
 {true} {printf("\033[0;35m%s \033[0m", yytext);}
 {false} {printf("\033[0;35m%s \033[0m", yytext);}
-{void} {printf("\033[0;35m%s \033[0m", yytext);}
 
 {soma} {printf("\033[0;34m%s \033[0m", yytext);}
 {subtracao} {printf("\033[0;34m%s \033[0m", yytext);}
-{igual} {printf("\033[0;34m%s \033[0m", yytext);}
 {multiplicacao} {printf("\033[0;34m%s \033[0m", yytext);}
 {divisao} {printf("\033[0;34m%s \033[0m", yytext);}
 {mod} {printf("\033[0;34m%s \033[0m", yytext);}
@@ -139,10 +137,13 @@ subtrairUm Desencantar[ ]
 {e} {printf("\033[0;36m%s \033[0m", yytext);}
 {diferente} {printf("\033[0;36m%s \033[0m", yytext);}
 {atribuicao} {printf("\033[0;36m%s \033[0m", yytext);}
-
+{igualdade} {printf("\033[0;36m%s \033[0m", yytext);}
 
 {tipoInt} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoLongInt} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoShortInt} {printf("\033[0;32m%s \033[0m", yytext);}
 {tipoFloat} {printf("\033[0;32m%s \033[0m", yytext);}
+{tipoDouble} {printf("\033[0;32m%s \033[0m", yytext);}
 {tipoBool} {printf("\033[0;32m%s \033[0m", yytext);}
 {tipoChar} {printf("\033[0;32m%s \033[0m", yytext);}
 {tipoVoid} {printf("\033[0;32m%s \033[0m", yytext);}
@@ -155,11 +156,24 @@ subtrairUm Desencantar[ ]
 {delimitadorChar} {printf("%s ", yytext);}
 
 {while} {printf("\033[0;33m%s \033[0m", yytext);}
+{for} {printf("\033[0;33m%s \033[0m", yytext);}
 {if} {printf("\033[0;33m%s \033[0m", yytext);}
-{return} {printf("\033[0;33m%s \033[0m", yytext);}
+{else} {printf("\033[0;33m%s \033[0m", yytext);}
+{elseif} {printf("\033[0;33m%s \033[0m", yytext);}
+{switch} {printf("\033[0;33m%s \033[0m", yytext);}
+{case} {printf("\033[0;33m%s \033[0m", yytext);}
+{default} {printf("\033[0;33m%s \033[0m", yytext);}
+{goto} {printf("\033[0;33m%s \033[0m", yytext);}
+
+{typedef} {printf("\033[0;33m%s \033[0m", yytext);}
+{struct} {printf("\033[0;33m%s \033[0m", yytext);}
+{union} {printf("\033[0;33m%s \033[0m", yytext);}
+{instanciar} {printf("\033[0;33m%s \033[0m", yytext);}
+
 {parametros} {printf("\033[0;33m%s \033[0m", yytext);}
 {chamarFunc} {printf("\033[0;33m%s \033[0m", yytext);}
 {declFunc} {printf("\033[0;33m%s \033[0m", yytext);}
+{return} {printf("\033[0;33m%s \033[0m", yytext);}
 
 {variavel} {printf("\033[0;31m%s \033[0m", yytext);}
 
