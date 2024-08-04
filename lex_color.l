@@ -29,6 +29,7 @@ void Nulo
 break Que[ ]assim[ ]seja
 continue Prossiga
 
+import Tutorar[ ]
 
 /* acesso */
 variavel {caractere}({caractere}|{digito})*
