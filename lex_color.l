@@ -77,11 +77,11 @@ fecha_bloco \\\_
 abre \[
 fecha \]
 divisor \,
-delimitadorChar [\" | \"]
+delimitadorChar \"
 delimitadorCase \;
 
 
-/* Comandos? nao sei o nome dessas coisa */
+/* Palavras reservadas */
 while Dilatar[ ]tempo[ ]enquanto[ ]
 for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
@@ -204,6 +204,8 @@ referenciar Lembrança[ ]de[ ]
 {acessarValor} {printf("\033[0;31m%s \033[0m", yytext);}
 {acessarPonteiro} {printf("\033[0;31m%s \033[0m", yytext);}
 {ponteiro} {printf("\033[0;31m%s \033[0m", yytext);}
+
+{definidorarray} {printf("%s ", yytext);}
 
 
 .         { }
