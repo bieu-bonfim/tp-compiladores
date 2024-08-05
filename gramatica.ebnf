@@ -80,6 +80,7 @@ OR                  ::= 'ou entao '
 NOT                 ::= 'contrariando '
 
 EXPR                ::=  TERM { OPERATOR TERM }
+                      |  '|' { EXPR } '|'
 
 TERM                ::=  FACTOR { OPERATOR FACTOR }
 
@@ -177,7 +178,7 @@ TYPE-DECL           ::=  [ 'essencia de' ] TYPE [ TYPE-QUALIFIER ]
 
 ASSIGNMENTS         ::=  ASSIGNMENT { ', ' ASSIGNMENT }
 
-ASSIGNMENT          ::=  [ TYPE-DECL ] VARIABLE [ 'sera' EXPR ]
+ASSIGNMENT          ::=  [ TYPE-DECL ] VARIABLE [ 'sera ' EXPR ]
 
 ACCESSES            ::=  { ACCESS }
 
