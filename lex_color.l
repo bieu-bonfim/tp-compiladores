@@ -35,9 +35,10 @@ import Tutorar[ ]
 variavel {caractere}({caractere}|{digito})*
 abrearray \-\|
 fechaarray \|\-
+definidorarray \|
 acessarValor \>
 acessarPonteiro \>\>
-ponteiro Essencia[ ]de[ ]
+ponteiro Essência[ ]de[ ]
 
 
 /* aritméticos */
@@ -48,15 +49,15 @@ divisao fragmentado[ ]em[ ]
 mod transmoglifado[ ]por[ ]
 
 /* lógicos */
-maior superior[ ]a[ ]
-menor inferior[ ]a[ ]
-maior_igual superequivalente[ ]a[ ]
-menor_igual infraequivalente[ ]a[ ]
+maior for[ ]superior[ ]a[ ]
+menor for[ ]inferior[ ]a[ ]
+maior_igual for[ ]superequivalente[ ]a[ ]
+menor_igual for[ ]infraequivalente[ ]a[ ]
 ou ou[ ]entao[ ]
 e assim[ ]como[ ]
 negado contrariando[ ]
-igualdade equivalente[ ]a[ ]
-diferente distinto[ ]de[ ]
+igualdade for[ ]equivalente[ ]a[ ]
+diferente for[ ]distinto[ ]de[ ]
 atribuicao será[ ]
 
 /* Tipos Primitivos */
