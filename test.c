@@ -27,12 +27,4 @@ void main(int argc, char *argv[]) {
     AddFunc addFunc = add;
     printf("addFunc(1, 2) = %d\n", addFunc(1, 2));
 
-    if ((1 == 1) || (2 == 2))
-    {
-        /* code */
-    }
-    
-
-    
-
 }

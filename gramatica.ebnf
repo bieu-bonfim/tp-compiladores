@@ -1,4 +1,6 @@
-START               ::=  { DECL-STMT | FUNCTION-DECL }
+START               ::=  { DECL-STMT | FUNCTION-DECL | IMPORT }
+
+IMPORT             ::=  {'Tutorar ' STR-CONST '...'}
 
 VARIABLE            ::=  ID [ ACCESSES ] { ( '>' VARIABLE ) | ( '>>' VARIABLE) }
 
