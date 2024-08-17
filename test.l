@@ -142,14 +142,14 @@ referenciar Lembrança[ ]de[ ]
 {derreferenciar} { return DEREF; }
 {referenciar} { return REF; }
 
-{maior} { return BIGTHAN; }
-{menor} { return SMALLTHAN; }
-{maior_igual} { return BIGEQUAL; }
-{menor_igual} { return SMALLEQUAL; }
+{maior} { return GT; }
+{menor} { return LT; }
+{maior_igual} { return GE; }
+{menor_igual} { return LE; }
 {ou} { return OR; }
 {e} { return AND; }
-{diferente} { return DIFF; }
-{igualdade} { return EQUALS; }
+{diferente} { return NE; }
+{igualdade} { return EQ; }
 
 {tipoInt} { return TYPEINT; }
 {tipoLongInt} { return TYPELONGINT; }
