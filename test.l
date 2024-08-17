@@ -152,8 +152,8 @@ referenciar Lembrança[ ]de[ ]
 {igualdade} { return EQ; }
 
 {tipoInt} { return TYPEINT; }
-{tipoLongInt} { return TYPELONGINT; }
-{tipoShortInt} { return TYPESHORTINT; }
+{tipoLongInt} { return TYPELONG; }
+{tipoShortInt} { return TYPESHORT; }
 {tipoFloat} { return TYPEFLOAT; }
 {tipoDouble} { return TYPEDOUBLE; }
 {tipoBool} { return TYPEBOOL; }
