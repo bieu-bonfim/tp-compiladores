@@ -121,7 +121,7 @@ referenciar Lembrança[ ]de[ ]
 
 
 {ws}		  { } 
-{end_line} { return ENDLINE }
+{end_line} { return ENDLINE; }
 
 {digito_positivo} { yylval.ival = atoi(yytext); return INT; }
 {digito_negativo} { yylval.ival = atoi(yytext); return INT; }
