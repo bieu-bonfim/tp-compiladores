@@ -125,8 +125,8 @@ referenciar Lembrança[ ]de[ ]
 
 {digito_positivo} { yylval.ival = atoi(yytext); return INT; }
 {digito_negativo} { yylval.ival = atoi(yytext); return INT; }
-{float_posit} { yylval.ival = atof(yytext); return FLOAT; }
-{float_negat} { yylval.ival = atof(yytext); return FLOAT; }
+{float_posit} { yylval.fval = atof(yytext); return FLOAT; }
+{float_negat} { yylval.fval = atof(yytext); return FLOAT; }
 {true} { yylval.ival = 1; return TRUE; }
 {false} { yylval.ival = 0; return FALSE; }
 {atribuicao} { return ASSIGN; }
@@ -192,7 +192,7 @@ referenciar Lembrança[ ]de[ ]
 
 
 
-{variavel} { yylval.sval = strdup(yytext); return IDENTIFIER; }
+{variavel} { yylval.sval = strdup(yytext); return ID; }
 
 .         { printf("Extra characters: %s\n", yytext); }
 
