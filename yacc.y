@@ -26,6 +26,10 @@ void yyerror(const char *s);
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
+%type <ival> expr term assignment decl_var bool
+%type <sval> variable
+%type <sval> tipo
+
 %%
 
 start: /* empty */
@@ -45,14 +49,22 @@ decl_func: PREPARE tipo ID PARAMS arguments stmt_block
 
 decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
-         // | def_type ENDLINE
-         // | sign_func ENDLINE
+         | def_type ENDLINE
+         | sign_func ENDLINE
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
           ;
 
 stmts: /* empty */
+      | stmts stmt
+      ;
+
+stmt: decl_stmt
+    | expr ENDLINE
+    | assignment ENDLINE
+    | stmt_block
+    ;
 
 arguments: /* empty */
          | OPENBRACK params CLOSEBRACK
@@ -66,10 +78,16 @@ opt_assignment: /* empty */
               ;
 
 decl_var: tipo ID opt_assignment
-        | CONST tipo ID assignment
+        | CONST tipo ID opt_assignment
         | VOLATILE tipo ID opt_assignment
-        | CONST VOLATILE tipo ID assignment
+        | CONST VOLATILE tipo ID opt_assignment
         ;
+
+def_type: TYPEDEF tipo ID
+        ;
+
+sign_func: tipo ID PARAMS
+         ;
 
 expr: term
     | expr PLUS term
@@ -85,7 +103,8 @@ expr: term
     | expr NE term
     | expr AND term
     | expr OR term
-    | expr NOT term
+    | NOT expr
+    | ternary_expr
     ;
 
 term: LITERAL
@@ -94,10 +113,12 @@ term: LITERAL
     | variable
     | bool
     | function_call
-    // | ternary_expr
     | unary_expr
-    | '[' expr ']'
+    | OPENBRACK expr CLOSEBRACK
     ;
+
+ternary_expr: expr '?' expr ':' expr
+            ;
 
 variable: ID 
         ;

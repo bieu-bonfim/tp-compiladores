@@ -115,6 +115,8 @@ adicionarUm Encantar[ ]
 subtrairUm Desencantar[ ]
 derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
+
+
 /* Pattern Action */ 
 %% 
 
@@ -131,16 +133,16 @@ referenciar Lembrança[ ]de[ ]
 {true} { yylval.ival = 1; return TRUE; }
 {false} { yylval.ival = 0; return FALSE; }
 
-{soma} { return PLUS }
-{subtracao} { return MINUS }
-{multiplicacao} { return MULT }
-{divisao} { return DIV }
-{mod} { return MOD }
+{soma} { return PLUS; }
+{subtracao} { return MINUS; }
+{multiplicacao} { return MULT; }
+{divisao} { return DIV; }
+{mod} { return MOD; }
 
-{adicionarUm} { return PLUSONE }
-{subtrairUm} { return MINUSONE }
-{derreferenciar} {printf("\033[0;34m%s \033[0m", yytext);}
-{referenciar} {printf("\033[0;34m%s \033[0m", yytext);}
+{adicionarUm} { return PLUSONE; }
+{subtrairUm} { return MINUSONE; }
+{derreferenciar} {return DEREF;}
+{referenciar} {return REF;}
 
 
 {maior} {printf("\033[0;36m%s \033[0m", yytext);}

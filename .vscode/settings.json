@@ -2,5 +2,6 @@
   "files.associations": {
     "*.php": "php",
     "stdio.h": "c"
-  }
+  },
+  "C_Cpp_Runner.msvcBatchPath": ""
 }

@@ -116,13 +116,6 @@ derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
 
 
-
-
-
-
-
-
-
 /* Pattern Action */ 
 %% 
 
