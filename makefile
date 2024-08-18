@@ -1,24 +1,20 @@
-# Nome do arquivo de entrada
-INPUT_FILE = input2.txt
+TARGET = teste
 
-# Nome dos arquivos gerados
-LEX_FILE = lex_color.l
-LEX_OUTPUT = lex.yy.c
-EXECUTABLE = a.out
+SOURCES = yacc.tab.c lex.yy.c
 
-# Comandos
-all: $(EXECUTABLE)
+LIBS = -lfl
 
-$(LEX_OUTPUT): $(LEX_FILE)
-	flex $(LEX_FILE)
 
-$(EXECUTABLE): $(LEX_OUTPUT)
-	gcc $(LEX_OUTPUT) -o $(EXECUTABLE)
+CC = gcc
 
-run: $(EXECUTABLE)
-	./$(EXECUTABLE) < $(INPUT_FILE)
+all: $(TARGET)
+
+
+$(TARGET): $(SOURCES)
+	$(CC) -o $(TARGET) $(SOURCES) $(LIBS)
+
+run: $(TARGET)
+	./$(TARGET)
 
 clean:
-	rm -f $(LEX_OUTPUT) $(EXECUTABLE)
-
-.PHONY: all clean run
+	rm -f $(TARGET)
