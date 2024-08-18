@@ -5,12 +5,25 @@
 void yyerror(const char *s);
 %}
 
+%union {
+    int ival;
+    float fval;
+    char *sval;
+}
+
+%token <ival> INT
+%token <fval> FLOAT
+%token <sval> ID
+%token <sval> LITERAL
+%token <ival> TRUE
+%token <ival> FALSE
+
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
-%token INT FLOAT TRUE FALSE ID COMMA REF DEREF
-%token LITERAL PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK
-%token IMPORT OPENBRACK CLOSEBRACK
-%token PREPARE CONJURE OR AND NOT
-%token GT LT GE LE EQ NE COMPONENTS
+%token COMMA REF DEREF QUOTE DELIMCASE WHILE FOR IF ELSE ELSEIF SWITCH CASE DEFAULT GOTO TYPEDEF STRUCT UNION
+%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK
+%token IMPORT OPENBRACK CLOSEBRACK 
+%token PREPARE CONJURE OR AND NOT 
+%token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
 %%
@@ -27,7 +40,7 @@ start_item: decl_stmt
 decl_import: IMPORT LITERAL ENDLINE
            ;
 
-decl_func: PREPARE tipo ID COMPONENTS arguments stmt_block
+decl_func: PREPARE tipo ID PARAMS arguments stmt_block
          ;
 
 decl_stmt: assignment ENDLINE
@@ -65,6 +78,8 @@ expr: term
     ;
 
 term: LITERAL
+    | INT
+    | FLOAT
     | variable
     | bool
     | function_call

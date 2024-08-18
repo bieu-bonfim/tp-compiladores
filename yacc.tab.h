@@ -54,56 +54,86 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    PLUS = 258,                    /* PLUS  */
-    MINUS = 259,                   /* MINUS  */
-    MULT = 260,                    /* MULT  */
-    DIV = 261,                     /* DIV  */
-    MOD = 262,                     /* MOD  */
-    ASSIGN = 263,                  /* ASSIGN  */
-    ENDLINE = 264,                 /* ENDLINE  */
-    INT = 265,                     /* INT  */
-    FLOAT = 266,                   /* FLOAT  */
-    TRUE = 267,                    /* TRUE  */
-    FALSE = 268,                   /* FALSE  */
-    ID = 269,                      /* ID  */
-    COMMA = 270,                   /* COMMA  */
-    REF = 271,                     /* REF  */
-    DEREF = 272,                   /* DEREF  */
-    LITERAL = 273,                 /* LITERAL  */
-    PLUSONE = 274,                 /* PLUSONE  */
-    MINUSONE = 275,                /* MINUSONE  */
-    OPENBLOCK = 276,               /* OPENBLOCK  */
-    CLOSEBLOCK = 277,              /* CLOSEBLOCK  */
-    IMPORT = 278,                  /* IMPORT  */
-    OPENBRACK = 279,               /* OPENBRACK  */
-    CLOSEBRACK = 280,              /* CLOSEBRACK  */
-    PREPARE = 281,                 /* PREPARE  */
-    CONJURE = 282,                 /* CONJURE  */
-    OR = 283,                      /* OR  */
-    AND = 284,                     /* AND  */
-    NOT = 285,                     /* NOT  */
-    GT = 286,                      /* GT  */
-    LT = 287,                      /* LT  */
-    GE = 288,                      /* GE  */
-    LE = 289,                      /* LE  */
-    EQ = 290,                      /* EQ  */
-    NE = 291,                      /* NE  */
-    COMPONENTS = 292,              /* COMPONENTS  */
-    TYPEINT = 293,                 /* TYPEINT  */
-    TYPEFLOAT = 294,               /* TYPEFLOAT  */
-    TYPEBOOL = 295,                /* TYPEBOOL  */
-    TYPECHAR = 296,                /* TYPECHAR  */
-    TYPEVOID = 297,                /* TYPEVOID  */
-    TYPESHORT = 298,               /* TYPESHORT  */
-    TYPEDOUBLE = 299,              /* TYPEDOUBLE  */
-    TYPELONG = 300                 /* TYPELONG  */
+    INT = 258,                     /* INT  */
+    FLOAT = 259,                   /* FLOAT  */
+    ID = 260,                      /* ID  */
+    LITERAL = 261,                 /* LITERAL  */
+    TRUE = 262,                    /* TRUE  */
+    FALSE = 263,                   /* FALSE  */
+    PLUS = 264,                    /* PLUS  */
+    MINUS = 265,                   /* MINUS  */
+    MULT = 266,                    /* MULT  */
+    DIV = 267,                     /* DIV  */
+    MOD = 268,                     /* MOD  */
+    ASSIGN = 269,                  /* ASSIGN  */
+    ENDLINE = 270,                 /* ENDLINE  */
+    COMMA = 271,                   /* COMMA  */
+    REF = 272,                     /* REF  */
+    DEREF = 273,                   /* DEREF  */
+    QUOTE = 274,                   /* QUOTE  */
+    DELIMCASE = 275,               /* DELIMCASE  */
+    WHILE = 276,                   /* WHILE  */
+    FOR = 277,                     /* FOR  */
+    IF = 278,                      /* IF  */
+    ELSE = 279,                    /* ELSE  */
+    ELSEIF = 280,                  /* ELSEIF  */
+    SWITCH = 281,                  /* SWITCH  */
+    CASE = 282,                    /* CASE  */
+    DEFAULT = 283,                 /* DEFAULT  */
+    GOTO = 284,                    /* GOTO  */
+    TYPEDEF = 285,                 /* TYPEDEF  */
+    STRUCT = 286,                  /* STRUCT  */
+    UNION = 287,                   /* UNION  */
+    PLUSONE = 288,                 /* PLUSONE  */
+    MINUSONE = 289,                /* MINUSONE  */
+    OPENBLOCK = 290,               /* OPENBLOCK  */
+    CLOSEBLOCK = 291,              /* CLOSEBLOCK  */
+    IMPORT = 292,                  /* IMPORT  */
+    OPENBRACK = 293,               /* OPENBRACK  */
+    CLOSEBRACK = 294,              /* CLOSEBRACK  */
+    PREPARE = 295,                 /* PREPARE  */
+    CONJURE = 296,                 /* CONJURE  */
+    OR = 297,                      /* OR  */
+    AND = 298,                     /* AND  */
+    NOT = 299,                     /* NOT  */
+    GT = 300,                      /* GT  */
+    LT = 301,                      /* LT  */
+    GE = 302,                      /* GE  */
+    LE = 303,                      /* LE  */
+    EQ = 304,                      /* EQ  */
+    NE = 305,                      /* NE  */
+    PARAMS = 306,                  /* PARAMS  */
+    CALLFUNC = 307,                /* CALLFUNC  */
+    DECLFUNC = 308,                /* DECLFUNC  */
+    RETURNT = 309,                 /* RETURNT  */
+    CONST = 310,                   /* CONST  */
+    VOLATILE = 311,                /* VOLATILE  */
+    TYPEINT = 312,                 /* TYPEINT  */
+    TYPEFLOAT = 313,               /* TYPEFLOAT  */
+    TYPEBOOL = 314,                /* TYPEBOOL  */
+    TYPECHAR = 315,                /* TYPECHAR  */
+    TYPEVOID = 316,                /* TYPEVOID  */
+    TYPESHORT = 317,               /* TYPESHORT  */
+    TYPEDOUBLE = 318,              /* TYPEDOUBLE  */
+    TYPELONG = 319                 /* TYPELONG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 8 "yacc.y"
+
+    int ival;
+    float fval;
+    char *sval;
+
+#line 134 "yacc.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

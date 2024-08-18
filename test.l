@@ -2,7 +2,7 @@
 /* C Code */
 
 #include <stdio.h>
-#include parser.y
+#include "yacc.tab.h"
 
 %} 
 
