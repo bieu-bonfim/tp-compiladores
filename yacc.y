@@ -44,6 +44,7 @@ decl_func: PREPARE tipo ID PARAMS arguments stmt_block
          ;
 
 decl_stmt: assignment ENDLINE
+         | decl_var ENDLINE
          // | def_type ENDLINE
          // | sign_func ENDLINE
          ;
@@ -59,6 +60,16 @@ arguments: /* empty */
 
 assignment: ID ASSIGN expr
           ;
+
+opt_assignment: /* empty */
+              | ASSIGN expr
+              ;
+
+decl_var: tipo ID opt_assignment
+        | CONST tipo ID assignment
+        | VOLATILE tipo ID opt_assignment
+        | CONST VOLATILE tipo ID assignment
+        ;
 
 expr: term
     | expr PLUS term
