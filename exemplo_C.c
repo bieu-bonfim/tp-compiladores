@@ -12,4 +12,3 @@ int main() {
     resultado = add(valor1, valor2);
     return 0;
 }
-
