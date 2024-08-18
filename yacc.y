@@ -6,10 +6,12 @@ void yyerror(const char *s);
 %}
 
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
-%token INT FLOAT TRUE FALSE ID
-%token LITERAL
-%token IMPORT
-%token PREPARE
+%token INT FLOAT TRUE FALSE ID COMMA REF DEREF
+%token LITERAL PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK
+%token IMPORT OPENBRACK CLOSEBRACK
+%token PREPARE CONJURE OR AND NOT
+%token GT LT GE LE EQ NE COMPONENTS
+%token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
 %%
 
@@ -89,8 +91,18 @@ unary_expr: MINUSONE variable
 
 params: /* empty */
       | expr
-      | params ', ' expr
+      | params COMMA expr
       ;
+
+tipo: TYPEINT
+    | TYPEFLOAT
+    | TYPEBOOL
+    | TYPECHAR
+    | TYPEVOID
+    | TYPEDOUBLE
+    | TYPELONG
+    | TYPESHORT
+    ;
 
 %%
 
