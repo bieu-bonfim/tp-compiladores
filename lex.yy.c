@@ -322,9 +322,6 @@ void yyfree ( void *  );
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
 /* Begin user sect3 */
-
-#define yywrap() (/*CONSTCOND*/1)
-#define YY_SKIP_YYWRAP
 typedef flex_uint8_t YY_CHAR;
 
 FILE *yyin = NULL, *yyout = NULL;
@@ -773,7 +770,7 @@ char *yytext;
 #include <stdio.h>
 #include "yacc.tab.h"
 
-#line 777 "lex.yy.c"
+#line 774 "lex.yy.c"
 /* Name Definition */ 
 /* identificação */
 /* acesso */
@@ -786,7 +783,7 @@ char *yytext;
 /* Funções */
 /* Unários */
 /* Pattern Action */ 
-#line 790 "lex.yy.c"
+#line 787 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -1008,7 +1005,7 @@ YY_DECL
 
 
 
-#line 1012 "lex.yy.c"
+#line 1009 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1074,7 +1071,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 124 "test.l"
-{ return ENDLINE }
+{ return ENDLINE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
@@ -1089,12 +1086,12 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 #line 128 "test.l"
-{ yylval.ival = atof(yytext); return FLOAT; }
+{ yylval.fval = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 129 "test.l"
-{ yylval.ival = atof(yytext); return FLOAT; }
+{ yylval.fval = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -1364,7 +1361,7 @@ YY_RULE_SETUP
 case 60:
 YY_RULE_SETUP
 #line 195 "test.l"
-{ yylval.sval = strdup(yytext); return IDENTIFIER; }
+{ yylval.sval = strdup(yytext); return ID; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
@@ -1376,7 +1373,7 @@ YY_RULE_SETUP
 #line 200 "test.l"
 ECHO;
 	YY_BREAK
-#line 1380 "lex.yy.c"
+#line 1377 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2386,8 +2383,6 @@ void yyfree (void * ptr )
 
 /* C Code */
 
-int main(void) 
-{ 
-    yylex(); 
-    return 0; 
+int yywrap() {
+    return 1;
 }

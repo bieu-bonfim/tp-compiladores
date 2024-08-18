@@ -7,7 +7,7 @@
 %} 
 
 /* Name Definition */ 
-%option noyywrap 
+
 
 
 delim		 [ \t\n\r] 
@@ -201,8 +201,6 @@ referenciar Lembrança[ ]de[ ]
 
 /* C Code */
 
-int main(void) 
-{ 
-    yylex(); 
-    return 0; 
+int yywrap() {
+    return 1;
 }
