@@ -104,7 +104,6 @@ expr: term
     | expr AND term
     | expr OR term
     | NOT expr
-    | ternary_expr
     ;
 
 term: LITERAL
@@ -117,8 +116,6 @@ term: LITERAL
     | OPENBRACK expr CLOSEBRACK
     ;
 
-ternary_expr: expr '?' expr ':' expr
-            ;
 
 variable: ID 
         ;
