@@ -39,9 +39,6 @@ start: /* empty */
 start_item: decl_stmt
           | decl_func
           | decl_import
-          | stmt_if
-          | stmt_while
-          | stmt_for
           ;
 
 decl_import: IMPORT LITERAL ENDLINE
@@ -54,10 +51,11 @@ decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
+         | stmt_if
+         | stmt_while
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
-         | OPENBLOCK start_item CLOSEBLOCK 
          ;
 
 stmt_if: IF expr stmt_block
@@ -97,7 +95,7 @@ decl_var: tipo ID opt_assignment
         | CONST VOLATILE tipo ID opt_assignment
         ;
 
-def_type: TYPEDEF tipo ID
+def_type: TYPEDEF tipo ID stmt_block
         ;
 
 sign_func: tipo ID PARAMS
