@@ -26,9 +26,6 @@ void yyerror(const char *s);
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
-%type <ival> expr term assignment decl_var bool
-%type <sval> variable
-%type <sval> tipo
 
 %%
 
@@ -52,20 +49,23 @@ decl_stmt: assignment ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
          | stmt_if
-         | switch_stmt
+         | stmt_switch
          | stmt_while
+         | stmt_for
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
          ;
 
-stmt_if: IF expr stmt_block
-       | IF expr stmt_block ELSE stmt_block
-       | IF expr stmt_block ELSEIF expr stmt_block
-       | IF expr stmt_block ELSEIF expr stmt_block ELSE stmt_block
+stmt_if: IF expr stmt_block stmt_else
        ;
 
-switch_stmt: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
+stmt_else: ELSE stmt_block
+         | ELSE stmt_if
+         | /* empty */
+         ;
+
+stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
            ;
 
 case_list: /* empty */
@@ -79,10 +79,8 @@ default_case: /* empty */
             | DEFAULT DELIMCASE stmts
             ;
 
-return_stmt: RETURNT expr ENDLINE
-           ;
-       
-
+// return_stmt: RETURNT expr ENDLINE
+//            ;
 
 stmt_for: FOR expr COMMA unary_expr stmt_block
         ;
@@ -97,7 +95,6 @@ stmts: /* empty */
 stmt: decl_stmt
     | expr ENDLINE
     | assignment ENDLINE
-    | stmt_block
     ;
 
 arguments: /* empty */
@@ -163,10 +160,9 @@ function_call: CONJURE ID OPENBRACK params CLOSEBRACK
 
 unary_expr: MINUSONE variable
           | PLUSONE variable
-          ;
-
-unary_exprPtr: DEREF variable
+          | DEREF variable
           | REF variable
+          ;
 
 params: /* empty */
       | expr

@@ -86,7 +86,7 @@ while Dilatar[ ]tempo[ ]enquanto[ ]
 for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
 else Ou[ ]optar[ ]por[ ]
-elseif Ou[ ]optar[ ]por[ ]ponderar[ ]se[ ]
+
 switch   Iniciar[ ]profecia[ ]de[ ]
 case Profetizar[ ]que[ ]se[ ]
 default Cumprir[ ]profecia[ ]
@@ -174,7 +174,6 @@ referenciar Lembrança[ ]de[ ]
 {for} {printf("Palavra reservada: %s\n", yytext);}
 {if} {printf("Palavra reservada: %s\n", yytext);}
 {else} {printf("Palavra reservada: %s\n", yytext);}
-{elseif} {printf("Palavra reservada: %s\n", yytext);}
 {switch} {printf("Palavra reservada: %s\n", yytext);}
 {case} {printf("Palavra reservada: %s\n", yytext);}
 {default} {printf("Palavra reservada: %s\n", yytext);}

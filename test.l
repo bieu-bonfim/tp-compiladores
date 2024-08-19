@@ -87,7 +87,6 @@ while Dilatar[ ]tempo[ ]enquanto[ ]
 for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
 else Ou[ ]optar[ ]por[ ]
-elseif Ou[ ]optar[ ]por[ ]ponderar[ ]se[ ]
 switch Iniciar[ ]profecia[ ]de[ ]
 case Profetizar[ ]que[ ]se[ ]
 default Cumprir[ ]profecia
@@ -172,7 +171,6 @@ referenciar Lembrança[ ]de[ ]
 {for} { return FOR; }
 {if} { return IF; }
 {else} { return ELSE; }
-{elseif} { return ELSEIF; }
 {switch} { return SWITCH; }
 {case} { return CASE; }
 {default} { return DEFAULT; }
