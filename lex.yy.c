@@ -1,5 +1,5 @@
 
-#line 2 "lex.yy.c"
+#line 3 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -770,7 +770,7 @@ char *yytext;
 #include <stdio.h>
 #include "yacc.tab.h"
 
-#line 773 "lex.yy.c"
+#line 774 "lex.yy.c"
 /* Name Definition */ 
 /* identificação */
 /* acesso */
@@ -783,7 +783,7 @@ char *yytext;
 /* Funções */
 /* Unários */
 /* Pattern Action */ 
-#line 786 "lex.yy.c"
+#line 787 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -1005,7 +1005,7 @@ YY_DECL
 
 
 
-#line 1008 "lex.yy.c"
+#line 1009 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1373,7 +1373,7 @@ YY_RULE_SETUP
 #line 200 "test.l"
 ECHO;
 	YY_BREAK
-#line 1376 "lex.yy.c"
+#line 1377 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

@@ -51,11 +51,18 @@ decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
+         | stmt
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
           ;
 
+stmt_if: IF expr stmt_block
+       | IF expr stmt_block ELSE stmt_block
+       | IF expr stmt_block ELSEIF expr stmt_block
+       | IF expr stmt_block ELSEIF expr stmt_block ELSE stmt_block
+       | IF stmt_block
+       
 stmts: /* empty */
       | stmts stmt
       ;
@@ -64,6 +71,7 @@ stmt: decl_stmt
     | expr ENDLINE
     | assignment ENDLINE
     | stmt_block
+    | stmt_if
     ;
 
 arguments: /* empty */
