@@ -105,7 +105,7 @@ volatile Volátil[ ]
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
 chamarFunc Conjurar[ ]
-parametros Componentes:[ ]
+parametros \,[ ]Componentes:[ ]
 return Regressus[ ]
 
 
@@ -175,6 +175,8 @@ referenciar Lembrança[ ]de[ ]
 {case} { return CASE; }
 {default} { return DEFAULT; }
 {goto} { return GOTO;}
+{break} { return BREAK; }
+{continue} { return CONTINUE; }
 
 {typedef} { return TYPEDEF;}
 {struct} { return STRUCT;}

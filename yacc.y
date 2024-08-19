@@ -21,11 +21,18 @@ void yyerror(const char *s);
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
 %token COMMA REF DEREF QUOTE DELIMCASE WHILE FOR IF ELSE ELSEIF SWITCH CASE DEFAULT GOTO TYPEDEF STRUCT UNION
 %token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK
-%token IMPORT OPENBRACK CLOSEBRACK 
+%token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE
 %token PREPARE CONJURE OR AND NOT 
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
+%right NOT                
+%left MULT DIV MOD        
+%left PLUS MINUS          
+%left LT GT LE GE         
+%left EQ NE               
+%left AND                 
+%left OR    
 
 %%
 
@@ -41,17 +48,13 @@ start_item: decl_stmt
 decl_import: IMPORT LITERAL ENDLINE
            ;
 
-decl_func: PREPARE tipo ID PARAMS arguments stmt_block
+decl_func: DECLFUNC tipo ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
          ;
 
 decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
-         | stmt_if
-         | stmt_switch
-         | stmt_while
-         | stmt_for
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
@@ -72,15 +75,15 @@ case_list: /* empty */
          | case_list case_stmt
          ;
 
-case_stmt: CASE expr DELIMCASE stmts
+case_stmt: CASE expr DELIMCASE stmts stmt_break
           ;
 
 default_case: /* empty */
-            | DEFAULT DELIMCASE stmts
+            | DEFAULT DELIMCASE stmts stmt_break
             ;
 
-// return_stmt: RETURNT expr ENDLINE
-//            ;
+stmt_return: RETURNT expr ENDLINE
+           ;
 
 stmt_for: FOR expr COMMA unary_expr stmt_block
         ;
@@ -88,18 +91,25 @@ stmt_for: FOR expr COMMA unary_expr stmt_block
 stmt_while: WHILE expr stmt_block
           ;
 
+stmt_break: BREAK ENDLINE
+          ;
+
+stmt_continue: CONTINUE ENDLINE
+             ;
+
 stmts: /* empty */
       | stmts stmt
       ;
 
 stmt: decl_stmt
-    | expr ENDLINE
-    | assignment ENDLINE
+    | stmt_if
+    | stmt_switch
+    | stmt_while
+    | stmt_for
+    | stmt_return
+    | stmt_break
+    | stmt_continue
     ;
-
-arguments: /* empty */
-         | OPENBRACK params CLOSEBRACK
-         ;
 
 assignment: ID ASSIGN expr
           ;
@@ -109,9 +119,9 @@ opt_assignment: /* empty */
               ;
 
 decl_var: tipo ID opt_assignment
-        | CONST tipo ID opt_assignment
-        | VOLATILE tipo ID opt_assignment
-        | CONST VOLATILE tipo ID opt_assignment
+        | tipo CONST ID opt_assignment
+        | tipo VOLATILE ID opt_assignment
+        | tipo VOLATILE CONST ID opt_assignment
         ;
 
 def_type: TYPEDEF tipo ID stmt_block
@@ -120,8 +130,7 @@ def_type: TYPEDEF tipo ID stmt_block
 sign_func: tipo ID PARAMS
          ;
 
-expr: term
-    | expr PLUS term
+expr: expr PLUS term
     | expr MINUS term
     | expr MULT term
     | expr DIV term
@@ -135,6 +144,7 @@ expr: term
     | expr AND term
     | expr OR term
     | NOT expr
+    | term
     ;
 
 term: LITERAL
@@ -155,7 +165,7 @@ bool: TRUE
     | FALSE
     ;
 
-function_call: CONJURE ID OPENBRACK params CLOSEBRACK
+function_call: CALLFUNC ID OPENBRACK params CLOSEBRACK
              ;
 
 unary_expr: MINUSONE variable
@@ -163,6 +173,13 @@ unary_expr: MINUSONE variable
           | DEREF variable
           | REF variable
           ;
+
+arguments: /* empty */
+         | argument
+         ;
+
+argument: tipo ID
+        | tipo ID COMMA argument 
 
 params: /* empty */
       | expr
