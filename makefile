@@ -1,5 +1,5 @@
 TARGET = teste 
-
+INPUTFILE = testeIF.txt
 YACC_SRC = yacc.y
 LEX_SRC = test.l
 YACC_OUT = yacc.tab.c
@@ -21,7 +21,7 @@ $(TARGET): $(YACC_OUT) $(LEX_OUT)
 	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT)
 
 run: all
-	./$(TARGET)
+	./$(TARGET) < $(INPUTFILE)
 
 clean:
 	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT)

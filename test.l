@@ -88,9 +88,9 @@ for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
 else Ou[ ]optar[ ]por[ ]
 elseif Ou[ ]optar[ ]por[ ]ponderar[ ]se[ ]
-switch   Iniciar[ ]profecia[ ]de[ ]
+switch Iniciar[ ]profecia[ ]de[ ]
 case Profetizar[ ]que[ ]se[ ]
-default Cumprir[ ]profecia[ ]
+default Cumprir[ ]profecia
 goto Translocar[ ]para[ ]
 
 

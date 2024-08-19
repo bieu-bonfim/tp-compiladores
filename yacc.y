@@ -52,6 +52,7 @@ decl_stmt: assignment ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
          | stmt_if
+         | switch_stmt
          | stmt_while
          ;
 
@@ -62,8 +63,29 @@ stmt_if: IF expr stmt_block
        | IF expr stmt_block ELSE stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block ELSE stmt_block
+       ;
+
+switch_stmt: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
+           ;
+
+case_list: /* empty */
+         | case_list case_stmt
          ;
+
+case_stmt: CASE expr DELIMCASE stmts
+          ;
+
+default_case: /* empty */
+            | DEFAULT DELIMCASE stmts
+            ;
+
+return_stmt: RETURNT expr ENDLINE
+           ;
+       
+
+
 stmt_for: FOR expr COMMA unary_expr stmt_block
+        ;
 
 stmt_while: WHILE expr stmt_block
           ;
