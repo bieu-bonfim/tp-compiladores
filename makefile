@@ -1,20 +1,28 @@
 TARGET = teste
 
-SOURCES = yacc.tab.c lex.yy.c
+YACC_SRC = yacc.y
+LEX_SRC = test.l
+
+YACC_OUT = yacc.tab.c
+LEX_OUT = lex.yy.c
 
 LIBS = -lfl
-
 
 CC = gcc
 
 all: $(TARGET)
 
+$(YACC_OUT): $(YACC_SRC)
+	bison -d $(YACC_SRC)
 
-$(TARGET): $(SOURCES)
-	$(CC) -o $(TARGET) $(SOURCES) $(LIBS)
+$(LEX_OUT): $(LEX_SRC)
+	flex $(LEX_SRC)
 
-run: $(TARGET)
+$(TARGET): $(YACC_OUT) $(LEX_OUT)
+	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(LIBS)
+
+run: all
 	./$(TARGET)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT)
