@@ -39,6 +39,7 @@ start: /* empty */
 start_item: decl_stmt
           | decl_func
           | decl_import
+          | stmt_if
           ;
 
 decl_import: IMPORT LITERAL ENDLINE
@@ -51,7 +52,6 @@ decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
-         | stmt
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
@@ -71,7 +71,6 @@ stmt: decl_stmt
     | expr ENDLINE
     | assignment ENDLINE
     | stmt_block
-    | stmt_if
     ;
 
 arguments: /* empty */
