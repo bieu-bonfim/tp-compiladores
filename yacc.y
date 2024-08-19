@@ -53,10 +53,11 @@ decl_stmt: assignment ENDLINE
          | sign_func ENDLINE
          | stmt_if
          | switch_stmt
+         | stmt_while
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
-          ;
+         ;
 
 stmt_if: IF expr stmt_block
        | IF expr stmt_block ELSE stmt_block
@@ -81,6 +82,14 @@ default_case: /* empty */
 return_stmt: RETURNT expr ENDLINE
            ;
        
+
+
+stmt_for: FOR expr COMMA unary_expr stmt_block
+        ;
+
+stmt_while: WHILE expr stmt_block
+          ;
+
 stmts: /* empty */
       | stmts stmt
       ;
@@ -108,7 +117,7 @@ decl_var: tipo ID opt_assignment
         | CONST VOLATILE tipo ID opt_assignment
         ;
 
-def_type: TYPEDEF tipo ID
+def_type: TYPEDEF tipo ID stmt_block
         ;
 
 sign_func: tipo ID PARAMS
@@ -154,9 +163,10 @@ function_call: CONJURE ID OPENBRACK params CLOSEBRACK
 
 unary_expr: MINUSONE variable
           | PLUSONE variable
-          | DEREF variable
-          | REF variable
           ;
+
+unary_exprPtr: DEREF variable
+          | REF variable
 
 params: /* empty */
       | expr
