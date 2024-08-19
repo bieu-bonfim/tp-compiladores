@@ -40,6 +40,7 @@ start_item: decl_stmt
           | decl_func
           | decl_import
           | stmt_if
+          | stmt_while
           ;
 
 decl_import: IMPORT LITERAL ENDLINE
@@ -55,14 +56,18 @@ decl_stmt: assignment ENDLINE
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
-          ;
+         | OPENBLOCK start_item CLOSEBLOCK 
+         ;
 
 stmt_if: IF expr stmt_block
        | IF expr stmt_block ELSE stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block ELSE stmt_block
-       | IF stmt_block
-       
+         ;
+
+stmt_while: WHILE expr stmt_block
+          ;
+
 stmts: /* empty */
       | stmts stmt
       ;
