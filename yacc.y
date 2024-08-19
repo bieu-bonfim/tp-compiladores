@@ -39,8 +39,6 @@ start: /* empty */
 start_item: decl_stmt
           | decl_func
           | decl_import
-          | stmt_if
-          | stmt_while
           ;
 
 decl_import: IMPORT LITERAL ENDLINE
@@ -53,10 +51,11 @@ decl_stmt: assignment ENDLINE
          | decl_var ENDLINE
          | def_type ENDLINE
          | sign_func ENDLINE
+         | stmt_if
+         | stmt_while
          ;
 
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
-         | OPENBLOCK start_item CLOSEBLOCK 
          ;
 
 stmt_if: IF expr stmt_block
