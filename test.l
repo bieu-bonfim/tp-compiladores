@@ -4,13 +4,15 @@
 #include <stdio.h>
 #include "yacc.tab.h"
 
+int line_number = 1;
+
 %} 
 
 /* Name Definition */ 
 
 
 
-delim		 [ \t\n\r] 
+delim		 [ \t\r] 
 ws		   {delim}+ 
 
 end_line  (\.\.\.)
@@ -115,11 +117,13 @@ subtrairUm Desencantar[ ]
 derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
 /* Pattern Action */ 
+
 %% 
-
-
-
 {ws}		  { } 
+\n             { line_number++; }
+
+
+
 {end_line} { return ENDLINE; }
 
 {digito_positivo} { yylval.ival = atoi(yytext); return INT; }
@@ -194,7 +198,7 @@ referenciar Lembrança[ ]de[ ]
 
 {variavel} { yylval.sval = strdup(yytext); return ID; }
 
-.         { printf("Extra characters: %s\n", yytext); }
+.                 { printf("Error: Extra characters: %s at line %d\n", yytext, line_number); }
 
 
 %% 

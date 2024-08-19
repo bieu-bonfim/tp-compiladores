@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern int line_number;
+
 void yyerror(const char *s);
 %}
 
@@ -124,7 +126,9 @@ decl_var: tipo ID opt_assignment
         | tipo VOLATILE CONST ID opt_assignment
         ;
 
-def_type: TYPEDEF tipo ID stmt_block
+def_type: TYPEDEF tipo ID ENDLINE
+        | TYPEDEF STRUCT ID 
+        | TYPEDEF UNION ID 
         ;
 
 sign_func: tipo ID PARAMS
@@ -198,8 +202,9 @@ tipo: TYPEINT
 
 %%
 
+/* Error reporting function */
 void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "Syntax error at line %d: %s\n", line_number, s);
 }
 
 int main() {
