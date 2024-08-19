@@ -2,14 +2,17 @@
 /* C Code */
 
 #include <stdio.h>
+#include "yacc.tab.h"
+
+int line_number = 1;
 
 %} 
 
 /* Name Definition */ 
-%option noyywrap 
 
 
-delim		 [ \t\n\r] 
+
+delim		 [ \t\r] 
 ws		   {delim}+ 
 
 end_line  (\.\.\.)
@@ -86,10 +89,9 @@ while Dilatar[ ]tempo[ ]enquanto[ ]
 for Fraturar[ ]tempo[ ]se[ ]
 if Ponderar[ ]se[ ]
 else Ou[ ]optar[ ]por[ ]
-
-switch   Iniciar[ ]profecia[ ]de[ ]
+switch Iniciar[ ]profecia[ ]de[ ]
 case Profetizar[ ]que[ ]se[ ]
-default Cumprir[ ]profecia[ ]
+default Cumprir[ ]profecia
 goto Translocar[ ]para[ ]
 
 
@@ -105,7 +107,7 @@ volatile Volátil[ ]
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
 chamarFunc Conjurar[ ]
-parametros Componentes:[ ]
+parametros \,[ ]Componentes:[ ]
 return Regressus[ ]
 
 
@@ -114,102 +116,95 @@ adicionarUm Encantar[ ]
 subtrairUm Desencantar[ ]
 derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
-
-
 /* Pattern Action */ 
+
 %% 
-
-
 {ws}		  { } 
-{end_line} {printf("Fim de linha\n");}
-
-
-{digito_positivo} {printf("Inteiro positivo: %s\n", yytext);}
-{digito_negativo} {printf("Inteiro negativo: %s\n", yytext);}
-{float_posit} {printf("Float positivo: %s\n", yytext);}
-{float_negat} {printf("Float negativo: %s\n", yytext);}
-{true} {printf("Verdadeiro: %s\n", yytext);}
-{false} {printf("Falso: %s\n", yytext);}
-
-{soma} {printf("Operador de soma: %s\n", yytext);}
-{subtracao} {printf("Operador de subtracao: %s\n", yytext);}
-{multiplicacao} {printf("Operador de multiplicacao: %s\n", yytext);}
-{divisao} {printf("Operador de divisao: %s\n", yytext);}
-{mod} {printf("Operador de resto: %s\n", yytext);}
-
-{adicionarUm} {printf("Operador unario de adicao: %s\n", yytext);}
-{subtrairUm} {printf("Operador unario de subtracao: %s\n", yytext);}
-{derreferenciar} {printf("Derreferenciacao de ponteiro: %s\n", yytext);}
-{referenciar} {printf("Referenciacao de ponteiro: %s\n", yytext);}
-
-
-{maior} {printf("Operador relacional maior: %s\n", yytext);}
-{menor} {printf("Operador relacional menor: %s\n", yytext);}
-{maior_igual} {printf("Operador relacional maior ou igual: %s\n", yytext);}
-{menor_igual} {printf("Operador relacional menor ou igual: %s\n", yytext);}
-{ou} {printf("Operador logico or: %s\n", yytext);}
-{e} {printf("Operador logico and: %s\n", yytext);}
-{diferente} {printf("Operador relacional diferente: %s\n", yytext);}
-{atribuicao} {printf("Operador de atribuicao: %s\n", yytext);}
-{igualdade} {printf("Operador relacional de igualdade: %s\n", yytext);}
-
-{tipoInt} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoLongInt} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoShortInt} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoFloat} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoDouble} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoBool} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoChar} {printf("Tipo primitivo: %s\n", yytext);}
-{tipoVoid} {printf("Tipo primitivo: %s\n", yytext);}
-
-{abre_bloco} {printf("\nAbre bloco %s\n", yytext);}
-{fecha_bloco} {printf("Fecha bloco %s\n", yytext);}
-{abre} {printf("Abre colchetes %s\n", yytext);}
-{fecha} {printf("Fecha colchetes %s\n", yytext);}
-{divisor} {printf("Vírgula divisora %s\n", yytext);}
-{delimitadorChar} {printf("Abre aspas %s\n", yytext);}
-{delimitadorCase} {printf("Fecha aspas %s\n", yytext);}
-
-{while} {printf("Palavra reservada: %s\n", yytext);}
-{for} {printf("Palavra reservada: %s\n", yytext);}
-{if} {printf("Palavra reservada: %s\n", yytext);}
-{else} {printf("Palavra reservada: %s\n", yytext);}
-{switch} {printf("Palavra reservada: %s\n", yytext);}
-{case} {printf("Palavra reservada: %s\n", yytext);}
-{default} {printf("Palavra reservada: %s\n", yytext);}
-{goto} {printf("Palavra reservada: %s\n", yytext);}
-
-{typedef} {printf("Palavra reservada de declaracao: %s\n", yytext);}
-{struct} {printf("Palavra reservada de estrutura: %s\n", yytext);}
-{union} {printf("Palavra reservada de uniao: %s\n", yytext);}
-
-{parametros} {printf("Palavra reservada: %s\n", yytext);}
-{chamarFunc} {printf("Palavra reservada: %s\n", yytext);}
-{declFunc} {printf("Palavra reservada: %s\n", yytext);}
-{return} {printf("Palavra reservada: %s\n", yytext);}
-{const} {printf("Palavra reservada: %s\n", yytext);}
-{volatile} {printf("Palavra reservada: %s\n", yytext);}
-
-{variavel} {printf("Variavel: %s\n", yytext);}
-{abrearray} {printf("Abre array: %s\n", yytext);}
-{fechaarray} {printf("Fecha array: %s\n", yytext);}
-{acessarValor} {printf("Unario de acesso a valor: %s\n", yytext);}
-{acessarPonteiro} {printf("Unario de acesso a ponteiro: %s\n", yytext);}
-{ponteiro} {printf("Unario de ponteiro: %s\n", yytext);}
-
-{definidorarray} {printf("Delimitador de array: %s\n", yytext);}
+\n             { line_number++; }
 
 
 
-.         { }
+{end_line} { return ENDLINE; }
+
+{digito_positivo} { yylval.ival = atoi(yytext); return INT; }
+{digito_negativo} { yylval.ival = atoi(yytext); return INT; }
+{float_posit} { yylval.fval = atof(yytext); return FLOAT; }
+{float_negat} { yylval.fval = atof(yytext); return FLOAT; }
+{true} { yylval.ival = 1; return TRUE; }
+{false} { yylval.ival = 0; return FALSE; }
+{atribuicao} { return ASSIGN; }
+
+{soma} { return PLUS; }
+{subtracao} { return MINUS; }
+{multiplicacao} { return MULT; }
+{divisao} { return DIV; }
+{mod} { return MOD; }
+
+{adicionarUm} { return PLUSONE; }
+{subtrairUm} { return MINUSONE; }
+{derreferenciar} { return DEREF; }
+{referenciar} { return REF; }
+
+{maior} { return GT; }
+{menor} { return LT; }
+{maior_igual} { return GE; }
+{menor_igual} { return LE; }
+{ou} { return OR; }
+{e} { return AND; }
+{diferente} { return NE; }
+{igualdade} { return EQ; }
+
+{tipoInt} { return TYPEINT; }
+{tipoLongInt} { return TYPELONG; }
+{tipoShortInt} { return TYPESHORT; }
+{tipoFloat} { return TYPEFLOAT; }
+{tipoDouble} { return TYPEDOUBLE; }
+{tipoBool} { return TYPEBOOL; }
+{tipoChar} { return TYPECHAR; }
+{tipoVoid} { return TYPEVOID; }
+
+{abre_bloco} { return OPENBLOCK; }
+{fecha_bloco} { return CLOSEBLOCK; }
+{abre} { return OPENBRACK; }
+{fecha} { return CLOSEBRACK; }
+{divisor} { return COMMA; }
+{delimitadorChar} { return QUOTE; }
+{delimitadorCase} { return DELIMCASE; }
+
+{while} { return WHILE; }
+{for} { return FOR; }
+{if} { return IF; }
+{else} { return ELSE; }
+{switch} { return SWITCH; }
+{case} { return CASE; }
+{default} { return DEFAULT; }
+{goto} { return GOTO;}
+{break} { return BREAK; }
+{continue} { return CONTINUE; }
+
+{typedef} { return TYPEDEF;}
+{struct} { return STRUCT;}
+{union} { return UNION; }
+
+{parametros} { return PARAMS; }
+{chamarFunc} { return CALLFUNC; }
+{declFunc} { return DECLFUNC; }
+{return} { return RETURNT; }
+{const} { return CONST; }
+{volatile} { return VOLATILE; } 
+
+
+
+
+{variavel} { yylval.sval = strdup(yytext); return ID; }
+
+.                 { printf("Error: Extra characters: %s at line %d\n", yytext, line_number); }
 
 
 %% 
 
 /* C Code */
 
-int main(void) 
-{ 
-    yylex(); 
-    return 0; 
+int yywrap() {
+    return 1;
 }

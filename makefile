@@ -1,7 +1,7 @@
 TARGET = teste 
 INPUTFILE = testeIF.txt
 YACC_SRC = yacc.y
-LEX_SRC = test.l
+LEX_SRC = lex.l
 YACC_OUT = yacc.tab.c
 LEX_OUT = lex.yy.c
 
