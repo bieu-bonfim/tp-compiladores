@@ -63,6 +63,7 @@ stmt_if: IF expr stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block
        | IF expr stmt_block ELSEIF expr stmt_block ELSE stmt_block
          ;
+stmt_for: FOR expr COMMA unary_expr stmt_block
 
 stmt_while: WHILE expr stmt_block
           ;
@@ -140,9 +141,10 @@ function_call: CONJURE ID OPENBRACK params CLOSEBRACK
 
 unary_expr: MINUSONE variable
           | PLUSONE variable
-          | DEREF variable
-          | REF variable
           ;
+
+unary_exprPtr: DEREF variable
+          | REF variable
 
 params: /* empty */
       | expr
