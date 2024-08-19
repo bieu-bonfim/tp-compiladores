@@ -95,7 +95,7 @@ decl_var: tipo ID opt_assignment
         | CONST VOLATILE tipo ID opt_assignment
         ;
 
-def_type: TYPEDEF tipo ID
+def_type: TYPEDEF tipo ID stmt_block
         ;
 
 sign_func: tipo ID PARAMS
