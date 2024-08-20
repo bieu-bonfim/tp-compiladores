@@ -1,7 +1,8 @@
 {
   "files.associations": {
     "*.php": "php",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "SymbolTable.C": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": ""
 }
