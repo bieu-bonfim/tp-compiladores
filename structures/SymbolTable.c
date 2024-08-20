@@ -23,7 +23,7 @@ SymbolTable *create_symbol_table(SymbolTable *parent)
   return new_table;
 }
 
-void insert_symbol(SymbolTable *table, char *name, Type type)
+Symbol* insert_symbol(SymbolTable *table, char *name, Type type)
 {
   unsigned int index = hash(name);
   Symbol *new_symbol = (Symbol *)malloc(sizeof(Symbol));
@@ -53,6 +53,14 @@ void insert_symbol(SymbolTable *table, char *name, Type type)
 
   new_symbol->next = table->table[index];
   table->table[index] = new_symbol;
+  return new_symbol;
+}
+
+void insert_ready_symbol(SymbolTable *table, Symbol *symbol)
+{
+  unsigned int index = hash(symbol->name);
+  symbol->next = table->table[index];
+  table->table[index] = symbol;
 }
 
 Symbol *lookup_symbol(SymbolTable *table, char *name)

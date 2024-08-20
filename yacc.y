@@ -75,8 +75,8 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
             Function *func = create_function($2);
             Param *param = $6;
             add_parameter_list(func, &param);
-            insert_symbol(current_table, $3, TYPE_FUNC); 
-            print_function(func);
+            Symbol *new_symbol = insert_symbol(current_table, $3, TYPE_FUNC);
+            new_symbol->TypeVal.funcVal = func;
            }
          ;
 
@@ -273,6 +273,6 @@ int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
     printf("Parsing complete\n");
-    /* print_table(current_table); */
+    print_table(current_table);
     return 0; 
 }

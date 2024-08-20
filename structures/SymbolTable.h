@@ -33,7 +33,7 @@ typedef struct SymbolTable {
 
 unsigned int hash(char *name);
 SymbolTable *create_symbol_table(SymbolTable *parent);
-void insert_symbol(SymbolTable *table, char *name, Type type);
+Symbol* insert_symbol(SymbolTable *table, char *name, Type type);
 Symbol *lookup_symbol(SymbolTable *table, char *name);
 void print_table(SymbolTable *table);
 void free_symbol_table(SymbolTable *table);
