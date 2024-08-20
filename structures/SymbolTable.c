@@ -82,7 +82,7 @@ void print_table(SymbolTable *table)
     Symbol *current_symbol = table->table[i];
     while (current_symbol)
     {
-      printf("Name: %s, Type: %d\n", current_symbol->name, current_symbol->type);
+      printf("Name: %s, Type: %s\n", current_symbol->name, type_to_string(current_symbol->type));
       current_symbol = current_symbol->next;
     }
   }
@@ -92,3 +92,15 @@ void print_table(SymbolTable *table)
   }
 }
 
+void free_symbol_table(SymbolTable *table) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Symbol *symbol = table->table[i];
+        while (symbol) {
+            Symbol *temp = symbol;
+            symbol = symbol->next;
+            free(temp->name);
+            free(temp);
+        }
+    }
+    free(table);
+}

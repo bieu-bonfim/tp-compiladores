@@ -16,5 +16,6 @@ typedef enum {
     TYPE_SHORT
 } Type;
 
+char *type_to_string(Type type);
 
 #endif
