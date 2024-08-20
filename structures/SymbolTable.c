@@ -76,6 +76,7 @@ Symbol *lookup_symbol(SymbolTable *table, char *name)
 
 void print_table(SymbolTable *table)
 {
+  printf("-----------------------------\n");
   for (int i = 0; i < HASH_SIZE; i++)
   {
     Symbol *current_symbol = table->table[i];
@@ -90,3 +91,4 @@ void print_table(SymbolTable *table)
     print_table(table->parent);
   }
 }
+

@@ -34,5 +34,4 @@ void insert_symbol(SymbolTable *table, char *name, Type type);
 Symbol *lookup_symbol(SymbolTable *table, char *name);
 void print_table(SymbolTable *table);
 
-
 #endif

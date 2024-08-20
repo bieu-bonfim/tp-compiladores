@@ -20,6 +20,7 @@ int yylex(void);
     int ival;
     float fval;
     char *sval;
+    Type type;
 }
 
 %token <ival> INT
@@ -46,6 +47,8 @@ int yylex(void);
 %left EQ NE               
 %left AND                 
 %left OR    
+
+%type <type> type
 
 %%
 
@@ -74,8 +77,19 @@ decl_stmt: assignment ENDLINE
          | sign_func ENDLINE
          ;
 
-stmt_block: OPENBLOCK stmts CLOSEBLOCK
-         ;
+stmt_block: OPENBLOCK 
+            { 
+              SymbolTable *new_table = create_symbol_table(current_table); 
+              current_table = new_table; 
+            }
+            stmts 
+            CLOSEBLOCK
+            {
+              print_table(current_table);
+              SymbolTable *old_table = current_table;
+              current_table = current_table->parent;
+            }
+          ;
 
 stmt_if: IF expr stmt_block stmt_else
        ;
@@ -85,7 +99,19 @@ stmt_else: ELSE stmt_block
          | /* empty */
          ;
 
-stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
+stmt_switch: SWITCH expr 
+             OPENBLOCK 
+             {
+               SymbolTable *new_table = create_symbol_table(current_table);
+               current_table = new_table;
+             }
+             case_list default_case 
+             CLOSEBLOCK
+             {
+               print_table(current_table);
+               SymbolTable *old_table = current_table;
+               current_table = current_table->parent;
+             }
            ;
 
 case_list: /* empty */
@@ -136,7 +162,9 @@ opt_assignment: /* empty */
               ;
 
 decl_var: type type_qualifier ID opt_assignment
+          { insert_symbol(current_table, $3, $1); }
         | type ID opt_assignment 
+          { insert_symbol(current_table, $2, $1); }
         ;
 
 type_qualifier: CONST
@@ -208,14 +236,14 @@ params: /* empty */
       | params COMMA expr
       ;
 
-type: TYPEINT
-    | TYPEFLOAT
-    | TYPEBOOL
-    | TYPECHAR
-    | TYPEVOID
-    | TYPEDOUBLE
-    | TYPELONG
-    | TYPESHORT
+type: TYPEINT { $$ = TYPE_INT; } 
+    | TYPEFLOAT { $$ = TYPE_FLOAT; }
+    | TYPEBOOL { $$ = TYPE_BOOL; }
+    | TYPECHAR { $$ = TYPE_CHAR; }
+    | TYPEVOID { $$ = TYPE_VOID; }
+    | TYPEDOUBLE { $$ = TYPE_DOUBLE; }
+    | TYPELONG { $$ = TYPE_LONG; }
+    | TYPESHORT { $$ = TYPE_SHORT; }
     ;
 
 %%

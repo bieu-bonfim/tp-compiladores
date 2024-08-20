@@ -11,7 +11,9 @@ typedef enum {
     TYPE_VOID,
     TYPE_STRUCT,
     TYPE_UNION,
-    TYPE_ENUM
+    TYPE_ENUM,
+    TYPE_LONG,
+    TYPE_SHORT
 } Type;
 
 
