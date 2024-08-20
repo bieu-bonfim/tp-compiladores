@@ -20,7 +20,10 @@ typedef struct Function {
 } Function;
 
 Function *create_function(Type returnType);
-void add_parameter(Function *func, char *name, Type paramType);
 void print_function(Function *func); 
+void add_parameter_list(Function *func, Param **param);
+int param_list_length(Param *param);
+Param *create_param(char *name, Type type);
+void link_params(Param *param, Param *next);
 
 #endif

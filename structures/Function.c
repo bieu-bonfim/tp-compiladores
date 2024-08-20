@@ -8,13 +8,35 @@ Function *create_function(Type type) {
     return func;
 }
 
-void add_parameter(Function *func, char *name, Type type) {
-    Param *newParam = (Param *)malloc(sizeof(Param));
-    newParam->name = strdup(name);
-    newParam->type = type;
-    newParam->next = func->params;
-    func->params = newParam;
-    func->num_params++;
+void add_parameter_list(Function *func, Param **param) {
+    if (param == NULL || *param == NULL) {
+        func->params = NULL;
+    } else {
+        func->params = *param;
+    }
+    func->num_params = param_list_length(func->params);
+}
+
+int param_list_length(Param *param) {
+    int count = 0;
+    Param *current = param;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+Param *create_param(char *name, Type type) {
+    Param *param = (Param *)malloc(sizeof(Param));
+    param->name = strdup(name);
+    param->type = type;
+    param->next = NULL;
+    return param;
+}
+
+void link_params(Param *param, Param *next) {
+    param->next = next;
 }
 
 void free_function(Function *func) {
@@ -29,13 +51,11 @@ void free_function(Function *func) {
 }
 
 void print_function(Function *func) {
-    printf("Function: ");
-    type_to_string(func->type);
-    printf("params: ");
+    printf(" params: ");
     Param *current = func->params;
     while (current != NULL) {
-        type_to_string(current->type);
-        printf("%s, ", current->name);
+        
+        printf("%s %s, ", type_to_string(current->type), current->name);
         current = current->next;
     }
     printf("\n");

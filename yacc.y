@@ -13,7 +13,7 @@ int yylex(void);
 %}
 
 %code requires {
- #include "structures/SymbolTable.h"
+#include "structures/SymbolTable.h"
 }
 
 %union {
@@ -21,6 +21,7 @@ int yylex(void);
     float fval;
     char *sval;
     Type type;
+    Param *param;
 }
 
 %token <ival> INT
@@ -48,6 +49,8 @@ int yylex(void);
 %left AND                 
 %left OR    
 
+%type <param> argument
+%type <param> arguments
 %type <type> type
 
 %%
@@ -68,7 +71,13 @@ decl_import: IMPORT LITERAL ENDLINE
            ;
 
 decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
-          { insert_symbol(current_table, $3, TYPE_FUNC); }
+           {
+            Function *func = create_function($2);
+            Param *param = $6;
+            add_parameter_list(func, &param);
+            insert_symbol(current_table, $3, TYPE_FUNC); 
+            print_function(func);
+           }
          ;
 
 decl_stmt: assignment ENDLINE
@@ -85,7 +94,6 @@ stmt_block: OPENBLOCK
             stmts 
             CLOSEBLOCK
             {
-              print_table(current_table);
               SymbolTable *old_table = current_table;
               current_table = current_table->parent;
             }
@@ -108,7 +116,6 @@ stmt_switch: SWITCH expr
              case_list default_case 
              CLOSEBLOCK
              {
-               print_table(current_table);
                SymbolTable *old_table = current_table;
                current_table = current_table->parent;
              }
@@ -141,8 +148,8 @@ stmt_continue: CONTINUE ENDLINE
              ;
 
 stmts: /* empty */
-      | stmts stmt
-      ;
+     | stmts stmt
+     ;
 
 stmt: decl_stmt
     | stmt_if
@@ -224,12 +231,21 @@ unary_expr: MINUSONE variable
           | REF variable
           ;
 
-arguments: /* empty */
-         | argument
+arguments: /* empty */ { $$ = NULL; }
+         | argument { $$ = $1; }
          ;
 
-argument: type ID
+argument: type ID 
+         {
+          Param *param = create_param($2, $1);
+          $$ = param;
+         }
         | type ID COMMA argument 
+         {
+          Param *param = create_param($2, $1);
+          link_params(param, $4);
+          $$ = param;
+         }
 
 params: /* empty */
       | expr
@@ -257,6 +273,6 @@ int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
     printf("Parsing complete\n");
-    print_table(current_table);
+    /* print_table(current_table); */
     return 0; 
 }

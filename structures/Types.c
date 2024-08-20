@@ -6,7 +6,13 @@ char *type_names[] = {
     "double",
     "char",
     "bool",
-    "void"
+    "function",
+    "void",
+    "struct",
+    "union",
+    "enum",
+    "long",
+    "short"
 };
 
 char *type_to_string(Type type)

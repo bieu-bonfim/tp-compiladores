@@ -82,7 +82,34 @@ void print_table(SymbolTable *table)
     Symbol *current_symbol = table->table[i];
     while (current_symbol)
     {
-      printf("Name: %s, Type: %s\n", current_symbol->name, type_to_string(current_symbol->type));
+      printf("Name: %s, Type: %s", current_symbol->name, type_to_string(current_symbol->type));
+      if (current_symbol->type == TYPE_INT)
+      {
+        printf("Value: %d\n", current_symbol->TypeVal.intVal);
+      }
+      else if (current_symbol->type == TYPE_FLOAT)
+      {
+        printf("Value: %f\n", current_symbol->TypeVal.floatVal);
+      }
+      else if (current_symbol->type == TYPE_DOUBLE)
+      {
+        printf("Value: %f\n", current_symbol->TypeVal.doubleVal);
+      }
+      else if (current_symbol->type == TYPE_CHAR)
+      {
+        printf("Value: %c\n", current_symbol->TypeVal.charVal);
+      }
+      else if (current_symbol->type == TYPE_BOOL)
+      {
+        printf("Value: %d\n", current_symbol->TypeVal.boolVal);
+      }
+      else if (current_symbol->type == TYPE_FUNC)
+      {
+        print_function(current_symbol->TypeVal.funcVal);
+      } else {
+        printf("\n");
+      }
+      
       current_symbol = current_symbol->next;
     }
   }
