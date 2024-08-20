@@ -1,10 +1,15 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "structures/SymbolTable.h"
 
 extern int line_number;
 
+SymbolTable *symbol_table = NULL;
+
 void yyerror(const char *s);
+int yylex(void);
+
 %}
 
 %union {
@@ -208,5 +213,7 @@ void yyerror(const char *s) {
 }
 
 int main() {
-    return yyparse();
+    current_table = create_symbol_table(NULL);
+    yyparse();
+    return 0; 
 }
