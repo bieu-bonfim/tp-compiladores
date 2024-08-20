@@ -5,12 +5,16 @@
 
 extern int line_number;
 
-SymbolTable *symbol_table = NULL;
+SymbolTable *current_table;
 
 void yyerror(const char *s);
 int yylex(void);
 
 %}
+
+%code requires {
+ #include "structures/SymbolTable.h"
+}
 
 %union {
     int ival;
@@ -33,6 +37,8 @@ int yylex(void);
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
+%start begin
+
 %right NOT                
 %left MULT DIV MOD        
 %left PLUS MINUS          
@@ -42,6 +48,9 @@ int yylex(void);
 %left OR    
 
 %%
+
+begin: start
+     ;
 
 start: /* empty */
       | start start_item
@@ -55,7 +64,8 @@ start_item: decl_stmt
 decl_import: IMPORT LITERAL ENDLINE
            ;
 
-decl_func: DECLFUNC tipo ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
+decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
+          { insert_symbol(current_table, $3, TYPE_FUNC); }
          ;
 
 decl_stmt: assignment ENDLINE
@@ -125,18 +135,21 @@ opt_assignment: /* empty */
               | ASSIGN expr
               ;
 
-decl_var: tipo ID opt_assignment
-        | tipo CONST ID opt_assignment
-        | tipo VOLATILE ID opt_assignment
-        | tipo VOLATILE CONST ID opt_assignment
+decl_var: type type_qualifier ID opt_assignment
+        | type ID opt_assignment 
         ;
 
-def_type: TYPEDEF tipo ID ENDLINE
+type_qualifier: CONST
+              | VOLATILE
+              | VOLATILE CONST
+              ;
+
+def_type: TYPEDEF type ID ENDLINE 
         | TYPEDEF STRUCT ID 
         | TYPEDEF UNION ID 
         ;
 
-sign_func: tipo ID PARAMS
+sign_func: type ID PARAMS 
          ;
 
 expr: expr PLUS term
@@ -187,15 +200,15 @@ arguments: /* empty */
          | argument
          ;
 
-argument: tipo ID
-        | tipo ID COMMA argument 
+argument: type ID
+        | type ID COMMA argument 
 
 params: /* empty */
       | expr
       | params COMMA expr
       ;
 
-tipo: TYPEINT
+type: TYPEINT
     | TYPEFLOAT
     | TYPEBOOL
     | TYPECHAR
@@ -215,5 +228,7 @@ void yyerror(const char *s) {
 int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
+    printf("Parsing complete\n");
+    print_table(current_table);
     return 0; 
 }

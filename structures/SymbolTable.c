@@ -23,13 +23,12 @@ SymbolTable *create_symbol_table(SymbolTable *parent)
   return new_table;
 }
 
-void insert_symbol(SymbolTable *table, char *name, Type type, int scope_level)
+void insert_symbol(SymbolTable *table, char *name, Type type)
 {
   unsigned int index = hash(name);
   Symbol *new_symbol = (Symbol *)malloc(sizeof(Symbol));
   new_symbol->name = strdup(name);
   new_symbol->type = type;
-  new_symbol->level = scope_level;
 
   if (type == TYPE_INT)
   {
@@ -82,7 +81,7 @@ void print_table(SymbolTable *table)
     Symbol *current_symbol = table->table[i];
     while (current_symbol)
     {
-      printf("Name: %s, Type: %d, Level: %d\n", current_symbol->name, current_symbol->type, current_symbol->level);
+      printf("Name: %s, Type: %d\n", current_symbol->name, current_symbol->type);
       current_symbol = current_symbol->next;
     }
   }

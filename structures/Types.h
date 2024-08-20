@@ -7,9 +7,12 @@ typedef enum {
     TYPE_DOUBLE,
     TYPE_CHAR,
     TYPE_BOOL,
-    TYPE_STRUCT,
     TYPE_FUNC,
-    TYPE_VOID
+    TYPE_VOID,
+    TYPE_STRUCT,
+    TYPE_UNION,
+    TYPE_ENUM
 } Type;
+
 
 #endif

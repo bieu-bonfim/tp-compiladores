@@ -13,20 +13,26 @@
 typedef struct Symbol {
     char *name;
     Type type;
-    union {
+    union TypeVal {
         int intVal;
         float floatVal;
         double doubleVal;
         char charVal;
         int boolVal;
     } TypeVal;
-    int level;
-    Symbol *next;
+    struct Symbol *next;
 } Symbol;
 
 typedef struct SymbolTable {
     Symbol *table[HASH_SIZE];
-    SymbolTable *parent;
+    struct SymbolTable *parent;
 } SymbolTable;
+
+unsigned int hash(char *name);
+SymbolTable *create_symbol_table(SymbolTable *parent);
+void insert_symbol(SymbolTable *table, char *name, Type type);
+Symbol *lookup_symbol(SymbolTable *table, char *name);
+void print_table(SymbolTable *table);
+
 
 #endif
