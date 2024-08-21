@@ -37,8 +37,8 @@ int yylex(void);
 
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
 %token COMMA REF DEREF DELIMCASE WHILE FOR IF ELSE SWITCH CASE DEFAULT TYPEDEF STRUCT UNION
-%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY
-%token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE
+%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY LITERALSTRING LITERALCHAR NULL
+%token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE 
 %token OR AND NOT ENUM CONJUNCTURE GOTO QUOTE
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
@@ -86,9 +86,8 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
 
 decl_stmt: assignment ENDLINE
          | sign_func ENDLINE
-         | type_def
+         | type_def ENDLINE
          | decl_var ENDLINE
-         | def_type ENDLINE
          ;
 
 stmt_block: OPENBLOCK 
@@ -187,11 +186,6 @@ type_qualifier: CONST
               | VOLATILE
               | VOLATILE CONST
               ;
-
-def_type: TYPEDEF type ID ENDLINE 
-        | TYPEDEF STRUCT ID 
-        | TYPEDEF UNION ID 
-        ;
 
 sign_func: type ID PARAMS 
          ;
@@ -294,10 +288,10 @@ union_list: type ID ENDLINE
           | union_list type ID ENDLINE
           ;
 
-type_def: TYPEDEF type ID ENDLINE
-        | TYPEDEF enum_def ID ENDLINE
-        | TYPEDEF struct_def ID ENDLINE
-        | TYPEDEF union_def ID ENDLINE
+type_def: TYPEDEF type ID
+        | TYPEDEF enum_def ID
+        | TYPEDEF struct_def ID
+        | TYPEDEF union_def ID
         ;
 
 type_enum: ENUM ID
@@ -315,6 +309,11 @@ accesses: /* empty */
 
 access: OPENARRAY expr CLOSEARRAY
       ;
+
+literal: LITERALSTRING
+       | LITERALCHAR
+       | NULL
+       ;
 
 %%
 
