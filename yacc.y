@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include "structures/SymbolTable.h"
 
+extern int yyparse();
+extern int invalid_found;
+extern char invalid_chars[];
 extern int line_number;
+
 void yyerror(const char *s);
 
 SymbolTable *current_table;
@@ -312,7 +316,10 @@ access: OPENARRAY expr CLOSEARRAY
 
 /* Error reporting function */
 void yyerror(const char *s) {
-    fprintf(stderr, "\033[0;31mErro no fluxo mágico... A linha %d do grimório contém problemas.\033[0m\n", line_number);
+    if (invalid_found) {
+        printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... As seguintes ranhuras sao condenadas: %s\n", line_number, invalid_chars);
+    }
+    fprintf(stderr, "\033[0;31mErro Arcano...\033[0m A linha %d do grimório contém problemas.\n", line_number);
 }
 
 int main() {
