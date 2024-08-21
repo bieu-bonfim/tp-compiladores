@@ -5,6 +5,11 @@
 #include "yacc.tab.h"
 
 int line_number = 1;
+char invalid_chars[1024];  // Array to hold invalid characters
+int invalid_index = 0;     // Index for the array
+int invalid_found = 0;
+
+
 %} 
 /* Name Definition */ 
 delim		 [ \t\r] 
@@ -180,6 +185,7 @@ referenciar Lembrança[ ]de[ ]
 {typedef} { return TYPEDEF;}
 {struct} { return STRUCT;}
 {union} { return UNION; }
+{enum} { return ENUM; }
 
 {parametros} { return PARAMS; }
 {chamarFunc} { return CALLFUNC; }
@@ -193,12 +199,15 @@ referenciar Lembrança[ ]de[ ]
 
 {variavel} { yylval.sval = strdup(yytext); return ID; }
 
-.                 { printf("Error: Extra characters: %s at line %d\n", yytext, line_number); }
+. {
+    if (invalid_index < sizeof(invalid_chars) - 1) {
+        invalid_chars[invalid_index++] = yytext[0];
+        invalid_chars[invalid_index] = '\0'; // Null-terminate the string
+        invalid_found = 1;  // Set flag to indicate an error was found
+    }
+}
 
-
-%% 
-
-/* C Code */
+%%
 
 int yywrap() {
     return 1;
