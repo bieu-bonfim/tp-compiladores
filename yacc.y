@@ -215,6 +215,7 @@ term: LITERAL
     | function_call
     | unary_expr
     | OPENBRACK expr CLOSEBRACK
+    | expr
     ;
 
 variable: ID accesses
@@ -224,7 +225,7 @@ bool: TRUE
     | FALSE
     ;
 
-function_call: CALLFUNC ID OPENBRACK params CLOSEBRACK
+function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
              ;
 
 unary_expr: MINUSONE variable
@@ -312,7 +313,7 @@ access: OPENARRAY expr CLOSEARRAY
 
 literal: LITERALSTRING
        | LITERALCHAR
-       | NULL
+       | NULLT
        ;
 
 %%
