@@ -102,7 +102,7 @@ volatile Volátil[ ]
 
 
 /* Nova conjuntura */
-CONJUNCTURE em[ ]
+conjuncture em[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -186,7 +186,7 @@ referenciar Lembrança[ ]de[ ]
 {struct} { return STRUCT;}
 {union} { return UNION; }
 {enum} { return ENUM; }
-{CONJUNCTURE} {return CONJUNCTURE;}
+{conjuncture} {return CONJUNCTURE;}
 
 {parametros} { return PARAMS; }
 {chamarFunc} { return CALLFUNC; }
@@ -195,6 +195,8 @@ referenciar Lembrança[ ]de[ ]
 {const} { return CONST; }
 {volatile} { return VOLATILE; } 
 
+{abrearray} { return OPENARRAY; }
+{fechaarray} { return CLOSEARRAY; }
 
 
 
