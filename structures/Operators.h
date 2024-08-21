@@ -24,4 +24,11 @@ typedef enum LogOp {
     NOTOP
 } LogOp;
 
+typedef enum UnnOp {
+    MINUSONEOP,
+    PLUSONEOP,
+    REFOP,
+    DEREFOP,
+} UnnOp;
+
 #endif

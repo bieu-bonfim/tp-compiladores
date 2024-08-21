@@ -31,7 +31,7 @@ void* perform_short_arithmetic(void *left, void *right, ArOp op);
 Expression* create_expression(Type type, void *value);
 void assign_value_to_symbol(Symbol *symbol, Expression *expr);
 void assign_value_to_expression(Symbol *symbol, Expression *expr);
-void apply_unary_operation(Expression *result, Expression *operand, int operation);
+void apply_unary_operation(Expression *result, Symbol *operand, int operation);
 
 int yylex(void);
 
@@ -365,27 +365,31 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
 
 unary_expr: MINUSONE variable 
           { 
-           Expression *result = create_expression($2->type, NULL);
-           assign_value_to_expression($2, result);
-           $$ = result; 
+            Expression *result = create_expression($2->type, NULL);
+            apply_unary_operation(result, $2, MINUSONEOP);
+            Symbol *symbol = lookup_symbol(current_table, $2->name);
+            assign_value_to_symbol(symbol, result);
+            $$ = result; 
           }
           | PLUSONE variable 
           { 
-           Expression *result = create_expression($2->type, NULL);
-           assign_value_to_expression($2, result);
-           $$ = result; 
+            Expression *result = create_expression($2->type, NULL);
+            apply_unary_operation(result, $2, PLUSONEOP);
+            Symbol *symbol = lookup_symbol(current_table, $2->name);
+            assign_value_to_symbol(symbol, result);
+            $$ = result; 
           }
           | DEREF variable 
           { 
-           Expression *result = create_expression($2->type, NULL);
-           assign_value_to_expression($2, result);
-           $$ = result; 
+            Expression *result = create_expression($2->type, NULL);
+            apply_unary_operation(result, $2, DEREFOP);
+            $$ = result; 
           }
           | REF variable 
           { 
-           Expression *result = create_expression($2->type, NULL);
-           assign_value_to_expression($2, result);
-           $$ = result; 
+            Expression *result = create_expression($2->type, NULL);
+            apply_unary_operation(result, $2, REFOP);
+            $$ = result; 
           }
           ;
 
@@ -921,9 +925,9 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
     }
 }
 
-void apply_unary_operation(Expression *result, Expression *operand, int operation) {
+void apply_unary_operation(Expression *result, Symbol *operand, int operation) {
     switch (operation) {
-        case MINUSONE:
+        case MINUSONEOP:
             if (operand->type == TYPE_INT) {
                 int value = *(int*)operand->value;
                 value--;
@@ -934,11 +938,12 @@ void apply_unary_operation(Expression *result, Expression *operand, int operatio
                 value--;
                 result->value = malloc(sizeof(float));
                 *(float*)result->value = value;
+            } else {
+                yyerror("Invalid unary operation...\n");
             }
-            // Handle other types...
             break;
 
-        case PLUSONE:
+        case PLUSONEOP:
             if (operand->type == TYPE_INT) {
                 int value = *(int*)operand->value;
                 value++;
@@ -949,18 +954,17 @@ void apply_unary_operation(Expression *result, Expression *operand, int operatio
                 value++;
                 result->value = malloc(sizeof(float));
                 *(float*)result->value = value;
+            } else {
+                yyerror("Invalid unary operation...\n");
             }
-            // Handle other types...
             break;
 
-        case DEREF:
-            // Assuming operand->value holds a pointer:
-            result->value = *(void**)operand->value;
+        case DEREFOP:
+            /* result->value = *(void**)operand->value; */
             break;
 
-        case REF:
-            // Assuming operand->value is a regular value:
-            result->value = &operand->value;
+        case REFOP:
+            /* result->value = &operand->value; */
             break;
 
         default:
