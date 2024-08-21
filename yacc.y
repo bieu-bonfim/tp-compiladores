@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "structures/SymbolTable.h"
+#include "structures/Expression.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -18,6 +19,7 @@ int yylex(void);
 
 %code requires {
 #include "structures/SymbolTable.h"
+#include "structures/Expression.h"
 }
 
 %union {
@@ -26,18 +28,20 @@ int yylex(void);
     char *sval;
     Type type;
     Param *param;
+    Expression result;
 }
 
 %token <ival> INT
 %token <fval> FLOAT
 %token <sval> ID
-%token <sval> LITERAL
+%token <sval> LITERALSTRING
+%token <sval> LITERALCHAR
 %token <ival> TRUE
 %token <ival> FALSE
 
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
 %token COMMA REF DEREF DELIMCASE WHILE FOR IF ELSE SWITCH CASE DEFAULT TYPEDEF STRUCT UNION
-%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY LITERALSTRING LITERALCHAR NULLT
+%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY NULLT
 %token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE 
 %token OR AND NOT ENUM CONJUNCTURE GOTO QUOTE
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
@@ -56,6 +60,10 @@ int yylex(void);
 %type <param> argument
 %type <param> arguments
 %type <type> type
+%type <result> assignment
+%type <result> expr
+%type <result> term
+
 
 %%
 
@@ -71,7 +79,7 @@ start_item: decl_stmt
           | decl_import
           ;
 
-decl_import: IMPORT LITERAL ENDLINE
+decl_import: IMPORT LITERALSTRING ENDLINE
            ;
 
 decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
@@ -86,7 +94,7 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
 
 decl_stmt: assignment ENDLINE
          | sign_func ENDLINE
-         | type_def ENDLINE
+         | type_def
          | decl_var ENDLINE
          ;
 
@@ -116,11 +124,13 @@ stmt_switch: SWITCH expr
              {
                SymbolTable *new_table = create_symbol_table(current_table);
                current_table = new_table;
+
              }
              case_list default_case 
              CLOSEBLOCK
              {
                SymbolTable *old_table = current_table;
+               print_table(current_table);
                current_table = current_table->parent;
              }
            ;
@@ -166,6 +176,16 @@ stmt: decl_stmt
     ;
 
 assignment: ID ASSIGN expr
+           {
+            Symbol *symbol = lookup_symbol(current_table, $1);
+            if (symbol == NULL) {
+              yyerror("Variavel nao encontrada...\n");
+            } else {
+              if (symbol->type != $3.type) {
+                yyerror("Tipos incompativeis...\n");
+              }
+            }
+           }
           ;
 
 opt_assignment: /* empty */
@@ -191,7 +211,18 @@ sign_func: type ID PARAMS
          ;
 
 expr: expr PLUS term
-    | expr MINUS term
+     {
+      if ($1.type != $3.type) {
+        yyerror("Tipos incompativeis...\n");
+      } else {
+        $$ = (Expression){.type = $1.type};
+        // Pensar em como realizar as operações de forma a não poluir o código,
+        // talvez seja interessante criar uma função que faça isso em Expressions.
+        // Pode ser que seja uma função que resolva de forma genérica para todos os
+        // tipos de operações.
+      } 
+     }
+    | expr MINUS term 
     | expr MULT term
     | expr DIV term
     | expr MOD term
@@ -207,15 +238,14 @@ expr: expr PLUS term
     | term
     ;
 
-term: LITERAL
-    | INT
+term: literal
+    | INT { printf("INT %d\n", yylval.ival); }
     | FLOAT
     | variable
     | bool
     | function_call
     | unary_expr
     | OPENBRACK expr CLOSEBRACK
-    | expr
     ;
 
 variable: ID accesses
@@ -290,9 +320,9 @@ union_list: type ID ENDLINE
           ;
 
 type_def: TYPEDEF type ID
-        | TYPEDEF enum_def ID
-        | TYPEDEF struct_def ID
-        | TYPEDEF union_def ID
+        | TYPEDEF enum_def
+        | TYPEDEF struct_def
+        | TYPEDEF union_def
         ;
 
 type_enum: ENUM ID
