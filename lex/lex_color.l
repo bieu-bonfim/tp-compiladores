@@ -198,6 +198,9 @@ referenciar Lembrança[ ]de[ ]
 {acessarPonteiro} {printf("\033[0;31m%s \033[0m", yytext);}
 {ponteiro} {printf("\033[0;31m%s \033[0m", yytext);}
 
+{abrearray} 
+{fechaarray}
+
 {definidorarray} {printf("%s ", yytext);}
 
 

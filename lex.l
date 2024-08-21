@@ -5,10 +5,6 @@
 #include "yacc.tab.h"
 
 int line_number = 1;
-char invalid_chars[1024];  // Array to hold invalid characters
-int invalid_index = 0;     // Index for the array
-int invalid_found = 0;
-
 
 %} 
 /* Name Definition */ 
@@ -106,7 +102,7 @@ volatile Volátil[ ]
 
 
 /* Nova conjuntura */
-CONJUNCTURE em[ ]
+conjuncture em[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -190,7 +186,7 @@ referenciar Lembrança[ ]de[ ]
 {struct} { return STRUCT;}
 {union} { return UNION; }
 {enum} { return ENUM; }
-{CONJUNCTURE} {return CONJUNCTURE;}
+{conjuncture} {return CONJUNCTURE;}
 
 {parametros} { return PARAMS; }
 {chamarFunc} { return CALLFUNC; }
@@ -199,21 +195,21 @@ referenciar Lembrança[ ]de[ ]
 {const} { return CONST; }
 {volatile} { return VOLATILE; } 
 
+{abrearray} { return OPENARRAY; }
+{fechaarray} { return CLOSEARRAY; }
 
 
 
 {variavel} { yylval.sval = strdup(yytext); return ID; }
 
-. {
-    if (invalid_index < sizeof(invalid_chars) - 1) {
-        invalid_chars[invalid_index++] = yytext[0];
-        invalid_chars[invalid_index] = '\0'; // Null-terminate the string
-        invalid_found = 1;  // Set flag to indicate an error was found
-    }
-}
+.                 { printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... A seguinte ranhura foi condenada: %s\n", line_number, yytext); }
 
-%%
+
+%% 
+
+/* C Code */
 
 int yywrap() {
     return 1;
 }
+
