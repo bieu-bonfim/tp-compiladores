@@ -98,11 +98,15 @@ goto Translocar[ ]para[ ]
 
 /* Estruturas */
 typedef Transmutar[ ]
-struct Componentização[ ]em[ ]
-union Conjuntura[ ]em[ ]
-enum Glifos[ ]em[ ]
+struct Componentização[ ]
+union Conjuntura[ ]
+enum Glifos[ ]
 const Imutável[ ]
 volatile Volátil[ ]
+
+
+/* Nova conjuntura */
+CONJUNCTURE em[ ]
 
 /* Funções */
 declFunc Preparar[ ]magia[ ]de[ ]
@@ -186,6 +190,7 @@ referenciar Lembrança[ ]de[ ]
 {struct} { return STRUCT;}
 {union} { return UNION; }
 {enum} { return ENUM; }
+{CONJUNCTURE} {return CONJUNCTURE;}
 
 {parametros} { return PARAMS; }
 {chamarFunc} { return CALLFUNC; }
