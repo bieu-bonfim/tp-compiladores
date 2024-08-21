@@ -16,6 +16,8 @@ typedef struct Symbol {
     char *name;
     Type type;
     void *value;
+    int volatile_flag;
+    int constant_flag;
     struct Symbol *next;
 } Symbol;
 

@@ -46,6 +46,7 @@ int yylex(void);
     int ival;
     float fval;
     char *sval;
+    char cval;
     Type type;
     Param *param;
     Expression *result;
@@ -60,7 +61,7 @@ int yylex(void);
 %token <fval> FLOAT
 %token <sval> ID
 %token <sval> LITERALSTRING
-%token <sval> LITERALCHAR
+%token <cval> LITERALCHAR
 %token <ival> TRUE
 %token <ival> FALSE
 %token <relOp> RELOP
@@ -331,17 +332,18 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
                   if (param_list_length(param) != param_list_length(func->params)) {
                     yyerror("Numero de parametros incorreto...\n");
                   }
-                  Param *current = func->params;
-                  while (current != NULL) {
-                    if (current->type != param->type) {
-                      yyerror("Tipo de parametro incorreto...\n");
-                    }
-                    current = current->next;
-                    param = param->next;
-                  }
+                  print_function(func);
+                  // Param *current = func->params;
+                  // while (current != NULL) {
+                  //   if (current->type != param->type) {
+                  //     yyerror("Tipo de parametro incorreto...\n");
+                  //   }
+                  //   current = current->next;
+                  //   param = param->next;
+                  // }
                 }
-                Expression *result = (Expression*)malloc(sizeof(Expression));
-                result->type = func->type;
+                printf("Calling function %s\n", $2);
+                Expression *result = create_expression(func->type, NULL);
                 // TODO: Call function
                 result->value = allocate_and_initialize(result->type);
                 $$ = result;
@@ -380,7 +382,7 @@ type: TYPEINT { $$ = TYPE_INT; }
     | TYPEBOOL { $$ = TYPE_BOOL; }
     | TYPECHAR { $$ = TYPE_CHAR; }
     | TYPEVOID { $$ = TYPE_VOID; }
-    | TYPEDOUBLE { $$ = TYPE_DOUBLE; }
+    | TYPEDOUBLE { $$ = TYPE_FLOAT; }
     | TYPELONG { $$ = TYPE_INT; }
     | TYPESHORT { $$ = TYPE_INT; }
     | type_enum { $$ = TYPE_ENUM; }
@@ -433,23 +435,21 @@ access: OPENARRAY expr CLOSEARRAY
 
 literal: LITERALSTRING 
        { 
-        Expression *result = (Expression*)malloc(sizeof(Expression)); 
-        result->type = TYPE_STRING; 
-        result->value = $1; 
-        $$ = result; 
+        Expression *result = create_expression(TYPE_STRING, NULL);        
+        result->value = malloc(sizeof(char) * (strlen($1) + 1));
+        strcpy((char*)result->value, $1);
+        $$ = result;
        }
        | LITERALCHAR 
        { 
-        Expression *result = (Expression*)malloc(sizeof(Expression)); 
-        result->type = TYPE_CHAR; 
-        result->value = $1;
-        $$ = result; 
+        Expression *result = create_expression(TYPE_CHAR, NULL);
+        result->value = malloc(sizeof(char));
+        *(char*)result->value = $1;
+        $$ = result;
        }
        | NULLT 
        { 
-        Expression *result = (Expression*)malloc(sizeof(Expression)); 
-        result->type = TYPE_VOID; 
-        result->value = NULL;
+        Expression *result = create_expression(TYPE_VOID, NULL);
         $$ = result; 
        }
        ;
