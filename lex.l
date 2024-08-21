@@ -125,12 +125,12 @@ referenciar Lembrança[ ]de[ ]
 {string} {
     yylval.sval = strdup(yytext + 1);
     yylval.sval[strlen(yylval.sval) - 1] = '\0';
-    return LITERAL_STRING;
+    return LITERALSTRING;
 }
 
 {char} {
     yylval.ival = yytext[1]; 
-    return LITERAL_CHAR;     
+    return LITERALCHAR;     
 }
 
 {ws}		  { } 
@@ -208,6 +208,7 @@ referenciar Lembrança[ ]de[ ]
 {return} { return RETURNT; }
 {const} { return CONST; }
 {volatile} { return VOLATILE; } 
+{null_literal} { return NULLT; }
 
 {abrearray} { return OPENARRAY; }
 {fechaarray} { return CLOSEARRAY; }
