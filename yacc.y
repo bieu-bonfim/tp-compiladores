@@ -216,7 +216,7 @@ assignment: variable ASSIGN expr
            {
             Symbol *symbol = lookup_symbol(current_table, $1->name);
             if (symbol == NULL) {
-                yyerror("Variable not found...\n");
+                yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
             } else {
                 assign_value_to_symbol(symbol, $3);
             }
@@ -239,14 +239,14 @@ opt_assignment: /* empty */
 decl_var: type type_qualifier ID opt_assignment
           { 
            if ($4->type != $1 && $4->type != TYPE_VOID) {
-             yyerror("Variavel nao inicializada com o tipo correto...\n");
+             yyerror("\033[0;34mInscricao Arcana\033[0m nao inicializada com o tipo correto...\n");
            }
            Symbol *new_symbol = insert_symbol(current_table, $3, $1, $4->value); 
           }
         | type ID opt_assignment 
           { 
            if ($3->type != $1 && $3->type != TYPE_VOID) {
-             yyerror("Variavel nao inicializada com o tipo correto...\n");
+             yyerror("\033[0;34mInscricao Arcana\033[0m nao inicializada com o tipo correto...\n");
            }
            Symbol *new_symbol = insert_symbol(current_table, $2, $1, $3->value); 
           }
@@ -299,7 +299,7 @@ variable: ID accesses attributes
          {
           Symbol *symbol = lookup_symbol(current_table, $1);
           if (symbol == NULL) {
-            yyerror("Variavel nao encontrada...\n");
+            yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
           }
           $$ = symbol;
          }
@@ -334,22 +334,22 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
               {
                 Symbol *symbol = lookup_symbol(current_table, $2);
                 if (symbol == NULL) {
-                  yyerror("Funcao nao encontrada...\n");
+                  yyerror("\033[0;32mMagia\033[0m nao encontrada...\n");
                 }
                 if (symbol->type != TYPE_FUNC) {
-                  yyerror("Simbolo nao e uma funcao...\n");
+                  yyerror("Simbolo nao e uma \033[0;32mmagia\033[0m...\n");
                 }
                 Function *func = (Function *)symbol->value;
                 Param *param = $5;
                 if (func->params != NULL) {
                   if (param_list_length(param) != param_list_length(func->params)) {
-                    yyerror("Numero de parametros incorreto...\n");
+                    yyerror("Numero de componentes incorreto...\n");
                   }
                   print_function(*func);
                   Param *current = func->params;
                   while (current != NULL) {
                     if (current->type != param->type) {
-                      yyerror("Tipo de parametro incorreto...\n");
+                      yyerror("Tipo de componente incorreto...\n");
                     }
                     current = current->next;
                     param = param->next;
@@ -523,7 +523,7 @@ Expression* evaluate_arithmetic(Expression left, Expression right, ArOp op) {
     Expression *result = (Expression*)malloc(sizeof(Expression));
     
     if (left.type != right.type) {
-        yyerror("Tipos incompativeis...\n");
+        yyerror("\033[0;36mTipos arcanos\033[0m incompativeis...\n");
     }
 
     result->value = perform_arithmetic(left, right, op);
@@ -544,7 +544,7 @@ void* perform_arithmetic(Expression left, Expression right, ArOp op) {
         case TYPE_SHORT:
             return perform_short_arithmetic(left.value, right.value, op);
         default:
-            yyerror("Tipo de variavel nao suportado...\n");
+            yyerror("Tipo de \033[0;36minscricao arcana\033[0m nao suportado...\n");
     }
 }
 
@@ -590,7 +590,7 @@ void *perform_float_arithmetic(void *left, void *right, ArOp op) {
             *result = *l / *r;
             break;
         case MOD:
-            yyerror("Operacao nao suportada para floats...\n");
+            yyerror("\033[0;36mManipulacao arcana\033[0m nao suportada para fractais...\n");
             break;
     }
     return (void*)result;
@@ -614,7 +614,7 @@ void *perform_double_arithmetic(void *left, void *right, ArOp op) {
             *result = *l / *r;
             break;
         case MOD:
-            yyerror("Operacao nao suportada para doubles...\n");
+            yyerror("\033[0;36mManipulacao arcana\033[0m nao suportada para Arquifractais...\n");
             break;
     }
     return (void*)result;
@@ -745,7 +745,7 @@ Expression* evaluate_not(Expression expr) {
 Expression* id_to_expression(char *id) {
     Symbol *symbol = lookup_symbol(current_table, id);
     if (symbol == NULL) {
-        yyerror("Variavel nao encontrada...\n");
+        yyerror("\033[0;36mInscricao arcana\033[0m nao encontrada...\n");
     }
     Expression *result = (Expression*)malloc(sizeof(Expression));
     result->type = symbol->type;
@@ -762,12 +762,12 @@ Expression* create_expression(Type type, void *value) {
 
 void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
     if (symbol == NULL || expr == NULL) {
-        yyerror("Invalid symbol or expression...\n");
+        yyerror("Inscricao ou manipulacao arcana incompativel...\n");
         return;
     }
 
     if (symbol->type != expr->type) {
-        yyerror("Incompatible types...\n");
+        yyerror("Tipos incompativeis...\n");
         return;
     }
 
@@ -779,7 +779,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_INT:
             symbol->value = malloc(sizeof(int));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(int*)symbol->value = *(int*)expr->value;
@@ -788,7 +788,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_FLOAT:
             symbol->value = malloc(sizeof(float));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(float*)symbol->value = *(float*)expr->value;
@@ -797,7 +797,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_DOUBLE:
             symbol->value = malloc(sizeof(double));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(double*)symbol->value = *(double*)expr->value;
@@ -806,7 +806,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_LONG:
             symbol->value = malloc(sizeof(long));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(long*)symbol->value = *(long*)expr->value;
@@ -815,7 +815,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_SHORT:
             symbol->value = malloc(sizeof(short));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(short*)symbol->value = *(short*)expr->value;
@@ -824,7 +824,7 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_BOOL:
             symbol->value = malloc(sizeof(_Bool));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(_Bool*)symbol->value = *(_Bool*)expr->value;
@@ -833,13 +833,13 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
         case TYPE_CHAR:
             symbol->value = malloc(sizeof(char));
             if (symbol->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(char*)symbol->value = *(char*)expr->value;
             break;
         default:
-            yyerror("Unknown data type...\n");
+            yyerror("\033[0;35mFluxo mistico\033[0m desconhecido...\n");
             return;
     }
 }
@@ -847,12 +847,12 @@ void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
 
 void assign_value_to_expression(Symbol *symbol, Expression *expr) {
     if (symbol == NULL || expr == NULL) {
-        yyerror("Invalid symbol or expression...\n");
+        yyerror("Inscricao arcana ou expressao magica nao compativel...\n");
         return;
     }
 
     if (symbol->type != expr->type) {
-        yyerror("Incompatible types...\n");
+        yyerror("Tipos incompativeis...\n");
         return;
     }
 
@@ -860,7 +860,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_INT:
             expr->value = malloc(sizeof(int));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(int*)expr->value = *(int*)symbol->value;
@@ -869,7 +869,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_FLOAT:
             expr->value = malloc(sizeof(float));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(float*)expr->value = *(float*)symbol->value;
@@ -878,7 +878,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_DOUBLE:
             expr->value = malloc(sizeof(double));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(double*)expr->value = *(double*)symbol->value;
@@ -887,7 +887,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_LONG:
             expr->value = malloc(sizeof(long));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(long*)expr->value = *(long*)symbol->value;
@@ -896,7 +896,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_SHORT:
             expr->value = malloc(sizeof(short));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(short*)expr->value = *(short*)symbol->value;
@@ -905,7 +905,7 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_BOOL:
             expr->value = malloc(sizeof(_Bool));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(_Bool*)expr->value = *(_Bool*)symbol->value;
@@ -914,13 +914,13 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
         case TYPE_CHAR:
             expr->value = malloc(sizeof(char));
             if (expr->value == NULL) {
-                yyerror("Memory allocation error...\n");
+                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
                 return;
             }
             *(char*)expr->value = *(char*)symbol->value;
             break;
         default:
-            yyerror("Unknown data type...\n");
+            yyerror("Manipulacao mistica desconhecida...\n");
             return;
     }
 }
@@ -968,7 +968,7 @@ void apply_unary_operation(Expression *result, Symbol *operand, int operation) {
             break;
 
         default:
-            yyerror("Invalid unary operation.");
+            yyerror("Encantamento falhou...");
     }
     result->type = operand->type;
 }
