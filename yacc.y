@@ -316,9 +316,6 @@ access: OPENARRAY expr CLOSEARRAY
 
 /* Error reporting function */
 void yyerror(const char *s) {
-    if (invalid_found) {
-        printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... As seguintes ranhuras sao condenadas: %s\n", line_number, invalid_chars);
-    }
     fprintf(stderr, "\033[0;31mErro Arcano...\033[0m A linha %d do grimório contém problemas.\n", line_number);
 }
 
