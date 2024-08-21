@@ -87,6 +87,7 @@ int yylex(void);
 %type <param> argument
 %type <param> arguments
 %type <param> params
+%type <param> param
 %type <type> type
 %type <result> assignment
 %type <result> opt_assignment
@@ -111,6 +112,7 @@ start: /* empty */
 start_item: decl_stmt
           | decl_func
           | decl_import
+          | unary_expr ENDLINE
           ;
 
 decl_import: IMPORT LITERALSTRING ENDLINE
@@ -332,15 +334,15 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
                   if (param_list_length(param) != param_list_length(func->params)) {
                     yyerror("Numero de parametros incorreto...\n");
                   }
-                  print_function(func);
-                  // Param *current = func->params;
-                  // while (current != NULL) {
-                  //   if (current->type != param->type) {
-                  //     yyerror("Tipo de parametro incorreto...\n");
-                  //   }
-                  //   current = current->next;
-                  //   param = param->next;
-                  // }
+                  print_function(*func);
+                  Param *current = func->params;
+                  while (current != NULL) {
+                    if (current->type != param->type) {
+                      yyerror("Tipo de parametro incorreto...\n");
+                    }
+                    current = current->next;
+                    param = param->next;
+                  }
                 }
                 printf("Calling function %s\n", $2);
                 Expression *result = create_expression(func->type, NULL);
@@ -373,9 +375,21 @@ argument: type ID
          }
 
 params: /* empty */ { $$ = NULL; }
-      | expr { $$ = NULL; }
-      | params COMMA expr { $$ = NULL; } 
+      | param { $$ = $1; }
       ;
+
+param: expr 
+     { 
+      Param *param = create_param("", $1->type);
+      $$ = param; 
+     }
+     | expr COMMA param 
+     { 
+      Param *param = create_param("", $1->type);
+      link_params(param, $3);
+      $$ = param; 
+     }
+     ;
 
 type: TYPEINT { $$ = TYPE_INT; } 
     | TYPEFLOAT { $$ = TYPE_FLOAT; }

@@ -10,6 +10,7 @@
 typedef struct Param {
     Type type;
     char *name;
+    void* value;
     struct Param *next;
 } Param;
 
@@ -22,7 +23,7 @@ typedef struct Function {
 } Function;
 
 Function *create_function(Type returnType);
-void print_function(Function *func); 
+void print_function(Function func); 
 void add_parameter_list(Function *func, Param **param);
 int param_list_length(Param *param);
 Param *create_param(char *name, Type type);

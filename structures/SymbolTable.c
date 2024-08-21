@@ -146,7 +146,7 @@ void print_table(SymbolTable *table)
       }
       else if (current_symbol->type == TYPE_FUNC)
       {
-        print_function((Function*)current_symbol->value);
+        print_function(*(Function*)current_symbol->value);
       } else {
         printf("\n");
       }

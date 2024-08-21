@@ -50,9 +50,11 @@ void free_function(Function *func) {
     free(func);
 }
 
-void print_function(Function *func) {
+void print_function(Function func) {
+    printf("Function: ");
+    printf("%s", type_to_string(func.type));
     printf(" params: ");
-    Param *current = func->params;
+    Param *current = func.params;
     while (current != NULL) {
         
         printf("%s %s, ", type_to_string(current->type), current->name);
