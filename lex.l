@@ -6,8 +6,8 @@
 
 int line_number = 1;
 
-%} 
-/* Name Definition */ 
+%}
+/* Name Definition */
 delim		 [ \t\r] 
 ws		   {delim}+ 
 
@@ -148,25 +148,27 @@ referenciar Lembrança[ ]de[ ]
 {false} { yylval.ival = 0; return FALSE; }
 {atribuicao} { return ASSIGN; }
 
-{soma} { return PLUS; }
-{subtracao} { return MINUS; }
-{multiplicacao} { return MULT; }
-{divisao} { return DIV; }
-{mod} { return MOD; }
+{soma} { yylval.arOp = PLUS; return AROP; }
+{subtracao} { yylval.arOp = MINUS; return AROP; }
+{multiplicacao} { yylval.arOp = MULT; return AROP; }
+{divisao} { yylval.arOp = DIV; return AROP; }
+{mod} { yylval.arOp = MOD; return AROP; }
 
 {adicionarUm} { return PLUSONE; }
 {subtrairUm} { return MINUSONE; }
 {derreferenciar} { return DEREF; }
 {referenciar} { return REF; }
 
-{maior} { return GT; }
-{menor} { return LT; }
-{maior_igual} { return GE; }
-{menor_igual} { return LE; }
+{maior} { yylval.relOp = GT; return RELOP; }
+{menor} { yylval.relOp = LT; return RELOP; }
+{maior_igual} { yylval.relOp = GE; return RELOP; }
+{menor_igual} { yylval.relOp = LE; return RELOP; }
+{diferente} { yylval.relOp = NE; return RELOP; }
+{igualdade} { yylval.relOp = EQ; return RELOP; }
+
 {ou} { return OR; }
 {e} { return AND; }
-{diferente} { return NE; }
-{igualdade} { return EQ; }
+{negado} { return NOT; }
 
 {tipoInt} { return TYPEINT; }
 {tipoLongInt} { return TYPELONG; }

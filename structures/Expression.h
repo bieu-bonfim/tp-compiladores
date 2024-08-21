@@ -16,6 +16,8 @@ typedef struct Expression {
     char charVal;
     int boolVal;
     char *stringVal;
+    short int shortVal;
+    long int longVal;
   } Val;
 } Expression;
 

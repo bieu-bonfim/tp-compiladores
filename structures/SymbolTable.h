@@ -7,6 +7,7 @@
 
 #include "Types.h"
 #include "Function.h"
+#include "Expression.h"
 
 #define HASH_SIZE 47
 #define MAX_LEVEL 10
@@ -20,6 +21,8 @@ typedef struct Symbol {
         double doubleVal;
         char charVal;
         int boolVal;
+        short int shortVal;
+        long int longVal;
         Function *funcVal;
     } TypeVal;
     struct Symbol *next;
