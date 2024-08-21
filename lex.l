@@ -24,7 +24,7 @@ palavra [a-zA-Z]+
 
 true Veritas
 false Falsum
-void Nulo
+null Nulo[ ]
 break Que[ ]assim[ ]seja
 continue Prossiga
 
@@ -67,7 +67,7 @@ tipoFloat Fractal[ ]
 tipoDouble Arquifractal[ ]
 tipoBool Axioma[ ]
 tipoChar Runa[ ]
-tipoVoid Nulo[ ]
+tipoVoid Vazio[ ]
 
 
 /* hierarquias e blocos */
@@ -197,6 +197,7 @@ referenciar Lembrança[ ]de[ ]
 
 {abrearray} { return OPENARRAY; }
 {fechaarray} { return CLOSEARRAY; }
+
 
 
 
