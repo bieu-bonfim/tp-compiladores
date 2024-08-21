@@ -32,10 +32,10 @@ int yylex(void);
 %token <ival> FALSE
 
 %token PLUS MINUS MULT DIV MOD ASSIGN ENDLINE
-%token COMMA REF DEREF QUOTE DELIMCASE WHILE FOR IF ELSE ELSEIF SWITCH CASE DEFAULT GOTO TYPEDEF STRUCT UNION
-%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK
+%token COMMA REF DEREF DELIMCASE WHILE FOR IF ELSE SWITCH CASE DEFAULT TYPEDEF STRUCT UNION
+%token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY
 %token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE
-%token PREPARE CONJURE OR AND NOT 
+%token OR AND NOT ENUM CONJUNCTURE
 %token GT LT GE LE EQ NE PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
@@ -169,9 +169,13 @@ opt_assignment: /* empty */
               ;
 
 decl_var: type type_qualifier ID opt_assignment
-          { insert_symbol(current_table, $3, $1); }
+          { 
+           insert_symbol(current_table, $3, $1); 
+          }
         | type ID opt_assignment 
-          { insert_symbol(current_table, $2, $1); }
+          { 
+           insert_symbol(current_table, $2, $1); 
+          }
         ;
 
 type_qualifier: CONST
@@ -213,7 +217,6 @@ term: LITERAL
     | unary_expr
     | OPENBRACK expr CLOSEBRACK
     ;
-
 
 variable: ID 
         ;
@@ -260,7 +263,50 @@ type: TYPEINT { $$ = TYPE_INT; }
     | TYPEDOUBLE { $$ = TYPE_DOUBLE; }
     | TYPELONG { $$ = TYPE_LONG; }
     | TYPESHORT { $$ = TYPE_SHORT; }
+    | type_enum { $$ = TYPE_ENUM; }
+    | type_struct { $$ = TYPE_STRUCT; }
+    | type_union { $$ = TYPE_UNION; }
     ;
+
+enum_def: ENUM CONJUNCTURE ID OPENBLOCK enum_list CLOSEBLOCK
+        ;
+
+enum_list: ID
+         | enum_list COMMA ID
+         ;
+
+struct_def: STRUCT CONJUNCTURE ID OPENBLOCK struct_list CLOSEBLOCK
+          ;
+
+struct_list: type ID ENDLINE
+           | struct_list type ID ENDLINE
+           ;
+
+union_def: UNION CONJUNCTURE ID OPENBLOCK union_list CLOSEBLOCK
+         ;
+
+union_list: type ID ENDLINE
+          | union_list type ID ENDLINE
+          ;
+
+type_def: TYPEDEF type ID
+        ;
+
+type_enum: ENUM ID
+         ;
+
+type_struct: STRUCT ID
+           ;
+
+type_union: UNION ID
+          ;
+
+accesses: /* empty */
+        | accesses access
+        ;
+
+access: OPENARRAY expr CLOSEARRAY
+      ;
 
 %%
 
