@@ -939,7 +939,7 @@ void apply_unary_operation(Expression *result, Symbol *operand, int operation) {
                 result->value = malloc(sizeof(float));
                 *(float*)result->value = value;
             } else {
-                yyerror("Invalid unary operation...\n");
+                yyerror("Encantamento invalido...\n");
             }
             break;
 
@@ -955,7 +955,7 @@ void apply_unary_operation(Expression *result, Symbol *operand, int operation) {
                 result->value = malloc(sizeof(float));
                 *(float*)result->value = value;
             } else {
-                yyerror("Invalid unary operation...\n");
+                yyerror("Encantamento invalido...\n");
             }
             break;
 
