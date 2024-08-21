@@ -24,7 +24,7 @@ palavra [a-zA-Z]+
 
 true Veritas
 false Falsum
-null Nulo[ ]
+null_literal Nulo[ ]
 break Que[ ]assim[ ]seja
 continue Prossiga
 string  \"([^\"]*)\"
