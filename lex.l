@@ -27,6 +27,8 @@ false Falsum
 null Nulo[ ]
 break Que[ ]assim[ ]seja
 continue Prossiga
+string  \"([^\"]*)\"
+char  \'([^\'])\'
 
 import Tutorar[ ]
 
@@ -119,6 +121,18 @@ referenciar Lembrança[ ]de[ ]
 /* Pattern Action */ 
 
 %% 
+
+{string} {
+    yylval.sval = strdup(yytext + 1);
+    yylval.sval[strlen(yylval.sval) - 1] = '\0';
+    return LITERAL_STRING;
+}
+
+{char} {
+    yylval.ival = yytext[1]; 
+    return LITERAL_CHAR;     
+}
+
 {ws}		  { } 
 \n             { line_number++; }
 
@@ -197,9 +211,6 @@ referenciar Lembrança[ ]de[ ]
 
 {abrearray} { return OPENARRAY; }
 {fechaarray} { return CLOSEARRAY; }
-
-
-
 
 {variavel} { yylval.sval = strdup(yytext); return ID; }
 
