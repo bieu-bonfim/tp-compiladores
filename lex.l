@@ -5,13 +5,8 @@
 #include "yacc.tab.h"
 
 int line_number = 1;
-
 %} 
-
 /* Name Definition */ 
-
-
-
 delim		 [ \t\r] 
 ws		   {delim}+ 
 

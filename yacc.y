@@ -4,10 +4,10 @@
 #include "structures/SymbolTable.h"
 
 extern int line_number;
+void yyerror(const char *s);
 
 SymbolTable *current_table;
 
-void yyerror(const char *s);
 int yylex(void);
 
 %}
@@ -266,7 +266,7 @@ type: TYPEINT { $$ = TYPE_INT; }
 
 /* Error reporting function */
 void yyerror(const char *s) {
-    fprintf(stderr, "Syntax error at line %d: %s\n", line_number, s);
+    fprintf(stderr, "\033[0;31mErro no fluxo mágico... A linha %d do grimório contém problemas.\033[0m\n", line_number);
 }
 
 int main() {
