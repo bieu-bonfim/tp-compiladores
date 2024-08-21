@@ -35,18 +35,6 @@ Param *create_param(char *name, Type type) {
     return param;
 }
 
-PassedParam *create_passed_param(Type type, void *value) {
-    PassedParam *param = (PassedParam *)malloc(sizeof(PassedParam));
-    param->type = type;
-    param->value = value;
-    param->next = NULL;
-    return param;
-}
-
-void link_passed_params(PassedParam *param, PassedParam *next) {
-    param->next = next;
-}
-
 void link_params(Param *param, Param *next) {
     param->next = next;
 }

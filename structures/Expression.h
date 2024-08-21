@@ -9,16 +9,7 @@
 
 typedef struct Expression {
   Type type;
-  union {
-    int intVal;
-    float floatVal;
-    double doubleVal;
-    char charVal;
-    int boolVal;
-    char *stringVal;
-    short int shortVal;
-    long int longVal;
-  } Val;
+  void *value;
 } Expression;
 
 #endif

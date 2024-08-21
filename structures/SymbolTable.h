@@ -15,16 +15,7 @@
 typedef struct Symbol {
     char *name;
     Type type;
-    union TypeVal {
-        int intVal;
-        float floatVal;
-        double doubleVal;
-        char charVal;
-        int boolVal;
-        short int shortVal;
-        long int longVal;
-        Function *funcVal;
-    } TypeVal;
+    void *value;
     struct Symbol *next;
 } Symbol;
 
@@ -36,9 +27,12 @@ typedef struct SymbolTable {
 
 unsigned int hash(char *name);
 SymbolTable *create_symbol_table(SymbolTable *parent);
-Symbol* insert_symbol(SymbolTable *table, char *name, Type type);
+Symbol* insert_symbol(SymbolTable *table, char *name, Type type, void* value);
 Symbol *lookup_symbol(SymbolTable *table, char *name);
 void print_table(SymbolTable *table);
 void free_symbol_table(SymbolTable *table);
+void* allocate_and_initialize(Type type);
+char* bool_to_string(int value);
+
 
 #endif
