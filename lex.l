@@ -215,6 +215,10 @@ referenciar Lembrança[ ]de[ ]
 {abrearray} { return OPENARRAY; }
 {fechaarray} { return CLOSEARRAY; }
 
+{acessarPonteiro} { return POINT; }
+{acessarValor} { return DOT; }
+
+
 {variavel} { yylval.sval = strdup(yytext); return ID; }
 
 .                 { printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... A seguinte ranhura foi condenada: %s\n", line_number, yytext); }

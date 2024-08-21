@@ -31,6 +31,7 @@ void* perform_short_arithmetic(void *left, void *right, ArOp op);
 Expression* create_expression(Type type, void *value);
 void assign_value_to_symbol(Symbol *symbol, Expression *expr);
 void assign_value_to_expression(Symbol *symbol, Expression *expr);
+void apply_unary_operation(Expression *result, Expression *operand, int operation);
 
 int yylex(void);
 
@@ -47,6 +48,7 @@ int yylex(void);
     float fval;
     char *sval;
     char cval;
+    Symbol *symbol;
     Type type;
     Param *param;
     Expression *result;
@@ -72,7 +74,7 @@ int yylex(void);
 %token COMMA REF DEREF DELIMCASE WHILE FOR IF ELSE SWITCH CASE DEFAULT TYPEDEF STRUCT UNION
 %token PLUSONE MINUSONE OPENBLOCK CLOSEBLOCK OPENARRAY CLOSEARRAY NULLT
 %token IMPORT OPENBRACK CLOSEBRACK BREAK CONTINUE 
-%token ENUM CONJUNCTURE GOTO QUOTE
+%token ENUM CONJUNCTURE GOTO QUOTE POINT DOT
 %token PARAMS CALLFUNC DECLFUNC RETURNT CONST VOLATILE
 %token TYPEINT TYPEFLOAT TYPEBOOL TYPECHAR TYPEVOID TYPESHORT TYPEDOUBLE TYPELONG
 
@@ -83,6 +85,7 @@ int yylex(void);
 %left AROP              
 %left AND                 
 %left OR    
+%left POINT DOT
 
 %type <param> argument
 %type <param> arguments
@@ -94,7 +97,7 @@ int yylex(void);
 %type <result> expr
 %type <result> term
 %type <result> literal
-%type <result> variable
+%type <symbol> variable
 %type <result> bool
 %type <result> function_call
 %type <result> unary_expr
@@ -209,9 +212,9 @@ stmt: decl_stmt
     | stmt_continue
     ;
 
-assignment: ID ASSIGN expr
+assignment: variable ASSIGN expr
            {
-            Symbol *symbol = lookup_symbol(current_table, $1);
+            Symbol *symbol = lookup_symbol(current_table, $1->name);
             if (symbol == NULL) {
                 yyerror("Variable not found...\n");
             } else {
@@ -280,24 +283,32 @@ term: literal { $$ = $1; }
      *(float*)result->value = $1;
      $$ = result; 
     }
-    | variable { $$ = $1; }
+    | variable 
+    { 
+     Expression *result = create_expression($1->type, NULL);
+     assign_value_to_expression($1, result);
+     $$ = result; 
+    }
     | bool { $$ = $1; }
     | function_call { $$ = $1; }
     | unary_expr { $$ = $1; }
     | OPENBRACK expr CLOSEBRACK { $$ = $2; }
     ;
 
-variable: ID accesses
+variable: ID accesses attributes
          {
           Symbol *symbol = lookup_symbol(current_table, $1);
           if (symbol == NULL) {
             yyerror("Variavel nao encontrada...\n");
           }
-          Expression *result = create_expression(symbol->type, NULL);
-          assign_value_to_expression(symbol, result);
-          $$ = result;
+          $$ = symbol;
          }
         ;
+
+attributes: /* empty */
+          | attributes DOT ID accesses
+          | attributes POINT ID accesses
+          ;
 
 bool: TRUE 
      {  
@@ -352,10 +363,30 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
               }
              ;
 
-unary_expr: MINUSONE variable { $$ = $2; }
-          | PLUSONE variable { $$ = $2; }
-          | DEREF variable { $$ = $2; }
-          | REF variable { $$ = $2; }
+unary_expr: MINUSONE variable 
+          { 
+           Expression *result = create_expression($2->type, NULL);
+           assign_value_to_expression($2, result);
+           $$ = result; 
+          }
+          | PLUSONE variable 
+          { 
+           Expression *result = create_expression($2->type, NULL);
+           assign_value_to_expression($2, result);
+           $$ = result; 
+          }
+          | DEREF variable 
+          { 
+           Expression *result = create_expression($2->type, NULL);
+           assign_value_to_expression($2, result);
+           $$ = result; 
+          }
+          | REF variable 
+          { 
+           Expression *result = create_expression($2->type, NULL);
+           assign_value_to_expression($2, result);
+           $$ = result; 
+          }
           ;
 
 arguments: /* empty */ { $$ = NULL; }
@@ -890,3 +921,50 @@ void assign_value_to_expression(Symbol *symbol, Expression *expr) {
     }
 }
 
+void apply_unary_operation(Expression *result, Expression *operand, int operation) {
+    switch (operation) {
+        case MINUSONE:
+            if (operand->type == TYPE_INT) {
+                int value = *(int*)operand->value;
+                value--;
+                result->value = malloc(sizeof(int));
+                *(int*)result->value = value;
+            } else if (operand->type == TYPE_FLOAT) {
+                float value = *(float*)operand->value;
+                value--;
+                result->value = malloc(sizeof(float));
+                *(float*)result->value = value;
+            }
+            // Handle other types...
+            break;
+
+        case PLUSONE:
+            if (operand->type == TYPE_INT) {
+                int value = *(int*)operand->value;
+                value++;
+                result->value = malloc(sizeof(int));
+                *(int*)result->value = value;
+            } else if (operand->type == TYPE_FLOAT) {
+                float value = *(float*)operand->value;
+                value++;
+                result->value = malloc(sizeof(float));
+                *(float*)result->value = value;
+            }
+            // Handle other types...
+            break;
+
+        case DEREF:
+            // Assuming operand->value holds a pointer:
+            result->value = *(void**)operand->value;
+            break;
+
+        case REF:
+            // Assuming operand->value is a regular value:
+            result->value = &operand->value;
+            break;
+
+        default:
+            yyerror("Invalid unary operation.");
+    }
+    result->type = operand->type;
+}
