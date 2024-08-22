@@ -2061,6 +2061,7 @@ void yyerror(const char *s) {
 }
 
 int main() {
+    printf("\n| %d | ", line_number);
     current_table = create_symbol_table(NULL);
     yyparse();
     if (error_found) {

@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include "translate.tab.h"
-
 int line_number = 1;
 
 %}
@@ -121,7 +120,7 @@ referenciar Lembrança[ ]de[ ]
 /* Pattern Action */ 
 
 %% 
-\n             { printf("%s| %d | ", yytext, line_number); line_number++; }
+\n             { printf("%s| %d | ", yytext, line_number+1); line_number++; }
 {string} {
     yylval.sval = strdup(yytext + 1);
     yylval.sval[strlen(yylval.sval) - 1] = '\0';
