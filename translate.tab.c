@@ -649,11 +649,11 @@ static const yytype_int16 yyrline[] =
      211,   212,   213,   216,   228,   234,   240,   247,   256,   257,
      258,   261,   264,   265,   266,   267,   268,   269,   272,   273,
      280,   287,   293,   294,   295,   296,   299,   309,   310,   311,
-     314,   323,   334,   366,   374,   382,   388,   396,   397,   400,
-     405,   412,   413,   416,   421,   429,   430,   431,   432,   433,
-     434,   435,   436,   437,   438,   439,   442,   445,   446,   449,
-     452,   453,   456,   459,   460,   463,   464,   465,   466,   469,
-     472,   475,   478,   479,   482,   485,   492,   499
+     314,   323,   334,   365,   373,   381,   387,   395,   396,   399,
+     404,   411,   412,   415,   420,   428,   429,   430,   431,   432,
+     433,   434,   435,   436,   437,   438,   441,   444,   445,   448,
+     451,   452,   455,   458,   459,   462,   463,   464,   465,   468,
+     471,   474,   477,   478,   481,   484,   491,   498
 };
 #endif
 
@@ -1636,7 +1636,6 @@ yyreduce:
                   if (param_list_length(param) != param_list_length(func->params)) {
                     yyerror("Numero de componentes incorreto...\n");
                   }
-                  print_function(*func);
                   Param *current = func->params;
                   while (current != NULL) {
                     if (current->type != param->type) {
@@ -1651,11 +1650,11 @@ yyreduce:
                 result->value = allocate_and_initialize(result->type);
                 (yyval.result) = result;
               }
-#line 1655 "translate.tab.c"
+#line 1654 "translate.tab.c"
     break;
 
   case 73: /* unary_expr: MINUSONE variable  */
-#line 367 "translate.y"
+#line 366 "translate.y"
           { 
             Expression *result = create_expression((yyvsp[0].symbol)->type, NULL);
             apply_unary_operation(result, (yyvsp[0].symbol), MINUSONEOP);
@@ -1663,11 +1662,11 @@ yyreduce:
             assign_value_to_symbol(symbol, result);
             (yyval.result) = result; 
           }
-#line 1667 "translate.tab.c"
+#line 1666 "translate.tab.c"
     break;
 
   case 74: /* unary_expr: PLUSONE variable  */
-#line 375 "translate.y"
+#line 374 "translate.y"
           { 
             Expression *result = create_expression((yyvsp[0].symbol)->type, NULL);
             apply_unary_operation(result, (yyvsp[0].symbol), PLUSONEOP);
@@ -1675,190 +1674,190 @@ yyreduce:
             assign_value_to_symbol(symbol, result);
             (yyval.result) = result; 
           }
-#line 1679 "translate.tab.c"
+#line 1678 "translate.tab.c"
     break;
 
   case 75: /* unary_expr: DEREF variable  */
-#line 383 "translate.y"
+#line 382 "translate.y"
           { 
             Expression *result = create_expression((yyvsp[0].symbol)->type, NULL);
             apply_unary_operation(result, (yyvsp[0].symbol), DEREFOP);
             (yyval.result) = result; 
           }
-#line 1689 "translate.tab.c"
+#line 1688 "translate.tab.c"
     break;
 
   case 76: /* unary_expr: REF variable  */
-#line 389 "translate.y"
+#line 388 "translate.y"
           { 
             Expression *result = create_expression((yyvsp[0].symbol)->type, NULL);
             apply_unary_operation(result, (yyvsp[0].symbol), REFOP);
             (yyval.result) = result; 
           }
-#line 1699 "translate.tab.c"
+#line 1698 "translate.tab.c"
     break;
 
   case 77: /* arguments: %empty  */
-#line 396 "translate.y"
+#line 395 "translate.y"
                        { (yyval.param) = NULL; }
-#line 1705 "translate.tab.c"
+#line 1704 "translate.tab.c"
     break;
 
   case 78: /* arguments: argument  */
-#line 397 "translate.y"
+#line 396 "translate.y"
                     { (yyval.param) = (yyvsp[0].param); }
-#line 1711 "translate.tab.c"
+#line 1710 "translate.tab.c"
     break;
 
   case 79: /* argument: type ID  */
-#line 401 "translate.y"
+#line 400 "translate.y"
          {
           Param *param = create_param((yyvsp[0].sval), (yyvsp[-1].type));
           (yyval.param) = param;
          }
-#line 1720 "translate.tab.c"
+#line 1719 "translate.tab.c"
     break;
 
   case 80: /* argument: type ID COMMA argument  */
-#line 406 "translate.y"
+#line 405 "translate.y"
          {
           Param *param = create_param((yyvsp[-2].sval), (yyvsp[-3].type));
           link_params(param, (yyvsp[0].param));
           (yyval.param) = param;
          }
-#line 1730 "translate.tab.c"
+#line 1729 "translate.tab.c"
     break;
 
   case 81: /* params: %empty  */
-#line 412 "translate.y"
+#line 411 "translate.y"
                     { (yyval.param) = NULL; }
-#line 1736 "translate.tab.c"
+#line 1735 "translate.tab.c"
     break;
 
   case 82: /* params: param  */
-#line 413 "translate.y"
+#line 412 "translate.y"
               { (yyval.param) = (yyvsp[0].param); }
-#line 1742 "translate.tab.c"
+#line 1741 "translate.tab.c"
     break;
 
   case 83: /* param: expr  */
-#line 417 "translate.y"
+#line 416 "translate.y"
      { 
       Param *param = create_param("", (yyvsp[0].result)->type);
       (yyval.param) = param; 
      }
-#line 1751 "translate.tab.c"
+#line 1750 "translate.tab.c"
     break;
 
   case 84: /* param: expr COMMA param  */
-#line 422 "translate.y"
+#line 421 "translate.y"
      { 
       Param *param = create_param("", (yyvsp[-2].result)->type);
       link_params(param, (yyvsp[0].param));
       (yyval.param) = param; 
      }
-#line 1761 "translate.tab.c"
+#line 1760 "translate.tab.c"
     break;
 
   case 85: /* type: TYPEINT  */
-#line 429 "translate.y"
+#line 428 "translate.y"
               { (yyval.type) = TYPE_INT; }
-#line 1767 "translate.tab.c"
+#line 1766 "translate.tab.c"
     break;
 
   case 86: /* type: TYPEFLOAT  */
-#line 430 "translate.y"
+#line 429 "translate.y"
                 { (yyval.type) = TYPE_FLOAT; }
-#line 1773 "translate.tab.c"
+#line 1772 "translate.tab.c"
     break;
 
   case 87: /* type: TYPEBOOL  */
-#line 431 "translate.y"
+#line 430 "translate.y"
                { (yyval.type) = TYPE_BOOL; }
-#line 1779 "translate.tab.c"
+#line 1778 "translate.tab.c"
     break;
 
   case 88: /* type: TYPECHAR  */
-#line 432 "translate.y"
+#line 431 "translate.y"
                { (yyval.type) = TYPE_CHAR; }
-#line 1785 "translate.tab.c"
+#line 1784 "translate.tab.c"
     break;
 
   case 89: /* type: TYPEVOID  */
-#line 433 "translate.y"
+#line 432 "translate.y"
                { (yyval.type) = TYPE_VOID; }
-#line 1791 "translate.tab.c"
+#line 1790 "translate.tab.c"
     break;
 
   case 90: /* type: TYPEDOUBLE  */
-#line 434 "translate.y"
+#line 433 "translate.y"
                  { (yyval.type) = TYPE_FLOAT; }
-#line 1797 "translate.tab.c"
+#line 1796 "translate.tab.c"
     break;
 
   case 91: /* type: TYPELONG  */
-#line 435 "translate.y"
+#line 434 "translate.y"
                { (yyval.type) = TYPE_INT; }
-#line 1803 "translate.tab.c"
+#line 1802 "translate.tab.c"
     break;
 
   case 92: /* type: TYPESHORT  */
-#line 436 "translate.y"
+#line 435 "translate.y"
                 { (yyval.type) = TYPE_INT; }
-#line 1809 "translate.tab.c"
+#line 1808 "translate.tab.c"
     break;
 
   case 93: /* type: type_enum  */
-#line 437 "translate.y"
+#line 436 "translate.y"
                 { (yyval.type) = TYPE_ENUM; }
-#line 1815 "translate.tab.c"
+#line 1814 "translate.tab.c"
     break;
 
   case 94: /* type: type_struct  */
-#line 438 "translate.y"
+#line 437 "translate.y"
                   { (yyval.type) = TYPE_STRUCT; }
-#line 1821 "translate.tab.c"
+#line 1820 "translate.tab.c"
     break;
 
   case 95: /* type: type_union  */
-#line 439 "translate.y"
+#line 438 "translate.y"
                  { (yyval.type) = TYPE_UNION; }
-#line 1827 "translate.tab.c"
+#line 1826 "translate.tab.c"
     break;
 
   case 115: /* literal: LITERALSTRING  */
-#line 486 "translate.y"
+#line 485 "translate.y"
        { 
         Expression *result = create_expression(TYPE_STRING, NULL);        
         result->value = malloc(sizeof(char) * (strlen((yyvsp[0].sval)) + 1));
         strcpy((char*)result->value, (yyvsp[0].sval));
         (yyval.result) = result;
        }
-#line 1838 "translate.tab.c"
+#line 1837 "translate.tab.c"
     break;
 
   case 116: /* literal: LITERALCHAR  */
-#line 493 "translate.y"
+#line 492 "translate.y"
        { 
         Expression *result = create_expression(TYPE_CHAR, NULL);
         result->value = malloc(sizeof(char));
         *(char*)result->value = (yyvsp[0].cval);
         (yyval.result) = result;
        }
-#line 1849 "translate.tab.c"
+#line 1848 "translate.tab.c"
     break;
 
   case 117: /* literal: NULLT  */
-#line 500 "translate.y"
+#line 499 "translate.y"
        { 
         Expression *result = create_expression(TYPE_VOID, NULL);
         (yyval.result) = result; 
        }
-#line 1858 "translate.tab.c"
+#line 1857 "translate.tab.c"
     break;
 
 
-#line 1862 "translate.tab.c"
+#line 1861 "translate.tab.c"
 
       default: break;
     }
@@ -2051,7 +2050,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 506 "translate.y"
+#line 505 "translate.y"
 
 
 /* Error reporting function */

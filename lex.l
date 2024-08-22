@@ -134,7 +134,7 @@ referenciar Lembrança[ ]de[ ]
 }
 
 {ws}		  { } 
-\n             { line_number++; }
+\n             { printf("%s| %d |", yytext, line_number); line_number++; }
 
 
 

@@ -346,7 +346,6 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
                   if (param_list_length(param) != param_list_length(func->params)) {
                     yyerror("Numero de componentes incorreto...\n");
                   }
-                  print_function(*func);
                   Param *current = func->params;
                   while (current != NULL) {
                     if (current->type != param->type) {
@@ -515,7 +514,6 @@ void yyerror(const char *s) {
 int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
-    printf("Parsing complete\n");
     if (error_found) {
         printf("Código sintaticamente incorreto.\n");
     } else {

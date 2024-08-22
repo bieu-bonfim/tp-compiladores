@@ -39,4 +39,4 @@ run: all
 	./$(TARGET) < $(INPUTFILE)
 
 clean:
-	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT) $(SYM_OBJ)
+	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ)
