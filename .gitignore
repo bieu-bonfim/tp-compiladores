@@ -1,5 +1,7 @@
 .vscode
 yacc.tab.c
+translate.tab.c
+translate.tab.h
 yacc.tab.h
 lex.yy.c
 a.out
