@@ -12,6 +12,7 @@ extern int yyparse();
 extern int invalid_found;
 extern char invalid_chars[];
 extern int line_number;
+int error_found = 0;
 
 void yyerror(const char *s);
 
@@ -257,7 +258,7 @@ type_qualifier: CONST
               | VOLATILE CONST
               ;
 
-sign_func: type ID PARAMS 
+sign_func: type ID PARAMS arguments
          ;
 
 expr: expr AROP term { $$ = evaluate_arithmetic(*$1, *$3, $2); }
@@ -355,7 +356,6 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
                     param = param->next;
                   }
                 }
-                printf("Calling function %s\n", $2);
                 Expression *result = create_expression(func->type, NULL);
                 // TODO: Call function
                 result->value = allocate_and_initialize(result->type);
@@ -509,12 +509,18 @@ literal: LITERALSTRING
 void yyerror(const char *s) {
     fprintf(stderr, "\033[0;31mErro Arcano...\033[0m A linha %d do grimório contém problemas.\n", line_number);
     fprintf(stderr, "%s\n", s);
+    error_found = 1;
 }
 
 int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
     printf("Parsing complete\n");
+    if (error_found) {
+        printf("Código sintaticamente incorreto.\n");
+    } else {
+        printf("Código sintaticamente correto.\n");
+    }
     print_table(current_table);
     return 0; 
 }

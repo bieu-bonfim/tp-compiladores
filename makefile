@@ -1,8 +1,8 @@
 TARGET = teste 
 INPUTFILE = testes/testeIF.txt
-YACC_SRC = yacc.y
+YACC_SRC = translate.y
 LEX_SRC = lex.l
-YACC_OUT = yacc.tab.c
+YACC_OUT = translate.tab.c
 LEX_OUT = lex.yy.c
 SYM_SRC = structures/SymbolTable.c
 SYM_OBJ = SymbolTable.o

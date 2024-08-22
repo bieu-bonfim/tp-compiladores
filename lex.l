@@ -2,7 +2,7 @@
 /* C Code */
 
 #include <stdio.h>
-#include "yacc.tab.h"
+#include "translate.tab.h"
 
 int line_number = 1;
 
