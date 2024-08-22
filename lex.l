@@ -121,7 +121,7 @@ referenciar Lembrança[ ]de[ ]
 /* Pattern Action */ 
 
 %% 
-
+\n             { printf("%s| %d | ", yytext, line_number); line_number++; }
 {string} {
     yylval.sval = strdup(yytext + 1);
     yylval.sval[strlen(yylval.sval) - 1] = '\0';
@@ -133,93 +133,93 @@ referenciar Lembrança[ ]de[ ]
     return LITERALCHAR;     
 }
 
-{ws}		  { } 
-\n             { printf("%s| %d |", yytext, line_number); line_number++; }
+{ws}		  {printf("%s", yytext); } 
 
 
 
-{end_line} { return ENDLINE; }
 
-{digito_positivo} { yylval.ival = atoi(yytext); return INT; }
-{digito_negativo} { yylval.ival = atoi(yytext); return INT; }
-{float_posit} { yylval.fval = atof(yytext); return FLOAT; }
-{float_negat} { yylval.fval = atof(yytext); return FLOAT; }
-{true} { yylval.ival = 1; return TRUE; }
-{false} { yylval.ival = 0; return FALSE; }
-{atribuicao} { return ASSIGN; }
+{end_line} {printf("%s", yytext); return ENDLINE; }
 
-{soma} { yylval.arOp = PLUS; return AROP; }
-{subtracao} { yylval.arOp = MINUS; return AROP; }
-{multiplicacao} { yylval.arOp = MULT; return AROP; }
-{divisao} { yylval.arOp = DIV; return AROP; }
-{mod} { yylval.arOp = MOD; return AROP; }
+{digito_positivo} {printf("%s", yytext); yylval.ival = atoi(yytext); return INT; }
+{digito_negativo} {printf("%s", yytext); yylval.ival = atoi(yytext); return INT; }
+{float_posit} {printf("%s", yytext); yylval.fval = atof(yytext); return FLOAT; }
+{float_negat} {printf("%s", yytext); yylval.fval = atof(yytext); return FLOAT; }
+{true} {printf("%s", yytext); yylval.ival = 1; return TRUE; }
+{false} {printf("%s", yytext); yylval.ival = 0; return FALSE; }
+{atribuicao} {printf("%s", yytext); return ASSIGN; }
 
-{adicionarUm} { return PLUSONE; }
-{subtrairUm} { return MINUSONE; }
-{derreferenciar} { return DEREF; }
-{referenciar} { return REF; }
+{soma} {printf("%s", yytext); yylval.arOp = PLUS; return AROP; }
+{subtracao} {printf("%s", yytext); yylval.arOp = MINUS; return AROP; }
+{multiplicacao} {printf("%s", yytext); yylval.arOp = MULT; return AROP; }
+{divisao} {printf("%s", yytext); yylval.arOp = DIV; return AROP; }
+{mod} {printf("%s", yytext); yylval.arOp = MOD; return AROP; }
 
-{maior} { yylval.relOp = GT; return RELOP; }
-{menor} { yylval.relOp = LT; return RELOP; }
-{maior_igual} { yylval.relOp = GE; return RELOP; }
-{menor_igual} { yylval.relOp = LE; return RELOP; }
-{diferente} { yylval.relOp = NE; return RELOP; }
-{igualdade} { yylval.relOp = EQ; return RELOP; }
+{adicionarUm} {printf("%s", yytext); return PLUSONE; }
+{subtrairUm} {printf("%s", yytext); return MINUSONE; }
+{derreferenciar} {printf("%s", yytext); return DEREF; }
+{referenciar} {printf("%s", yytext); return REF; }
 
-{ou} { return OR; }
-{e} { return AND; }
-{negado} { return NOT; }
+{maior} {printf("%s", yytext); yylval.relOp = GT; return RELOP; }
+{menor} {printf("%s", yytext); yylval.relOp = LT; return RELOP; }
+{maior_igual} {printf("%s", yytext); yylval.relOp = GE; return RELOP; }
+{menor_igual} {printf("%s", yytext); yylval.relOp = LE; return RELOP; }
+{diferente} {printf("%s", yytext); yylval.relOp = NE; return RELOP; }
+{igualdade} {printf("%s", yytext); yylval.relOp = EQ; return RELOP; }
 
-{tipoInt} { return TYPEINT; }
-{tipoLongInt} { return TYPELONG; }
-{tipoShortInt} { return TYPESHORT; }
-{tipoFloat} { return TYPEFLOAT; }
-{tipoDouble} { return TYPEDOUBLE; }
-{tipoBool} { return TYPEBOOL; }
-{tipoChar} { return TYPECHAR; }
-{tipoVoid} { return TYPEVOID; }
+{ou} {printf("%s", yytext); return OR; }
+{e} {printf("%s", yytext); return AND; }
+{negado} {printf("%s", yytext); return NOT; }
 
-{abre_bloco} { return OPENBLOCK; }
-{fecha_bloco} { return CLOSEBLOCK; }
-{abre} { return OPENBRACK; }
-{fecha} { return CLOSEBRACK; }
-{divisor} { return COMMA; }
-{delimitadorChar} { return QUOTE; }
-{delimitadorCase} { return DELIMCASE; }
+{tipoInt} {printf("%s", yytext); return TYPEINT; }
+{tipoLongInt} {printf("%s", yytext); return TYPELONG; }
+{tipoShortInt} {printf("%s", yytext); return TYPESHORT; }
+{tipoFloat} {printf("%s", yytext); return TYPEFLOAT; }
+{tipoDouble} {printf("%s", yytext); return TYPEDOUBLE; }
+{tipoBool} {printf("%s", yytext); return TYPEBOOL; }
+{tipoChar} { printf("%s", yytext);return TYPECHAR; }
+{tipoVoid} {printf("%s", yytext); return TYPEVOID; }
 
-{while} { return WHILE; }
-{for} { return FOR; }
-{if} { return IF; }
-{else} { return ELSE; }
-{switch} { return SWITCH; }
-{case} { return CASE; }
-{default} { return DEFAULT; }
-{goto} { return GOTO;}
-{break} { return BREAK; }
-{continue} { return CONTINUE; }
+{abre_bloco} { printf("%s", yytext);return OPENBLOCK; }
+{fecha_bloco} { printf("%s", yytext);return CLOSEBLOCK; }
+{abre} {printf("%s", yytext); return OPENBRACK; }
+{fecha} {printf("%s", yytext); return CLOSEBRACK; }
+{divisor} {printf("%s", yytext); return COMMA; }
+{delimitadorChar} {printf("%s", yytext); return QUOTE; }
+{delimitadorCase} {printf("%s", yytext); return DELIMCASE; }
 
-{typedef} { return TYPEDEF;}
-{struct} { return STRUCT;}
-{union} { return UNION; }
-{enum} { return ENUM; }
-{conjuncture} {return CONJUNCTURE;}
+{while} {printf("%s", yytext); return WHILE; }
+{for} { printf("%s", yytext);return FOR; }
+{if} {printf("%s", yytext); return IF; }
+{else} {printf("%s", yytext); return ELSE; }
+{switch} {printf("%s", yytext); return SWITCH; }
+{case} {printf("%s", yytext); return CASE; }
+{default} {printf("%s", yytext); return DEFAULT; }
+{goto} {printf("%s", yytext); return GOTO;}
+{break} { printf("%s", yytext);return BREAK; }
+{continue} { printf("%s", yytext);return CONTINUE; }
 
-{parametros} { return PARAMS; }
-{chamarFunc} { return CALLFUNC; }
-{declFunc} { return DECLFUNC; }
-{return} { return RETURNT; }
-{const} { return CONST; }
-{volatile} { return VOLATILE; } 
-{null_literal} { return NULLT; }
+{typedef} { printf("%s", yytext);return TYPEDEF;}
+{struct} {printf("%s", yytext); return STRUCT;}
+{union} {printf("%s", yytext); return UNION; }
+{enum} {printf("%s", yytext); return ENUM; }
+{conjuncture} {printf("%s", yytext);return CONJUNCTURE;}
 
-{abrearray} { return OPENARRAY; }
-{fechaarray} { return CLOSEARRAY; }
+{parametros} { printf("%s", yytext);return PARAMS; }
+{chamarFunc} {printf("%s", yytext); return CALLFUNC; }
+{declFunc} {printf("%s", yytext); return DECLFUNC; }
+{return} {printf("%s", yytext); return RETURNT; }
+{const} {printf("%s", yytext); return CONST; }
+{volatile} {printf("%s", yytext); return VOLATILE; } 
+{null_literal} {printf("%s", yytext); return NULLT; }
 
-{acessarPonteiro} { return POINT; }
-{acessarValor} { return DOT; }
+{abrearray} {printf("%s", yytext); return OPENARRAY; }
+{fechaarray} { printf("%s", yytext);return CLOSEARRAY; }
+
+{acessarPonteiro} { printf("%s", yytext);return POINT; }
+{acessarValor} {printf("%s", yytext); return DOT; }
 
 
-{variavel} { yylval.sval = strdup(yytext); return ID; }
+{variavel} {printf("%s", yytext); yylval.sval = strdup(yytext); return ID; }
 
 .                 { printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... A seguinte ranhura foi condenada: %s\n", line_number, yytext); }
 
@@ -229,6 +229,7 @@ referenciar Lembrança[ ]de[ ]
 /* C Code */
 
 int yywrap() {
+    printf("\n| %d | ", line_number);
     return 1;
 }
 
