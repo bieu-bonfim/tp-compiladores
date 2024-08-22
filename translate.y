@@ -516,9 +516,9 @@ int main() {
     current_table = create_symbol_table(NULL);
     yyparse();
     if (error_found) {
-        printf("Código sintaticamente incorreto.\n");
+        printf("\nCodigo sintaticamente incorreto.\n");
     } else {
-        printf("Código sintaticamente correto.\n");
+        printf("\nCodigo sintaticamente correto.\n");
     }
     print_table(current_table);
     return 0; 
