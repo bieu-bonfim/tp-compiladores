@@ -7,3 +7,7 @@ lex.yy.c
 a.out
 test
 teste
+**.o
+Function.o
+SymbolTable.o
+Type.o
