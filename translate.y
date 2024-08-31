@@ -117,6 +117,7 @@ start_item: decl_stmt
           | decl_func
           | decl_import
           | unary_expr ENDLINE
+          | stmts
           ;
 
 decl_import: IMPORT LITERALSTRING ENDLINE
