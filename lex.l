@@ -165,8 +165,8 @@ referenciar Lembrança[ ]de[ ]
 {diferente} {printf("%s", yytext); yylval.relOp = NE; return RELOP; }
 {igualdade} {printf("%s", yytext); yylval.relOp = EQ; return RELOP; }
 
-{ou} {printf("%s", yytext); return OR; }
-{e} {printf("%s", yytext); return AND; }
+{ou} {printf("%s", yytext); yylval.logOp = OROP; return LOGOP; }
+{e} {printf("%s", yytext); yylval.logOp = ANDOP; return LOGOP; }
 {negado} {printf("%s", yytext); return NOT; }
 
 {tipoInt} {printf("%s", yytext); return TYPEINT; }

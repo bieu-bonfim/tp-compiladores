@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 41 "translate.y"
+#line 27 "translate.y"
 
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
@@ -70,58 +70,59 @@ extern int yydebug;
     TRUE = 263,                    /* TRUE  */
     FALSE = 264,                   /* FALSE  */
     RELOP = 265,                   /* RELOP  */
-    AND = 266,                     /* AND  */
-    OR = 267,                      /* OR  */
-    NOT = 268,                     /* NOT  */
-    AROP = 269,                    /* AROP  */
-    ASSIGN = 270,                  /* ASSIGN  */
-    ENDLINE = 271,                 /* ENDLINE  */
-    COMMA = 272,                   /* COMMA  */
-    REF = 273,                     /* REF  */
-    DEREF = 274,                   /* DEREF  */
-    DELIMCASE = 275,               /* DELIMCASE  */
-    WHILE = 276,                   /* WHILE  */
-    FOR = 277,                     /* FOR  */
-    IF = 278,                      /* IF  */
-    ELSE = 279,                    /* ELSE  */
-    SWITCH = 280,                  /* SWITCH  */
-    CASE = 281,                    /* CASE  */
-    DEFAULT = 282,                 /* DEFAULT  */
-    TYPEDEF = 283,                 /* TYPEDEF  */
-    STRUCT = 284,                  /* STRUCT  */
-    UNION = 285,                   /* UNION  */
-    PLUSONE = 286,                 /* PLUSONE  */
-    MINUSONE = 287,                /* MINUSONE  */
-    OPENBLOCK = 288,               /* OPENBLOCK  */
-    CLOSEBLOCK = 289,              /* CLOSEBLOCK  */
-    OPENARRAY = 290,               /* OPENARRAY  */
-    CLOSEARRAY = 291,              /* CLOSEARRAY  */
-    NULLT = 292,                   /* NULLT  */
-    IMPORT = 293,                  /* IMPORT  */
-    OPENBRACK = 294,               /* OPENBRACK  */
-    CLOSEBRACK = 295,              /* CLOSEBRACK  */
-    BREAK = 296,                   /* BREAK  */
-    CONTINUE = 297,                /* CONTINUE  */
-    ENUM = 298,                    /* ENUM  */
-    CONJUNCTURE = 299,             /* CONJUNCTURE  */
-    GOTO = 300,                    /* GOTO  */
-    QUOTE = 301,                   /* QUOTE  */
-    POINT = 302,                   /* POINT  */
-    DOT = 303,                     /* DOT  */
-    PARAMS = 304,                  /* PARAMS  */
-    CALLFUNC = 305,                /* CALLFUNC  */
-    DECLFUNC = 306,                /* DECLFUNC  */
-    RETURNT = 307,                 /* RETURNT  */
-    CONST = 308,                   /* CONST  */
-    VOLATILE = 309,                /* VOLATILE  */
-    TYPEINT = 310,                 /* TYPEINT  */
-    TYPEFLOAT = 311,               /* TYPEFLOAT  */
-    TYPEBOOL = 312,                /* TYPEBOOL  */
-    TYPECHAR = 313,                /* TYPECHAR  */
-    TYPEVOID = 314,                /* TYPEVOID  */
-    TYPESHORT = 315,               /* TYPESHORT  */
-    TYPEDOUBLE = 316,              /* TYPEDOUBLE  */
-    TYPELONG = 317                 /* TYPELONG  */
+    LOGOP = 266,                   /* LOGOP  */
+    NOT = 267,                     /* NOT  */
+    AROP = 268,                    /* AROP  */
+    ASSIGN = 269,                  /* ASSIGN  */
+    ENDLINE = 270,                 /* ENDLINE  */
+    COMMA = 271,                   /* COMMA  */
+    REF = 272,                     /* REF  */
+    DEREF = 273,                   /* DEREF  */
+    DELIMCASE = 274,               /* DELIMCASE  */
+    WHILE = 275,                   /* WHILE  */
+    FOR = 276,                     /* FOR  */
+    IF = 277,                      /* IF  */
+    ELSE = 278,                    /* ELSE  */
+    SWITCH = 279,                  /* SWITCH  */
+    CASE = 280,                    /* CASE  */
+    DEFAULT = 281,                 /* DEFAULT  */
+    TYPEDEF = 282,                 /* TYPEDEF  */
+    STRUCT = 283,                  /* STRUCT  */
+    UNION = 284,                   /* UNION  */
+    PLUSONE = 285,                 /* PLUSONE  */
+    MINUSONE = 286,                /* MINUSONE  */
+    OPENBLOCK = 287,               /* OPENBLOCK  */
+    CLOSEBLOCK = 288,              /* CLOSEBLOCK  */
+    OPENARRAY = 289,               /* OPENARRAY  */
+    CLOSEARRAY = 290,              /* CLOSEARRAY  */
+    NULLT = 291,                   /* NULLT  */
+    IMPORT = 292,                  /* IMPORT  */
+    OPENBRACK = 293,               /* OPENBRACK  */
+    CLOSEBRACK = 294,              /* CLOSEBRACK  */
+    BREAK = 295,                   /* BREAK  */
+    CONTINUE = 296,                /* CONTINUE  */
+    ENUM = 297,                    /* ENUM  */
+    CONJUNCTURE = 298,             /* CONJUNCTURE  */
+    GOTO = 299,                    /* GOTO  */
+    QUOTE = 300,                   /* QUOTE  */
+    POINT = 301,                   /* POINT  */
+    DOT = 302,                     /* DOT  */
+    PARAMS = 303,                  /* PARAMS  */
+    CALLFUNC = 304,                /* CALLFUNC  */
+    DECLFUNC = 305,                /* DECLFUNC  */
+    RETURNT = 306,                 /* RETURNT  */
+    CONST = 307,                   /* CONST  */
+    VOLATILE = 308,                /* VOLATILE  */
+    TYPEINT = 309,                 /* TYPEINT  */
+    TYPEFLOAT = 310,               /* TYPEFLOAT  */
+    TYPEBOOL = 311,                /* TYPEBOOL  */
+    TYPECHAR = 312,                /* TYPECHAR  */
+    TYPEVOID = 313,                /* TYPEVOID  */
+    TYPESHORT = 314,               /* TYPESHORT  */
+    TYPEDOUBLE = 315,              /* TYPEDOUBLE  */
+    TYPELONG = 316,                /* TYPELONG  */
+    AND = 317,                     /* AND  */
+    OR = 318                       /* OR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -130,7 +131,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 47 "translate.y"
+#line 33 "translate.y"
 
     int ival;
     float fval;
@@ -143,8 +144,10 @@ union YYSTYPE
     ArOp arOp;
     RelOp relOp;
     LogOp logOp;
+    struct ASTNodeList *node_list;
+    struct ASTNode *node;
 
-#line 148 "translate.tab.h"
+#line 151 "translate.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
