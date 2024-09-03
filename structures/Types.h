@@ -16,7 +16,8 @@ typedef enum {
     TYPE_SHORT,
     TYPE_POINTER,
     TYPE_ARRAY,
-    TYPE_STRING
+    TYPE_STRING,
+    TYPE_NULL
 } Type;
 
 char *type_to_string(Type type);

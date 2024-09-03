@@ -35,6 +35,6 @@ void print_table(SymbolTable *table);
 void free_symbol_table(SymbolTable *table);
 void* allocate_and_initialize(Type type);
 char* bool_to_string(int value);
-
+Symbol* create_symbol(char *name, Type type, void* value);
 
 #endif

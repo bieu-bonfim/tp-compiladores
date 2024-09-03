@@ -28,6 +28,21 @@ Transmutar Componentização em Golemita _/
 Componentização Golemita golem...
 Glifos Listagem lista...
 
+Ponderar se x for superior a y _/
+
+\_ Ou optar por Ponderar se x for equivalente a y _/
+
+\_ Ou optar por _/
+
+\_
+
+Dilatar tempo enquanto x for superior a y _/
+
+\_
+
+Fraturar tempo se x for inferior a y, Encantar i _/
+
+\_
 
 Preparar magia de Glifo Additium, Componentes: [Glifo unnus, Glifo annus] 
 _/

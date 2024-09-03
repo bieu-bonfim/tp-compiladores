@@ -31,7 +31,10 @@ typedef enum {
     AST_TYPE_BOOL,
     AST_TYPE_NULL,
     AST_TYPE_STRING,
-    AST_TYPE_VOID
+    AST_TYPE_VOID,
+    AST_TYPE_CASE,
+    AST_TYPE_SWITCH,
+    AST_TYPE_DEFAULT
 } ASTNodeType;
 
 #endif

@@ -21,6 +21,7 @@ SymbolTable *current_table;
 ASTNode *ast;
 
 int yylex(void);
+void semantic_analisys(ASTNode *node, SymbolTable *table);
 
 %}
 
@@ -89,6 +90,8 @@ int yylex(void);
 %type <node_list> start stmts param params
 %type <node> start_item decl_func stmt_block decl_import unnary_expr bool function_call literal stmt decl_var decl_stmt stmt_continue
 %type <node> stmt_break stmt_return stmt_for stmt_while stmt_if stmt_switch stmt_else
+%type <node> case_stmt default_case 
+%type <node_list> case_list
 %type sign_func type_def
 
 %%
@@ -114,9 +117,8 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
             Function *func = create_function($2);
             Param *param = $6;
             add_parameter_list(func, &param);
-            Symbol *new_symbol = insert_symbol(current_table, $3, TYPE_FUNC, (void*)func);
 
-            ASTNode *node = create_func_node(new_symbol, $8);
+            ASTNode *node = create_func_node($3, func, $2, $8);
 
             $$ = node;
            }
@@ -126,19 +128,13 @@ decl_stmt: assignment ENDLINE { $$ = $1; }
          | sign_func ENDLINE { $$ = NULL; }
          | type_def { $$ = NULL; }
          | decl_var ENDLINE { $$ = $1; }
+         | function_call ENDLINE { $$ = $1; }
          ;
 
-stmt_block: OPENBLOCK 
-            { 
-              SymbolTable *new_table = create_symbol_table(current_table); 
-              current_table = new_table; 
-            }
-            stmts 
-            CLOSEBLOCK
-            {
-              SymbolTable *old_table = current_table;
-              current_table = current_table->parent;
-            }
+stmt_block: OPENBLOCK stmts CLOSEBLOCK
+          {
+           $$ = create_block_node($2);
+          }
           ;
 
 stmt_if: IF expr stmt_block stmt_else
@@ -161,30 +157,36 @@ stmt_else: ELSE stmt_block
          }
          ;
 
-stmt_switch: SWITCH expr 
-             OPENBLOCK 
-             {
-               SymbolTable *new_table = create_symbol_table(current_table);
-               current_table = new_table;
-
-             }
-             case_list default_case 
-             CLOSEBLOCK
-             {
-               SymbolTable *old_table = current_table;
-               current_table = current_table->parent;
-             }
+stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
+           {
+            $$ = create_switch_node($2, $4, $5);
+           }
            ;
 
 case_list: /* empty */
+         {
+          $$ = NULL;
+         }
          | case_list case_stmt
+         {
+          $$ = append_to_list($1, $2);
+         }
          ;
 
 case_stmt: CASE expr DELIMCASE stmts stmt_break
-          ;
+         {
+          $$ = create_case_node($2, $4, 0); 
+         }
+         ;
 
 default_case: /* empty */
+            {
+             $$ = NULL;
+            }
             | DEFAULT DELIMCASE stmts stmt_break
+            {
+             $$ = create_case_node(NULL, $3, 1);
+            }
             ;
 
 stmt_return: RETURNT expr ENDLINE
@@ -221,7 +223,7 @@ stmts: /* empty */ { $$ = NULL; }
      | stmts stmt { $$ = append_to_list($1, $2); }
      ;
 
-stmt: decl_stmt
+stmt: decl_stmt { $$ = $1; }
     | stmt_if { $$ = $1; }
     | stmt_switch { $$ = $1; }
     | stmt_while { $$ = $1; }
@@ -232,14 +234,9 @@ stmt: decl_stmt
     ;
 
 assignment: variable ASSIGN expr
-           {
-            Symbol *symbol = $1->data.symbol;
-            if (symbol == NULL) {
-                yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
-            } else {
-                $$ = create_assign_node(symbol, $3);
-            }
-           }
+          {
+           $$ = create_assign_node($1->data.var_name, $3);
+          }
           ;
 
 opt_assignment: /* empty */ 
@@ -254,13 +251,11 @@ opt_assignment: /* empty */
 
 decl_var: type type_qualifier ID opt_assignment
         {
-          Symbol *symbol = insert_symbol(current_table, $3, $1, NULL);
-          $$ = create_var_decl_node(symbol, $4);
+          $$ = create_var_decl_node($3, $4);
         }
         | type ID opt_assignment 
         {
-          Symbol *symbol = insert_symbol(current_table, $2, $1, NULL);
-          $$ = create_var_decl_node(symbol, $3);
+          $$ = create_var_decl_node($2, $3);
         }
         ;
 
@@ -272,10 +267,22 @@ type_qualifier: CONST
 sign_func: type ID PARAMS arguments
          ;
 
-expr: expr AROP term { $$ = create_bin_arop_node($1, $3, $2); }
-    | expr RELOP term { $$ = create_bin_relop_node($1, $3, $2); }
-    | expr LOGOP term { $$ = create_bin_logop_node($1, $3, $2); }
-    | NOT expr { $$ = create_unop_node($2, NOTOP); }
+expr: expr AROP term 
+    { 
+     $$ = create_bin_arop_node($1, $3, $2); 
+    }
+    | expr RELOP term 
+    { 
+     $$ = create_bin_relop_node($1, $3, $2); 
+    }
+    | expr LOGOP term 
+    { 
+     $$ = create_bin_logop_node($1, $3, $2); 
+    }
+    | NOT expr 
+    { 
+     $$ = create_unop_node($2, NOTOP); 
+    }
     | term { $$ = $1; }
     ;
 
@@ -291,12 +298,7 @@ term: literal { $$ = $1; }
 
 variable: ID accesses attributes
          {
-          Symbol *symbol = lookup_symbol(current_table, $1);
-          if (symbol == NULL) {
-            yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
-          }
-          // $$ = create_var_node(symbol, $2, $3);
-          $$ = create_var_ref_node(symbol);
+          $$ = create_var_ref_node($1);
          }
         ;
 
@@ -316,29 +318,9 @@ bool: TRUE
     ;
 
 function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
-              {
-                Symbol *symbol = lookup_symbol(current_table, $2);
-                if (symbol == NULL) {
-                  yyerror("\033[0;32mMagia\033[0m nao encontrada...\n");
-                }
-                if (symbol->type != TYPE_FUNC) {
-                  yyerror("Simbolo nao e uma \033[0;32mmagia\033[0m...\n");
-                }
-                Function *func = (Function *)symbol->value;
-                ASTNodeList *params = $5;
-                // if (func->params != NULL) {
-                //   Param *current = func->params;
-                //   while (current != NULL) {
-                //     if (current->type != param->type) {
-                //       yyerror("Tipo de componente incorreto...\n");
-                //     }
-                //     current = current->next;
-                //     param = param->next;
-                //   }
-                // }
-                
-                $$ = create_func_call_node(symbol, $5);
-              }
+             {
+              $$ = create_func_call_node($2, $5);
+             }
              ;
 
 unnary_expr: MINUSONE variable 
@@ -480,4 +462,8 @@ int main() {
     traverse_ast(ast, 0);
     print_table(current_table);
     return 0; 
+}
+
+void semantic_analisys(ASTNode *node, SymbolTable *table) {
+
 }

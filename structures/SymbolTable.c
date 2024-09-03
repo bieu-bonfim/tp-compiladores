@@ -44,6 +44,22 @@ Symbol* insert_symbol(SymbolTable *table, char *name, Type type, void* value)
   return new_symbol;
 }
 
+Symbol* create_symbol(char *name, Type type, void* value)
+{
+  Symbol *new_symbol = (Symbol *)malloc(sizeof(Symbol));
+  new_symbol->name = strdup(name);
+  new_symbol->type = type;
+
+  if (value == NULL) {
+    new_symbol->value = allocate_and_initialize(type);
+  } else {
+    new_symbol->value = value;
+  }
+
+  new_symbol->next = NULL;
+  return new_symbol;
+}
+
 void* allocate_and_initialize(Type type) {
     void *defaultValue = NULL;
 
