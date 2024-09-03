@@ -78,6 +78,7 @@
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
+#include "structures/Types.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -88,13 +89,14 @@ int error_found = 0;
 void yyerror(const char *s);
 
 SymbolTable *current_table;
+SymbolTable *global_table;
 ASTNode *ast;
 
 int yylex(void);
-void semantic_analisys(ASTNode *node, SymbolTable *table);
+void semantic_analysis(ASTNode *node, SymbolTable *table);
 
 
-#line 98 "translate.tab.c"
+#line 100 "translate.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -628,18 +630,18 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    99,    99,   102,   103,   106,   107,   108,   109,   112,
-     115,   127,   128,   129,   130,   131,   134,   140,   146,   150,
-     155,   160,   167,   170,   176,   183,   186,   192,   198,   204,
-     210,   216,   222,   223,   226,   227,   228,   229,   230,   231,
-     232,   233,   236,   243,   246,   252,   256,   262,   263,   264,
-     267,   270,   274,   278,   282,   286,   289,   290,   291,   292,
-     293,   294,   295,   296,   299,   305,   306,   307,   310,   314,
-     320,   326,   330,   334,   338,   344,   345,   348,   353,   360,
-     361,   364,   368,   374,   375,   376,   377,   378,   379,   380,
-     381,   382,   383,   384,   387,   390,   391,   394,   397,   398,
-     401,   404,   405,   408,   409,   410,   411,   414,   417,   420,
-     423,   424,   427,   430,   434,   438
+       0,   103,   103,   106,   107,   110,   111,   112,   113,   116,
+     119,   131,   132,   133,   134,   135,   138,   144,   150,   154,
+     159,   164,   171,   174,   180,   187,   190,   196,   202,   208,
+     214,   220,   226,   227,   230,   231,   232,   233,   234,   235,
+     236,   237,   240,   247,   250,   256,   260,   266,   267,   268,
+     271,   274,   278,   282,   286,   290,   293,   294,   295,   296,
+     297,   298,   299,   300,   303,   309,   310,   311,   314,   318,
+     324,   330,   334,   338,   342,   348,   349,   352,   357,   364,
+     365,   368,   372,   378,   379,   380,   381,   382,   383,   384,
+     385,   386,   387,   388,   391,   394,   395,   398,   401,   402,
+     405,   408,   409,   412,   413,   414,   415,   418,   421,   424,
+     427,   428,   431,   434,   438,   442
 };
 #endif
 
@@ -1373,55 +1375,55 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* begin: start  */
-#line 99 "translate.y"
+#line 103 "translate.y"
              { ast = create_root_node((yyvsp[0].node_list)); }
-#line 1379 "translate.tab.c"
+#line 1381 "translate.tab.c"
     break;
 
   case 3: /* start: %empty  */
-#line 102 "translate.y"
+#line 106 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1385 "translate.tab.c"
+#line 1387 "translate.tab.c"
     break;
 
   case 4: /* start: start start_item  */
-#line 103 "translate.y"
+#line 107 "translate.y"
                          { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1391 "translate.tab.c"
+#line 1393 "translate.tab.c"
     break;
 
   case 5: /* start_item: decl_func  */
-#line 106 "translate.y"
+#line 110 "translate.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1397 "translate.tab.c"
+#line 1399 "translate.tab.c"
     break;
 
   case 6: /* start_item: decl_import  */
-#line 107 "translate.y"
+#line 111 "translate.y"
                         { (yyval.node) = (yyvsp[0].node); }
-#line 1403 "translate.tab.c"
+#line 1405 "translate.tab.c"
     break;
 
   case 7: /* start_item: stmt  */
-#line 108 "translate.y"
+#line 112 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1409 "translate.tab.c"
+#line 1411 "translate.tab.c"
     break;
 
   case 8: /* start_item: unnary_expr ENDLINE  */
-#line 109 "translate.y"
+#line 113 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1415 "translate.tab.c"
+#line 1417 "translate.tab.c"
     break;
 
   case 9: /* decl_import: IMPORT LITERALSTRING ENDLINE  */
-#line 112 "translate.y"
+#line 116 "translate.y"
                                           { (yyval.node) = create_import_node((yyvsp[-1].sval)); }
-#line 1421 "translate.tab.c"
+#line 1423 "translate.tab.c"
     break;
 
   case 10: /* decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block  */
-#line 116 "translate.y"
+#line 120 "translate.y"
            {
             Function *func = create_function((yyvsp[-6].type));
             Param *param = (yyvsp[-2].param);
@@ -1431,568 +1433,568 @@ yyreduce:
 
             (yyval.node) = node;
            }
-#line 1435 "translate.tab.c"
+#line 1437 "translate.tab.c"
     break;
 
   case 11: /* decl_stmt: assignment ENDLINE  */
-#line 127 "translate.y"
+#line 131 "translate.y"
                               { (yyval.node) = (yyvsp[-1].node); }
-#line 1441 "translate.tab.c"
+#line 1443 "translate.tab.c"
     break;
 
   case 12: /* decl_stmt: sign_func ENDLINE  */
-#line 128 "translate.y"
+#line 132 "translate.y"
                              { (yyval.node) = NULL; }
-#line 1447 "translate.tab.c"
+#line 1449 "translate.tab.c"
     break;
 
   case 13: /* decl_stmt: type_def  */
-#line 129 "translate.y"
+#line 133 "translate.y"
                     { (yyval.node) = NULL; }
-#line 1453 "translate.tab.c"
+#line 1455 "translate.tab.c"
     break;
 
   case 14: /* decl_stmt: decl_var ENDLINE  */
-#line 130 "translate.y"
+#line 134 "translate.y"
                             { (yyval.node) = (yyvsp[-1].node); }
-#line 1459 "translate.tab.c"
+#line 1461 "translate.tab.c"
     break;
 
   case 15: /* decl_stmt: function_call ENDLINE  */
-#line 131 "translate.y"
+#line 135 "translate.y"
                                  { (yyval.node) = (yyvsp[-1].node); }
-#line 1465 "translate.tab.c"
+#line 1467 "translate.tab.c"
     break;
 
   case 16: /* stmt_block: OPENBLOCK stmts CLOSEBLOCK  */
-#line 135 "translate.y"
+#line 139 "translate.y"
           {
            (yyval.node) = create_block_node((yyvsp[-1].node_list));
           }
-#line 1473 "translate.tab.c"
+#line 1475 "translate.tab.c"
     break;
 
   case 17: /* stmt_if: IF expr stmt_block stmt_else  */
-#line 141 "translate.y"
+#line 145 "translate.y"
        {
         (yyval.node) = create_if_node((yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));
        }
-#line 1481 "translate.tab.c"
+#line 1483 "translate.tab.c"
     break;
 
   case 18: /* stmt_else: ELSE stmt_block  */
-#line 147 "translate.y"
-         {
-          (yyval.node) = (yyvsp[0].node);
-         }
-#line 1489 "translate.tab.c"
-    break;
-
-  case 19: /* stmt_else: ELSE stmt_if  */
 #line 151 "translate.y"
          {
           (yyval.node) = (yyvsp[0].node);
          }
-#line 1497 "translate.tab.c"
+#line 1491 "translate.tab.c"
+    break;
+
+  case 19: /* stmt_else: ELSE stmt_if  */
+#line 155 "translate.y"
+         {
+          (yyval.node) = (yyvsp[0].node);
+         }
+#line 1499 "translate.tab.c"
     break;
 
   case 20: /* stmt_else: %empty  */
-#line 155 "translate.y"
+#line 159 "translate.y"
          {
           (yyval.node) = NULL;
          }
-#line 1505 "translate.tab.c"
+#line 1507 "translate.tab.c"
     break;
 
   case 21: /* stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK  */
-#line 161 "translate.y"
+#line 165 "translate.y"
            {
             (yyval.node) = create_switch_node((yyvsp[-4].node), (yyvsp[-2].node_list), (yyvsp[-1].node));
            }
-#line 1513 "translate.tab.c"
+#line 1515 "translate.tab.c"
     break;
 
   case 22: /* case_list: %empty  */
-#line 167 "translate.y"
+#line 171 "translate.y"
          {
           (yyval.node_list) = NULL;
          }
-#line 1521 "translate.tab.c"
+#line 1523 "translate.tab.c"
     break;
 
   case 23: /* case_list: case_list case_stmt  */
-#line 171 "translate.y"
+#line 175 "translate.y"
          {
           (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node));
          }
-#line 1529 "translate.tab.c"
+#line 1531 "translate.tab.c"
     break;
 
   case 24: /* case_stmt: CASE expr DELIMCASE stmts stmt_break  */
-#line 177 "translate.y"
+#line 181 "translate.y"
          {
           (yyval.node) = create_case_node((yyvsp[-3].node), (yyvsp[-1].node_list), 0); 
          }
-#line 1537 "translate.tab.c"
+#line 1539 "translate.tab.c"
     break;
 
   case 25: /* default_case: %empty  */
-#line 183 "translate.y"
+#line 187 "translate.y"
             {
              (yyval.node) = NULL;
             }
-#line 1545 "translate.tab.c"
+#line 1547 "translate.tab.c"
     break;
 
   case 26: /* default_case: DEFAULT DELIMCASE stmts stmt_break  */
-#line 187 "translate.y"
+#line 191 "translate.y"
             {
              (yyval.node) = create_case_node(NULL, (yyvsp[-1].node_list), 1);
             }
-#line 1553 "translate.tab.c"
+#line 1555 "translate.tab.c"
     break;
 
   case 27: /* stmt_return: RETURNT expr ENDLINE  */
-#line 193 "translate.y"
+#line 197 "translate.y"
            {
             (yyval.node) = create_return_node((yyvsp[-1].node));
            }
-#line 1561 "translate.tab.c"
+#line 1563 "translate.tab.c"
     break;
 
   case 28: /* stmt_for: FOR expr COMMA unnary_expr stmt_block  */
-#line 199 "translate.y"
+#line 203 "translate.y"
          {
           (yyval.node) = create_for_node((yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node));
          }
-#line 1569 "translate.tab.c"
+#line 1571 "translate.tab.c"
     break;
 
   case 29: /* stmt_while: WHILE expr stmt_block  */
-#line 205 "translate.y"
+#line 209 "translate.y"
           {
             (yyval.node) = create_while_node((yyvsp[-1].node), (yyvsp[0].node));
           }
-#line 1577 "translate.tab.c"
+#line 1579 "translate.tab.c"
     break;
 
   case 30: /* stmt_break: BREAK ENDLINE  */
-#line 211 "translate.y"
+#line 215 "translate.y"
           {
             (yyval.node) = create_break_node();
           }
-#line 1585 "translate.tab.c"
+#line 1587 "translate.tab.c"
     break;
 
   case 31: /* stmt_continue: CONTINUE ENDLINE  */
-#line 217 "translate.y"
+#line 221 "translate.y"
              {
               (yyval.node) = create_continue_node();
              }
-#line 1593 "translate.tab.c"
+#line 1595 "translate.tab.c"
     break;
 
   case 32: /* stmts: %empty  */
-#line 222 "translate.y"
+#line 226 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1599 "translate.tab.c"
+#line 1601 "translate.tab.c"
     break;
 
   case 33: /* stmts: stmts stmt  */
-#line 223 "translate.y"
+#line 227 "translate.y"
                   { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1605 "translate.tab.c"
+#line 1607 "translate.tab.c"
     break;
 
   case 34: /* stmt: decl_stmt  */
-#line 226 "translate.y"
+#line 230 "translate.y"
                 { (yyval.node) = (yyvsp[0].node); }
-#line 1611 "translate.tab.c"
+#line 1613 "translate.tab.c"
     break;
 
   case 35: /* stmt: stmt_if  */
-#line 227 "translate.y"
+#line 231 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1617 "translate.tab.c"
+#line 1619 "translate.tab.c"
     break;
 
   case 36: /* stmt: stmt_switch  */
-#line 228 "translate.y"
+#line 232 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1623 "translate.tab.c"
+#line 1625 "translate.tab.c"
     break;
 
   case 37: /* stmt: stmt_while  */
-#line 229 "translate.y"
+#line 233 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1629 "translate.tab.c"
+#line 1631 "translate.tab.c"
     break;
 
   case 38: /* stmt: stmt_for  */
-#line 230 "translate.y"
+#line 234 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1635 "translate.tab.c"
+#line 1637 "translate.tab.c"
     break;
 
   case 39: /* stmt: stmt_return  */
-#line 231 "translate.y"
+#line 235 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1641 "translate.tab.c"
+#line 1643 "translate.tab.c"
     break;
 
   case 40: /* stmt: stmt_break  */
-#line 232 "translate.y"
+#line 236 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1647 "translate.tab.c"
+#line 1649 "translate.tab.c"
     break;
 
   case 41: /* stmt: stmt_continue  */
-#line 233 "translate.y"
+#line 237 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1653 "translate.tab.c"
+#line 1655 "translate.tab.c"
     break;
 
   case 42: /* assignment: variable ASSIGN expr  */
-#line 237 "translate.y"
+#line 241 "translate.y"
           {
            (yyval.node) = create_assign_node((yyvsp[-2].node)->data.var_name, (yyvsp[0].node));
           }
-#line 1661 "translate.tab.c"
+#line 1663 "translate.tab.c"
     break;
 
   case 43: /* opt_assignment: %empty  */
-#line 243 "translate.y"
+#line 247 "translate.y"
               { 
                (yyval.node) = NULL; 
               }
-#line 1669 "translate.tab.c"
+#line 1671 "translate.tab.c"
     break;
 
   case 44: /* opt_assignment: ASSIGN expr  */
-#line 247 "translate.y"
+#line 251 "translate.y"
               { 
                (yyval.node) = (yyvsp[0].node); 
               }
-#line 1677 "translate.tab.c"
+#line 1679 "translate.tab.c"
     break;
 
   case 45: /* decl_var: type type_qualifier ID opt_assignment  */
-#line 253 "translate.y"
+#line 257 "translate.y"
         {
-          (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[0].node));
+          (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[-3].type), (yyvsp[0].node));
         }
-#line 1685 "translate.tab.c"
+#line 1687 "translate.tab.c"
     break;
 
   case 46: /* decl_var: type ID opt_assignment  */
-#line 257 "translate.y"
+#line 261 "translate.y"
         {
-          (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[0].node));
+          (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[-2].type), (yyvsp[0].node));
         }
-#line 1693 "translate.tab.c"
+#line 1695 "translate.tab.c"
     break;
 
   case 51: /* expr: expr AROP term  */
-#line 271 "translate.y"
+#line 275 "translate.y"
     { 
      (yyval.node) = create_bin_arop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].arOp)); 
     }
-#line 1701 "translate.tab.c"
+#line 1703 "translate.tab.c"
     break;
 
   case 52: /* expr: expr RELOP term  */
-#line 275 "translate.y"
+#line 279 "translate.y"
     { 
      (yyval.node) = create_bin_relop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].relOp)); 
     }
-#line 1709 "translate.tab.c"
+#line 1711 "translate.tab.c"
     break;
 
   case 53: /* expr: expr LOGOP term  */
-#line 279 "translate.y"
+#line 283 "translate.y"
     { 
      (yyval.node) = create_bin_logop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].logOp)); 
     }
-#line 1717 "translate.tab.c"
+#line 1719 "translate.tab.c"
     break;
 
   case 54: /* expr: NOT expr  */
-#line 283 "translate.y"
+#line 287 "translate.y"
     { 
      (yyval.node) = create_unop_node((yyvsp[0].node), NOTOP); 
     }
-#line 1725 "translate.tab.c"
+#line 1727 "translate.tab.c"
     break;
 
   case 55: /* expr: term  */
-#line 286 "translate.y"
+#line 290 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1731 "translate.tab.c"
+#line 1733 "translate.tab.c"
     break;
 
   case 56: /* term: literal  */
-#line 289 "translate.y"
+#line 293 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1737 "translate.tab.c"
+#line 1739 "translate.tab.c"
     break;
 
   case 57: /* term: INT  */
-#line 290 "translate.y"
+#line 294 "translate.y"
           { (yyval.node) = create_int_node((yyvsp[0].ival)); }
-#line 1743 "translate.tab.c"
+#line 1745 "translate.tab.c"
     break;
 
   case 58: /* term: FLOAT  */
-#line 291 "translate.y"
+#line 295 "translate.y"
             { (yyval.node) = create_float_node((yyvsp[0].fval)); }
-#line 1749 "translate.tab.c"
+#line 1751 "translate.tab.c"
     break;
 
   case 59: /* term: variable  */
-#line 292 "translate.y"
+#line 296 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1755 "translate.tab.c"
+#line 1757 "translate.tab.c"
     break;
 
   case 60: /* term: bool  */
-#line 293 "translate.y"
+#line 297 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1761 "translate.tab.c"
+#line 1763 "translate.tab.c"
     break;
 
   case 61: /* term: function_call  */
-#line 294 "translate.y"
+#line 298 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1767 "translate.tab.c"
+#line 1769 "translate.tab.c"
     break;
 
   case 62: /* term: unnary_expr  */
-#line 295 "translate.y"
+#line 299 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1773 "translate.tab.c"
+#line 1775 "translate.tab.c"
     break;
 
   case 63: /* term: OPENBRACK expr CLOSEBRACK  */
-#line 296 "translate.y"
+#line 300 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1779 "translate.tab.c"
+#line 1781 "translate.tab.c"
     break;
 
   case 64: /* variable: ID accesses attributes  */
-#line 300 "translate.y"
+#line 304 "translate.y"
          {
           (yyval.node) = create_var_ref_node((yyvsp[-2].sval));
          }
-#line 1787 "translate.tab.c"
+#line 1789 "translate.tab.c"
     break;
 
   case 68: /* bool: TRUE  */
-#line 311 "translate.y"
+#line 315 "translate.y"
      {  
       (yyval.node) = create_bool_node(1);
      }
-#line 1795 "translate.tab.c"
+#line 1797 "translate.tab.c"
     break;
 
   case 69: /* bool: FALSE  */
-#line 315 "translate.y"
+#line 319 "translate.y"
      {
       (yyval.node) = create_bool_node(0);
      }
-#line 1803 "translate.tab.c"
+#line 1805 "translate.tab.c"
     break;
 
   case 70: /* function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK  */
-#line 321 "translate.y"
+#line 325 "translate.y"
              {
               (yyval.node) = create_func_call_node((yyvsp[-4].sval), (yyvsp[-1].node_list));
              }
-#line 1811 "translate.tab.c"
+#line 1813 "translate.tab.c"
     break;
 
   case 71: /* unnary_expr: MINUSONE variable  */
-#line 327 "translate.y"
+#line 331 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), MINUSONEOP);
           }
-#line 1819 "translate.tab.c"
+#line 1821 "translate.tab.c"
     break;
 
   case 72: /* unnary_expr: PLUSONE variable  */
-#line 331 "translate.y"
+#line 335 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), PLUSONEOP);
           }
-#line 1827 "translate.tab.c"
+#line 1829 "translate.tab.c"
     break;
 
   case 73: /* unnary_expr: DEREF variable  */
-#line 335 "translate.y"
+#line 339 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), DEREFOP);
           }
-#line 1835 "translate.tab.c"
+#line 1837 "translate.tab.c"
     break;
 
   case 74: /* unnary_expr: REF variable  */
-#line 339 "translate.y"
+#line 343 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), REFOP);
           }
-#line 1843 "translate.tab.c"
+#line 1845 "translate.tab.c"
     break;
 
   case 75: /* arguments: %empty  */
-#line 344 "translate.y"
+#line 348 "translate.y"
                        { (yyval.param) = NULL; }
-#line 1849 "translate.tab.c"
+#line 1851 "translate.tab.c"
     break;
 
   case 76: /* arguments: argument  */
-#line 345 "translate.y"
+#line 349 "translate.y"
                     { (yyval.param) = (yyvsp[0].param); }
-#line 1855 "translate.tab.c"
+#line 1857 "translate.tab.c"
     break;
 
   case 77: /* argument: type ID  */
-#line 349 "translate.y"
+#line 353 "translate.y"
          {
           Param *param = create_param((yyvsp[0].sval), (yyvsp[-1].type));
           (yyval.param) = param;
          }
-#line 1864 "translate.tab.c"
+#line 1866 "translate.tab.c"
     break;
 
   case 78: /* argument: type ID COMMA argument  */
-#line 354 "translate.y"
+#line 358 "translate.y"
          {
           Param *param = create_param((yyvsp[-2].sval), (yyvsp[-3].type));
           link_params(param, (yyvsp[0].param));
           (yyval.param) = param;
          }
-#line 1874 "translate.tab.c"
+#line 1876 "translate.tab.c"
     break;
 
   case 79: /* params: %empty  */
-#line 360 "translate.y"
+#line 364 "translate.y"
                     { (yyval.node_list) = NULL; }
-#line 1880 "translate.tab.c"
+#line 1882 "translate.tab.c"
     break;
 
   case 80: /* params: param  */
-#line 361 "translate.y"
+#line 365 "translate.y"
               { (yyval.node_list) = (yyvsp[0].node_list); }
-#line 1886 "translate.tab.c"
+#line 1888 "translate.tab.c"
     break;
 
   case 81: /* param: expr  */
-#line 365 "translate.y"
+#line 369 "translate.y"
      { 
       (yyval.node_list) = append_to_list(NULL, (yyvsp[0].node)); 
      }
-#line 1894 "translate.tab.c"
+#line 1896 "translate.tab.c"
     break;
 
   case 82: /* param: expr COMMA param  */
-#line 369 "translate.y"
+#line 373 "translate.y"
      { 
       (yyval.node_list) = append_to_list((yyvsp[0].node_list), (yyvsp[-2].node)); 
      }
-#line 1902 "translate.tab.c"
+#line 1904 "translate.tab.c"
     break;
 
   case 83: /* type: TYPEINT  */
-#line 374 "translate.y"
+#line 378 "translate.y"
               { (yyval.type) = TYPE_INT; }
-#line 1908 "translate.tab.c"
+#line 1910 "translate.tab.c"
     break;
 
   case 84: /* type: TYPEFLOAT  */
-#line 375 "translate.y"
+#line 379 "translate.y"
                 { (yyval.type) = TYPE_FLOAT; }
-#line 1914 "translate.tab.c"
+#line 1916 "translate.tab.c"
     break;
 
   case 85: /* type: TYPEBOOL  */
-#line 376 "translate.y"
+#line 380 "translate.y"
                { (yyval.type) = TYPE_BOOL; }
-#line 1920 "translate.tab.c"
+#line 1922 "translate.tab.c"
     break;
 
   case 86: /* type: TYPECHAR  */
-#line 377 "translate.y"
+#line 381 "translate.y"
                { (yyval.type) = TYPE_CHAR; }
-#line 1926 "translate.tab.c"
+#line 1928 "translate.tab.c"
     break;
 
   case 87: /* type: TYPEVOID  */
-#line 378 "translate.y"
+#line 382 "translate.y"
                { (yyval.type) = TYPE_VOID; }
-#line 1932 "translate.tab.c"
+#line 1934 "translate.tab.c"
     break;
 
   case 88: /* type: TYPEDOUBLE  */
-#line 379 "translate.y"
+#line 383 "translate.y"
                  { (yyval.type) = TYPE_FLOAT; }
-#line 1938 "translate.tab.c"
+#line 1940 "translate.tab.c"
     break;
 
   case 89: /* type: TYPELONG  */
-#line 380 "translate.y"
+#line 384 "translate.y"
                { (yyval.type) = TYPE_INT; }
-#line 1944 "translate.tab.c"
+#line 1946 "translate.tab.c"
     break;
 
   case 90: /* type: TYPESHORT  */
-#line 381 "translate.y"
+#line 385 "translate.y"
                 { (yyval.type) = TYPE_INT; }
-#line 1950 "translate.tab.c"
+#line 1952 "translate.tab.c"
     break;
 
   case 91: /* type: type_enum  */
-#line 382 "translate.y"
+#line 386 "translate.y"
                 { (yyval.type) = TYPE_ENUM; }
-#line 1956 "translate.tab.c"
+#line 1958 "translate.tab.c"
     break;
 
   case 92: /* type: type_struct  */
-#line 383 "translate.y"
+#line 387 "translate.y"
                   { (yyval.type) = TYPE_STRUCT; }
-#line 1962 "translate.tab.c"
+#line 1964 "translate.tab.c"
     break;
 
   case 93: /* type: type_union  */
-#line 384 "translate.y"
+#line 388 "translate.y"
                  { (yyval.type) = TYPE_UNION; }
-#line 1968 "translate.tab.c"
+#line 1970 "translate.tab.c"
     break;
 
   case 113: /* literal: LITERALSTRING  */
-#line 431 "translate.y"
+#line 435 "translate.y"
        { 
         (yyval.node) = create_string_node((yyvsp[0].sval));
        }
-#line 1976 "translate.tab.c"
+#line 1978 "translate.tab.c"
     break;
 
   case 114: /* literal: LITERALCHAR  */
-#line 435 "translate.y"
+#line 439 "translate.y"
        { 
         (yyval.node) = create_char_node((yyvsp[0].cval));
        }
-#line 1984 "translate.tab.c"
+#line 1986 "translate.tab.c"
     break;
 
   case 115: /* literal: NULLT  */
-#line 439 "translate.y"
+#line 443 "translate.y"
        { 
         (yyval.node) = create_null_node(); 
        }
-#line 1992 "translate.tab.c"
+#line 1994 "translate.tab.c"
     break;
 
 
-#line 1996 "translate.tab.c"
+#line 1998 "translate.tab.c"
 
       default: break;
     }
@@ -2185,7 +2187,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 444 "translate.y"
+#line 448 "translate.y"
 
 
 /* Error reporting function */
@@ -2197,18 +2199,172 @@ void yyerror(const char *s) {
 
 int main() {
     printf("\n| %d | ", line_number);
-    current_table = create_symbol_table(NULL);
+    global_table = create_symbol_table(NULL);
+    current_table = global_table;
     yyparse();
     if (error_found) {
         printf("\nCodigo sintaticamente incorreto.\n");
     } else {
         printf("\nCodigo sintaticamente correto.\n");
     }
-    traverse_ast(ast, 0);
+    printf("\n");
+    semantic_analysis(ast, current_table);
+    // traverse_ast(ast, 0);
     print_table(current_table);
     return 0; 
 }
 
-void semantic_analisys(ASTNode *node, SymbolTable *table) {
+void semantic_analysis(ASTNode *node, SymbolTable *table) {
+ 
+ if (node == NULL) return;
 
+  switch (node->type) {
+    case AST_TYPE_VAR_DECL:
+      if (lookup_symbol(current_table, node->data.var_decl.var_name)) {
+        printf("Semantic Error: Variable '%s' already declared in this scope.\n", node->data.var_decl.var_name);
+      }
+
+      insert_symbol(current_table, node->data.var_decl.var_name, node->data.var_decl.var_type, NULL);
+
+      if (node->data.var_decl.expr != NULL) {
+        semantic_analysis(node->data.var_decl.expr, current_table);
+
+        if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
+          printf("Semantic Error: Type mismatch in variable '%s' initialization.\n", node->data.var_decl.var_name);
+        }
+      }
+      break;
+    case AST_TYPE_FUNC:
+      if (lookup_symbol(current_table, node->data.func.func_name)) {
+        printf("Semantic Error: Function '%s' already declared in this scope.\n", node->data.func.func_name);
+      }
+      insert_symbol(current_table, node->data.func.func_name, TYPE_FUNC, (void*)node->data.func.func);
+      break;
+    case AST_TYPE_FUNC_CALL:
+      Symbol *func = lookup_symbol(current_table, node->data.func_call.func_name);
+      if (func == NULL) {
+        printf("Semantic Error: Function '%s' not declared in this scope.\n", node->data.func_call.func_name);
+      } else if (func->type != TYPE_FUNC) {
+        printf("Semantic Error: '%s' is not a function.\n", node->data.func_call.func_name);
+      } else {
+        Function *function = (Function*)func->value;
+        Param *param = function->params;
+        ASTNodeList *arg = node->data.func_call.args;
+        while (param != NULL && arg != NULL) {
+          semantic_analysis(arg->node, current_table);
+          if (param->type != arg->node->data_type) {
+            printf("Semantic Error: Type mismatch in function call.\n");
+          }
+          param = param->next;
+          arg = arg->next;
+        }
+        if (param != NULL || arg != NULL) {
+          printf("Semantic Error: Number of arguments mismatch in function call.\n");
+        }
+      }
+      break;
+    case AST_TYPE_BIN_AROP:
+      semantic_analysis(node->data.bin_arop.left, current_table);
+      semantic_analysis(node->data.bin_arop.right, current_table);
+      if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary arithmetic operation.\n");
+      }
+      node->data_type = node->data.bin_arop.left->data_type;
+      break;
+    case AST_TYPE_BIN_RELOP:
+      semantic_analysis(node->data.bin_relop.left, current_table);
+      semantic_analysis(node->data.bin_relop.right, current_table);
+      if (node->data.bin_relop.left->data_type != node->data.bin_relop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary relational operation.\n");
+      }
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_BIN_LOGOP:
+      semantic_analysis(node->data.bin_logop.left, current_table);
+      semantic_analysis(node->data.bin_logop.right, current_table);
+      if (node->data.bin_logop.left->data_type != node->data.bin_logop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary logical operation.\n");
+      }
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_UNOP_NOT:
+      semantic_analysis(node->data.unnop.expr, current_table);
+      if (node->data.unnop.expr->data_type != TYPE_BOOL) {
+        printf("Semantic Error: Type mismatch in unary logical operation.\n");
+      }
+      break;
+    case AST_TYPE_VAR:
+      Symbol *var = lookup_symbol(current_table, node->data.var_name);
+      if (var == NULL) {
+        printf("Semantic Error: Variable '%s' not declared in this scope.\n", node->data.var_name);
+      } else {
+        node->data_type = var->type;
+      }
+      break;
+    case AST_TYPE_INT:
+      node->data_type = TYPE_INT;
+      break;
+    case AST_TYPE_FLOAT:
+      node->data_type = TYPE_FLOAT;
+      break;
+    case AST_TYPE_BOOL:
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_CHAR:
+      node->data_type = TYPE_CHAR;
+      break;
+    case AST_TYPE_STRING:
+      node->data_type = TYPE_STRING;
+      break;
+    case AST_TYPE_NULL:
+      node->data_type = TYPE_NULL;
+      break;
+    case AST_TYPE_BLOCK:
+        printf("stmt\n");
+      current_table = create_symbol_table(current_table);
+      ASTNodeList *stmt = node->children;
+      while (stmt != NULL) {
+        semantic_analysis(stmt->node, current_table);
+        stmt = stmt->next;
+      }
+      current_table = current_table->parent;
+      break;
+    case AST_TYPE_IF:
+      semantic_analysis(node->data.if_node.condition, current_table);
+      if (node->data.if_node.condition->data_type != TYPE_BOOL) {
+        printf("Semantic Error: Type mismatch in if condition.\n");
+      }
+      semantic_analysis(node->data.if_node.body_branch, current_table);
+      if (node->data.if_node.else_branch != NULL) {
+        semantic_analysis(node->data.if_node.else_branch, current_table);
+      }
+      break;
+    case AST_TYPE_SWITCH:
+      semantic_analysis(node->data.switch_node.condition, current_table);
+      ASTNodeList *case_stmt = node->data.switch_node.cases;
+      while (case_stmt != NULL) {
+        semantic_analysis(case_stmt->node, current_table);
+        case_stmt = case_stmt->next;
+      }
+      break;
+    case AST_TYPE_CASE:
+      if (node->data.case_node.case_expr != NULL) {
+        semantic_analysis(node->data.case_node.case_expr, current_table);
+      }
+      current_table = create_symbol_table(current_table);
+      ASTNodeList *stmts = node->data.case_node.stmts;
+      while (stmts != NULL) {
+        semantic_analysis(stmts->node, current_table);
+        stmts = stmts->next;
+      }
+      break;
+    default:
+      break;
+  }
+
+  ASTNodeList *child = node->children;
+  while (child != NULL) {
+      semantic_analysis(child->node, current_table);
+      child = child->next;
+  }
 }

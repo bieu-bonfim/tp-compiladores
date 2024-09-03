@@ -8,6 +8,7 @@
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
+#include "structures/Types.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -18,17 +19,20 @@ int error_found = 0;
 void yyerror(const char *s);
 
 SymbolTable *current_table;
+SymbolTable *global_table;
 ASTNode *ast;
 
 int yylex(void);
-void semantic_analisys(ASTNode *node, SymbolTable *table);
+void semantic_analysis(ASTNode *node, SymbolTable *table);
 
 %}
 
 %code requires {
+#include "structures/AST/AST.h"
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
+#include "structures/Types.h"
 }
 
 %union {
@@ -251,11 +255,11 @@ opt_assignment: /* empty */
 
 decl_var: type type_qualifier ID opt_assignment
         {
-          $$ = create_var_decl_node($3, $4);
+          $$ = create_var_decl_node($3, $1, $4);
         }
         | type ID opt_assignment 
         {
-          $$ = create_var_decl_node($2, $3);
+          $$ = create_var_decl_node($2, $1, $3);
         }
         ;
 
@@ -452,18 +456,173 @@ void yyerror(const char *s) {
 
 int main() {
     printf("\n| %d | ", line_number);
-    current_table = create_symbol_table(NULL);
+    global_table = create_symbol_table(NULL);
+    current_table = global_table;
     yyparse();
     if (error_found) {
         printf("\nCodigo sintaticamente incorreto.\n");
     } else {
         printf("\nCodigo sintaticamente correto.\n");
     }
-    traverse_ast(ast, 0);
+    printf("\n");
+    semantic_analysis(ast, current_table);
+    // traverse_ast(ast, 0);
     print_table(current_table);
     return 0; 
 }
 
-void semantic_analisys(ASTNode *node, SymbolTable *table) {
+void semantic_analysis(ASTNode *node, SymbolTable *table) {
+ 
+ if (node == NULL) return;
 
+  switch (node->type) {
+    case AST_TYPE_VAR_DECL:
+      if (lookup_symbol(current_table, node->data.var_decl.var_name)) {
+        printf("Semantic Error: Variable '%s' already declared in this scope.\n", node->data.var_decl.var_name);
+      }
+
+      insert_symbol(current_table, node->data.var_decl.var_name, node->data.var_decl.var_type, NULL);
+
+      if (node->data.var_decl.expr != NULL) {
+        semantic_analysis(node->data.var_decl.expr, current_table);
+
+        if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
+          printf("Semantic Error: Type mismatch in variable '%s' initialization.\n", node->data.var_decl.var_name);
+        }
+      }
+      break;
+    case AST_TYPE_FUNC:
+      if (lookup_symbol(current_table, node->data.func.func_name)) {
+        printf("Semantic Error: Function '%s' already declared in this scope.\n", node->data.func.func_name);
+      }
+      insert_symbol(current_table, node->data.func.func_name, TYPE_FUNC, (void*)node->data.func.func);
+      break;
+    case AST_TYPE_FUNC_CALL:
+      Symbol *func = lookup_symbol(current_table, node->data.func_call.func_name);
+      if (func == NULL) {
+        printf("Semantic Error: Function '%s' not declared in this scope.\n", node->data.func_call.func_name);
+      } else if (func->type != TYPE_FUNC) {
+        printf("Semantic Error: '%s' is not a function.\n", node->data.func_call.func_name);
+      } else {
+        Function *function = (Function*)func->value;
+        Param *param = function->params;
+        ASTNodeList *arg = node->data.func_call.args;
+        while (param != NULL && arg != NULL) {
+          semantic_analysis(arg->node, current_table);
+          if (param->type != arg->node->data_type) {
+            printf("Semantic Error: Type mismatch in function call.\n");
+          }
+          param = param->next;
+          arg = arg->next;
+        }
+        if (param != NULL || arg != NULL) {
+          printf("Semantic Error: Number of arguments mismatch in function call.\n");
+        }
+      }
+      break;
+    case AST_TYPE_BIN_AROP:
+      semantic_analysis(node->data.bin_arop.left, current_table);
+      semantic_analysis(node->data.bin_arop.right, current_table);
+      if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary arithmetic operation.\n");
+      }
+      node->data_type = node->data.bin_arop.left->data_type;
+      break;
+    case AST_TYPE_BIN_RELOP:
+      semantic_analysis(node->data.bin_relop.left, current_table);
+      semantic_analysis(node->data.bin_relop.right, current_table);
+      if (node->data.bin_relop.left->data_type != node->data.bin_relop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary relational operation.\n");
+      }
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_BIN_LOGOP:
+      semantic_analysis(node->data.bin_logop.left, current_table);
+      semantic_analysis(node->data.bin_logop.right, current_table);
+      if (node->data.bin_logop.left->data_type != node->data.bin_logop.right->data_type) {
+        printf("Semantic Error: Type mismatch in binary logical operation.\n");
+      }
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_UNOP_NOT:
+      semantic_analysis(node->data.unnop.expr, current_table);
+      if (node->data.unnop.expr->data_type != TYPE_BOOL) {
+        printf("Semantic Error: Type mismatch in unary logical operation.\n");
+      }
+      break;
+    case AST_TYPE_VAR:
+      Symbol *var = lookup_symbol(current_table, node->data.var_name);
+      if (var == NULL) {
+        printf("Semantic Error: Variable '%s' not declared in this scope.\n", node->data.var_name);
+      } else {
+        node->data_type = var->type;
+      }
+      break;
+    case AST_TYPE_INT:
+      node->data_type = TYPE_INT;
+      break;
+    case AST_TYPE_FLOAT:
+      node->data_type = TYPE_FLOAT;
+      break;
+    case AST_TYPE_BOOL:
+      node->data_type = TYPE_BOOL;
+      break;
+    case AST_TYPE_CHAR:
+      node->data_type = TYPE_CHAR;
+      break;
+    case AST_TYPE_STRING:
+      node->data_type = TYPE_STRING;
+      break;
+    case AST_TYPE_NULL:
+      node->data_type = TYPE_NULL;
+      break;
+    case AST_TYPE_BLOCK:
+        printf("stmt\n");
+      current_table = create_symbol_table(current_table);
+      ASTNodeList *stmt = node->children;
+      while (stmt != NULL) {
+        semantic_analysis(stmt->node, current_table);
+        stmt = stmt->next;
+      }
+      current_table = current_table->parent;
+      break;
+    case AST_TYPE_IF:
+      semantic_analysis(node->data.if_node.condition, current_table);
+      if (node->data.if_node.condition->data_type != TYPE_BOOL) {
+        printf("Semantic Error: Type mismatch in if condition.\n");
+      }
+      semantic_analysis(node->data.if_node.body_branch, current_table);
+      if (node->data.if_node.else_branch != NULL) {
+        semantic_analysis(node->data.if_node.else_branch, current_table);
+      }
+      break;
+    case AST_TYPE_SWITCH:
+      semantic_analysis(node->data.switch_node.condition, current_table);
+      ASTNodeList *case_stmt = node->data.switch_node.cases;
+      while (case_stmt != NULL) {
+        semantic_analysis(case_stmt->node, current_table);
+        case_stmt = case_stmt->next;
+      }
+      break;
+    case AST_TYPE_CASE:
+      if (node->data.case_node.case_expr != NULL) {
+        semantic_analysis(node->data.case_node.case_expr, current_table);
+      }
+      current_table = create_symbol_table(current_table);
+      ASTNodeList *stmts = node->data.case_node.stmts;
+      while (stmts != NULL) {
+        semantic_analysis(stmts->node, current_table);
+        stmts = stmts->next;
+      }
+      break;
+    
+    default:
+      break;
+  }
+
+  ASTNodeList *child = node->children;
+  while (child != NULL) {
+      semantic_analysis(child->node, current_table);
+      child = child->next;
+  }
 }

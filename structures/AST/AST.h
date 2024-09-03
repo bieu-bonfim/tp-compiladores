@@ -10,6 +10,7 @@
 typedef struct ASTNode {
     ASTNodeType type;
     Type data_type; 
+    int line;
     
     union ASTNodeData {
 
@@ -23,6 +24,7 @@ typedef struct ASTNode {
       char* var_name;
       struct {
         char* var_name;
+        Type var_type;
         struct ASTNode *expr;
       } var_decl;
       struct {
@@ -101,7 +103,7 @@ ASTNodeList* append_to_list(ASTNodeList *list, ASTNode *node);
 ASTNode* create_root_node(ASTNodeList *children);
 ASTNode* create_int_node(int val);
 ASTNode* create_float_node(float val);
-ASTNode* create_var_decl_node(char* var_name, ASTNode *expr);
+ASTNode* create_var_decl_node(char* var_name, Type var_type, ASTNode *expr);
 ASTNode* create_var_ref_node(char* var_name);
 ASTNode* create_func_call_node(char *func_name, ASTNodeList *args);
 ASTNode* create_func_node(char* func_name, Function* func, Type func_type, ASTNode *body);
