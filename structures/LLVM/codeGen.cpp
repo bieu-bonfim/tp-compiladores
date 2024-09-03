@@ -1,0 +1,132 @@
+#include "codeGen.h"
+#include "LLVMAST.h"
+#include "NodeTypeAST.h"
+#include "../Operators.h"
+#include "../SymbolTable.h"
+#include "../Types.h"
+
+#include <iostream>
+#include <memory>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FileSystem.h>
+
+llvm::LLVMContext TheContext;
+std::unique_ptr<llvm::Module> TheModule;
+std::unique_ptr<llvm::IRBuilder<>> Builder;
+
+void initLLVM() {
+    TheModule = std::make_unique<llvm::Module>("my_module", TheContext);
+    Builder = std::make_unique<llvm::IRBuilder<>>(TheContext);
+}
+
+llvm::Value* codegen(ASTNode* node) {
+    switch (node->type) {
+        case ASTNodeType::AST_TYPE_INT:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->data.int_val));
+        case ASTNodeType::AST_TYPE_FLOAT:
+            return llvm::ConstantFP::get(TheContext, llvm::APFloat(node->data.float_val));
+        case ASTNodeType::AST_TYPE_LONG:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(64, node->data.long_val));
+        case ASTNodeType::AST_TYPE_SHORT:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(16, node->data.short_val));
+        case ASTNodeType::AST_TYPE_DOUBLE:
+            return llvm::ConstantFP::get(TheContext, llvm::APFloat(node->data.double_val));
+        case ASTNodeType::AST_TYPE_CHAR:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(8, node->data.char_val));
+        case ASTNodeType::AST_TYPE_BOOL:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(1, node->data.int_val));
+        case ASTNodeType::AST_TYPE_BIN_AROP: {
+            llvm::Value* left = codegen(node->data.bin_arop.left.get());
+            llvm::Value* right = codegen(node->data.bin_arop.right.get());
+            switch (node->data.bin_arop.op) {
+                case ADD:
+                    return Builder->CreateAdd(left, right, "addtmp");
+                case SUB:
+                    return Builder->CreateSub(left, right, "subtmp");
+                case MUL:
+                    return Builder->CreateMul(left, right, "multmp");
+                case DIV:
+                    return Builder->CreateSDiv(left, right, "divtmp");
+                default:
+                    return nullptr;
+            }
+        }
+        case ASTNodeType::AST_TYPE_BIN_RELOP: {
+            llvm::Value* left = codegen(node->data.bin_relop.left.get());
+            llvm::Value* right = codegen(node->data.bin_relop.right.get());
+            switch (node->data.bin_relop.op) {
+                case LT:
+                    return Builder->CreateICmpSLT(left, right, "lttmp");
+                case GT:
+                    return Builder->CreateICmpSGT(left, right, "gttmp");
+                case LE:
+                    return Builder->CreateICmpSLE(left, right, "letmp");
+                case GE:
+                    return Builder->CreateICmpSGE(left, right, "getmp");
+                case EQ:
+                    return Builder->CreateICmpEQ(left, right, "eqtmp");
+                case NE:
+                    return Builder->CreateICmpNE(left, right, "netmp");
+                default:
+                    return nullptr;
+            }
+        }
+        case ASTNodeType::AST_TYPE_BIN_LOGOP: {
+            llvm::Value* left = codegen(node->data.bin_logop.left.get());
+            llvm::Value* right = codegen(node->data.bin_logop.right.get());
+            switch (node->data.bin_logop.op) {
+                case AND:
+                    return Builder->CreateAnd(left, right, "andtmp");
+                case OR:
+                    return Builder->CreateOr(left, right, "ortmp");
+                default:
+                    return nullptr;
+            }
+        }
+        case ASTNodeType::AST_TYPE_UNOP: {
+            llvm::Value* expr = codegen(node->data.unnop.expr.get());
+            switch (node->data.unnop.op) {
+                case NEG:
+                    return Builder->CreateNeg(expr, "negtmp");
+                case NOT:
+                    return Builder->CreateNot(expr, "nottmp");
+                default:
+                    return nullptr;
+            }
+        }
+        // Adicione mais casos conforme necessário para lidar com outros tipos de nós da AST
+        default:
+            return nullptr;
+    }
+}
+
+llvm::Function* createFunction(ASTNode* func_node) {
+    // Exemplo simplificado
+    llvm::FunctionType* funcType = llvm::FunctionType::get(llvm::Type::getVoidTy(TheContext), false);
+    llvm::Function* func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "func_name", TheModule.get());
+
+    llvm::BasicBlock* entry = llvm::BasicBlock::Create(TheContext, "entry", func);
+    Builder->SetInsertPoint(entry);
+
+    // Gere o corpo da função
+    codegen(func_node->data.func.body.get());
+
+    Builder->CreateRetVoid();
+
+    llvm::verifyFunction(*func);
+
+    return func;
+}
+
+void generateLLVMIR() {
+    TheModule->print(llvm::outs(), nullptr);
+
+    // Para salvar em arquivo
+    std::error_code EC;
+    llvm::raw_fd_ostream OS("output.ll", EC);
+    TheModule->print(OS, nullptr);
+}
+

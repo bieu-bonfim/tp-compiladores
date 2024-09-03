@@ -117,7 +117,7 @@ adicionarUm Encantar[ ]
 subtrairUm Desencantar[ ]
 derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
-/* Pattern Action */ 
+/* Pattern Action */
 
 %% 
 \n             { printf("%s| %d | ", yytext, line_number+1); line_number++; }

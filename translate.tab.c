@@ -74,10 +74,21 @@
 #include <string.h>
 #include <math.h>
 
+#include <llvm-c/Core.h>
+#include <llvm-c/ExecutionEngine.h>
+#include <llvm-c/Target.h>
+//#include <llvm-c/Transforms/Scalar.h>
+#include <llvm-c/Analysis.h>
+
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
+
+#include "structures/LLVM/codeGen.h"
+#include "structures/LLVM/LLVMAST.h"
+#include "structures/LLVM/NodeTypeAST.h"
+
 
 extern int yyparse();
 extern int invalid_found;
@@ -92,8 +103,10 @@ ASTNode *ast;
 
 int yylex(void);
 
+extern ASTNode *root;
 
-#line 97 "translate.tab.c"
+
+#line 110 "translate.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -629,18 +642,18 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    96,    96,    99,   100,   103,   104,   105,   106,   109,
-     112,   125,   126,   127,   128,   132,   131,   144,   150,   154,
-     159,   166,   164,   179,   180,   183,   186,   187,   190,   196,
-     202,   208,   214,   220,   221,   224,   225,   226,   227,   228,
-     229,   230,   231,   234,   246,   249,   255,   260,   267,   268,
-     269,   272,   275,   276,   277,   278,   279,   282,   283,   284,
-     285,   286,   287,   288,   289,   292,   303,   304,   305,   308,
-     312,   318,   344,   348,   352,   356,   362,   363,   366,   371,
-     378,   379,   382,   386,   392,   393,   394,   395,   396,   397,
-     398,   399,   400,   401,   402,   405,   408,   409,   412,   415,
-     416,   419,   422,   423,   426,   427,   428,   429,   432,   435,
-     438,   441,   442,   445,   448,   452,   456
+       0,   109,   109,   112,   113,   116,   117,   118,   119,   122,
+     125,   138,   139,   140,   141,   145,   144,   157,   163,   167,
+     172,   179,   177,   192,   193,   196,   199,   200,   203,   209,
+     215,   221,   227,   233,   234,   237,   238,   239,   240,   241,
+     242,   243,   244,   247,   259,   262,   268,   273,   280,   281,
+     282,   285,   288,   289,   290,   291,   292,   295,   296,   297,
+     298,   299,   300,   301,   302,   305,   316,   317,   318,   321,
+     325,   331,   357,   361,   365,   369,   375,   376,   379,   384,
+     391,   392,   395,   399,   405,   406,   407,   408,   409,   410,
+     411,   412,   413,   414,   415,   418,   421,   422,   425,   428,
+     429,   432,   435,   436,   439,   440,   441,   442,   445,   448,
+     451,   454,   455,   458,   461,   465,   469
 };
 #endif
 
@@ -1374,55 +1387,55 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* begin: start  */
-#line 96 "translate.y"
+#line 109 "translate.y"
              { ast = create_root_node((yyvsp[0].node_list)); }
-#line 1380 "translate.tab.c"
+#line 1393 "translate.tab.c"
     break;
 
   case 3: /* start: %empty  */
-#line 99 "translate.y"
+#line 112 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1386 "translate.tab.c"
+#line 1399 "translate.tab.c"
     break;
 
   case 4: /* start: start start_item  */
-#line 100 "translate.y"
+#line 113 "translate.y"
                          { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1392 "translate.tab.c"
+#line 1405 "translate.tab.c"
     break;
 
   case 5: /* start_item: decl_func  */
-#line 103 "translate.y"
+#line 116 "translate.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1398 "translate.tab.c"
+#line 1411 "translate.tab.c"
     break;
 
   case 6: /* start_item: decl_import  */
-#line 104 "translate.y"
+#line 117 "translate.y"
                         { (yyval.node) = (yyvsp[0].node); }
-#line 1404 "translate.tab.c"
+#line 1417 "translate.tab.c"
     break;
 
   case 7: /* start_item: stmt  */
-#line 105 "translate.y"
+#line 118 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1410 "translate.tab.c"
+#line 1423 "translate.tab.c"
     break;
 
   case 8: /* start_item: unnary_expr ENDLINE  */
-#line 106 "translate.y"
+#line 119 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1416 "translate.tab.c"
+#line 1429 "translate.tab.c"
     break;
 
   case 9: /* decl_import: IMPORT LITERALSTRING ENDLINE  */
-#line 109 "translate.y"
+#line 122 "translate.y"
                                           { (yyval.node) = create_import_node((yyvsp[-1].sval)); }
-#line 1422 "translate.tab.c"
+#line 1435 "translate.tab.c"
     break;
 
   case 10: /* decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block  */
-#line 113 "translate.y"
+#line 126 "translate.y"
            {
             Function *func = create_function((yyvsp[-6].type));
             Param *param = (yyvsp[-2].param);
@@ -1433,198 +1446,198 @@ yyreduce:
 
             (yyval.node) = node;
            }
-#line 1437 "translate.tab.c"
+#line 1450 "translate.tab.c"
     break;
 
   case 11: /* decl_stmt: assignment ENDLINE  */
-#line 125 "translate.y"
+#line 138 "translate.y"
                               { (yyval.node) = (yyvsp[-1].node); }
-#line 1443 "translate.tab.c"
+#line 1456 "translate.tab.c"
     break;
 
   case 12: /* decl_stmt: sign_func ENDLINE  */
-#line 126 "translate.y"
+#line 139 "translate.y"
                              { (yyval.node) = NULL; }
-#line 1449 "translate.tab.c"
+#line 1462 "translate.tab.c"
     break;
 
   case 13: /* decl_stmt: type_def  */
-#line 127 "translate.y"
+#line 140 "translate.y"
                     { (yyval.node) = NULL; }
-#line 1455 "translate.tab.c"
+#line 1468 "translate.tab.c"
     break;
 
   case 14: /* decl_stmt: decl_var ENDLINE  */
-#line 128 "translate.y"
+#line 141 "translate.y"
                             { (yyval.node) = (yyvsp[-1].node); }
-#line 1461 "translate.tab.c"
+#line 1474 "translate.tab.c"
     break;
 
   case 15: /* $@1: %empty  */
-#line 132 "translate.y"
+#line 145 "translate.y"
             { 
               SymbolTable *new_table = create_symbol_table(current_table); 
               current_table = new_table; 
             }
-#line 1470 "translate.tab.c"
+#line 1483 "translate.tab.c"
     break;
 
   case 16: /* stmt_block: OPENBLOCK $@1 stmts CLOSEBLOCK  */
-#line 138 "translate.y"
+#line 151 "translate.y"
             {
               SymbolTable *old_table = current_table;
               current_table = current_table->parent;
             }
-#line 1479 "translate.tab.c"
+#line 1492 "translate.tab.c"
     break;
 
   case 17: /* stmt_if: IF expr stmt_block stmt_else  */
-#line 145 "translate.y"
+#line 158 "translate.y"
        {
         (yyval.node) = create_if_node((yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));
        }
-#line 1487 "translate.tab.c"
+#line 1500 "translate.tab.c"
     break;
 
   case 18: /* stmt_else: ELSE stmt_block  */
-#line 151 "translate.y"
+#line 164 "translate.y"
          {
           (yyval.node) = (yyvsp[0].node);
          }
-#line 1495 "translate.tab.c"
+#line 1508 "translate.tab.c"
     break;
 
   case 19: /* stmt_else: ELSE stmt_if  */
-#line 155 "translate.y"
+#line 168 "translate.y"
          {
           (yyval.node) = (yyvsp[0].node);
          }
-#line 1503 "translate.tab.c"
+#line 1516 "translate.tab.c"
     break;
 
   case 20: /* stmt_else: %empty  */
-#line 159 "translate.y"
+#line 172 "translate.y"
          {
           (yyval.node) = NULL;
          }
-#line 1511 "translate.tab.c"
+#line 1524 "translate.tab.c"
     break;
 
   case 21: /* $@2: %empty  */
-#line 166 "translate.y"
+#line 179 "translate.y"
              {
                SymbolTable *new_table = create_symbol_table(current_table);
                current_table = new_table;
 
              }
-#line 1521 "translate.tab.c"
+#line 1534 "translate.tab.c"
     break;
 
   case 22: /* stmt_switch: SWITCH expr OPENBLOCK $@2 case_list default_case CLOSEBLOCK  */
-#line 173 "translate.y"
+#line 186 "translate.y"
              {
                SymbolTable *old_table = current_table;
                current_table = current_table->parent;
              }
-#line 1530 "translate.tab.c"
+#line 1543 "translate.tab.c"
     break;
 
   case 28: /* stmt_return: RETURNT expr ENDLINE  */
-#line 191 "translate.y"
+#line 204 "translate.y"
            {
             (yyval.node) = create_return_node((yyvsp[-1].node));
            }
-#line 1538 "translate.tab.c"
+#line 1551 "translate.tab.c"
     break;
 
   case 29: /* stmt_for: FOR expr COMMA unnary_expr stmt_block  */
-#line 197 "translate.y"
+#line 210 "translate.y"
          {
           (yyval.node) = create_for_node((yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node));
          }
-#line 1546 "translate.tab.c"
+#line 1559 "translate.tab.c"
     break;
 
   case 30: /* stmt_while: WHILE expr stmt_block  */
-#line 203 "translate.y"
+#line 216 "translate.y"
           {
             (yyval.node) = create_while_node((yyvsp[-1].node), (yyvsp[0].node));
           }
-#line 1554 "translate.tab.c"
+#line 1567 "translate.tab.c"
     break;
 
   case 31: /* stmt_break: BREAK ENDLINE  */
-#line 209 "translate.y"
+#line 222 "translate.y"
           {
             (yyval.node) = create_break_node();
           }
-#line 1562 "translate.tab.c"
+#line 1575 "translate.tab.c"
     break;
 
   case 32: /* stmt_continue: CONTINUE ENDLINE  */
-#line 215 "translate.y"
+#line 228 "translate.y"
              {
               (yyval.node) = create_continue_node();
              }
-#line 1570 "translate.tab.c"
+#line 1583 "translate.tab.c"
     break;
 
   case 33: /* stmts: %empty  */
-#line 220 "translate.y"
+#line 233 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1576 "translate.tab.c"
+#line 1589 "translate.tab.c"
     break;
 
   case 34: /* stmts: stmts stmt  */
-#line 221 "translate.y"
+#line 234 "translate.y"
                   { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1582 "translate.tab.c"
+#line 1595 "translate.tab.c"
     break;
 
   case 36: /* stmt: stmt_if  */
-#line 225 "translate.y"
+#line 238 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1588 "translate.tab.c"
+#line 1601 "translate.tab.c"
     break;
 
   case 37: /* stmt: stmt_switch  */
-#line 226 "translate.y"
+#line 239 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1594 "translate.tab.c"
+#line 1607 "translate.tab.c"
     break;
 
   case 38: /* stmt: stmt_while  */
-#line 227 "translate.y"
+#line 240 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1600 "translate.tab.c"
+#line 1613 "translate.tab.c"
     break;
 
   case 39: /* stmt: stmt_for  */
-#line 228 "translate.y"
+#line 241 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1606 "translate.tab.c"
+#line 1619 "translate.tab.c"
     break;
 
   case 40: /* stmt: stmt_return  */
-#line 229 "translate.y"
+#line 242 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1612 "translate.tab.c"
+#line 1625 "translate.tab.c"
     break;
 
   case 41: /* stmt: stmt_break  */
-#line 230 "translate.y"
+#line 243 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1618 "translate.tab.c"
+#line 1631 "translate.tab.c"
     break;
 
   case 42: /* stmt: stmt_continue  */
-#line 231 "translate.y"
+#line 244 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1624 "translate.tab.c"
+#line 1637 "translate.tab.c"
     break;
 
   case 43: /* assignment: variable ASSIGN expr  */
-#line 235 "translate.y"
+#line 248 "translate.y"
            {
             Symbol *symbol = (yyvsp[-2].node)->data.symbol;
             if (symbol == NULL) {
@@ -1633,123 +1646,123 @@ yyreduce:
                 (yyval.node) = create_assign_node(symbol, (yyvsp[0].node));
             }
            }
-#line 1637 "translate.tab.c"
+#line 1650 "translate.tab.c"
     break;
 
   case 44: /* opt_assignment: %empty  */
-#line 246 "translate.y"
+#line 259 "translate.y"
               { 
                (yyval.node) = NULL; 
               }
-#line 1645 "translate.tab.c"
+#line 1658 "translate.tab.c"
     break;
 
   case 45: /* opt_assignment: ASSIGN expr  */
-#line 250 "translate.y"
+#line 263 "translate.y"
               { 
                (yyval.node) = (yyvsp[0].node); 
               }
-#line 1653 "translate.tab.c"
+#line 1666 "translate.tab.c"
     break;
 
   case 46: /* decl_var: type type_qualifier ID opt_assignment  */
-#line 256 "translate.y"
+#line 269 "translate.y"
         {
           Symbol *symbol = insert_symbol(current_table, (yyvsp[-1].sval), (yyvsp[-3].type), NULL);
           (yyval.node) = create_var_decl_node(symbol, (yyvsp[0].node));
         }
-#line 1662 "translate.tab.c"
+#line 1675 "translate.tab.c"
     break;
 
   case 47: /* decl_var: type ID opt_assignment  */
-#line 261 "translate.y"
+#line 274 "translate.y"
         {
           Symbol *symbol = insert_symbol(current_table, (yyvsp[-1].sval), (yyvsp[-2].type), NULL);
           (yyval.node) = create_var_decl_node(symbol, (yyvsp[0].node));
         }
-#line 1671 "translate.tab.c"
+#line 1684 "translate.tab.c"
     break;
 
   case 52: /* expr: expr AROP term  */
-#line 275 "translate.y"
+#line 288 "translate.y"
                      { (yyval.node) = create_bin_arop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].arOp)); }
-#line 1677 "translate.tab.c"
+#line 1690 "translate.tab.c"
     break;
 
   case 53: /* expr: expr RELOP term  */
-#line 276 "translate.y"
+#line 289 "translate.y"
                       { (yyval.node) = create_bin_relop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].relOp)); }
-#line 1683 "translate.tab.c"
+#line 1696 "translate.tab.c"
     break;
 
   case 54: /* expr: expr LOGOP term  */
-#line 277 "translate.y"
+#line 290 "translate.y"
                       { (yyval.node) = create_bin_logop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].logOp)); }
-#line 1689 "translate.tab.c"
+#line 1702 "translate.tab.c"
     break;
 
   case 55: /* expr: NOT expr  */
-#line 278 "translate.y"
+#line 291 "translate.y"
                { (yyval.node) = create_unop_node((yyvsp[0].node), NOTOP); }
-#line 1695 "translate.tab.c"
+#line 1708 "translate.tab.c"
     break;
 
   case 56: /* expr: term  */
-#line 279 "translate.y"
+#line 292 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1701 "translate.tab.c"
+#line 1714 "translate.tab.c"
     break;
 
   case 57: /* term: literal  */
-#line 282 "translate.y"
+#line 295 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1707 "translate.tab.c"
+#line 1720 "translate.tab.c"
     break;
 
   case 58: /* term: INT  */
-#line 283 "translate.y"
+#line 296 "translate.y"
           { (yyval.node) = create_int_node((yyvsp[0].ival)); }
-#line 1713 "translate.tab.c"
+#line 1726 "translate.tab.c"
     break;
 
   case 59: /* term: FLOAT  */
-#line 284 "translate.y"
+#line 297 "translate.y"
             { (yyval.node) = create_float_node((yyvsp[0].fval)); }
-#line 1719 "translate.tab.c"
+#line 1732 "translate.tab.c"
     break;
 
   case 60: /* term: variable  */
-#line 285 "translate.y"
+#line 298 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1725 "translate.tab.c"
+#line 1738 "translate.tab.c"
     break;
 
   case 61: /* term: bool  */
-#line 286 "translate.y"
+#line 299 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1731 "translate.tab.c"
+#line 1744 "translate.tab.c"
     break;
 
   case 62: /* term: function_call  */
-#line 287 "translate.y"
+#line 300 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1737 "translate.tab.c"
+#line 1750 "translate.tab.c"
     break;
 
   case 63: /* term: unnary_expr  */
-#line 288 "translate.y"
+#line 301 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1743 "translate.tab.c"
+#line 1756 "translate.tab.c"
     break;
 
   case 64: /* term: OPENBRACK expr CLOSEBRACK  */
-#line 289 "translate.y"
+#line 302 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1749 "translate.tab.c"
+#line 1762 "translate.tab.c"
     break;
 
   case 65: /* variable: ID accesses attributes  */
-#line 293 "translate.y"
+#line 306 "translate.y"
          {
           Symbol *symbol = lookup_symbol(current_table, (yyvsp[-2].sval));
           if (symbol == NULL) {
@@ -1758,27 +1771,27 @@ yyreduce:
           // $$ = create_var_node(symbol, $2, $3);
           (yyval.node) = create_var_ref_node(symbol);
          }
-#line 1762 "translate.tab.c"
+#line 1775 "translate.tab.c"
     break;
 
   case 69: /* bool: TRUE  */
-#line 309 "translate.y"
+#line 322 "translate.y"
      {  
       (yyval.node) = create_bool_node(1);
      }
-#line 1770 "translate.tab.c"
+#line 1783 "translate.tab.c"
     break;
 
   case 70: /* bool: FALSE  */
-#line 313 "translate.y"
+#line 326 "translate.y"
      {
       (yyval.node) = create_bool_node(0);
      }
-#line 1778 "translate.tab.c"
+#line 1791 "translate.tab.c"
     break;
 
   case 71: /* function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK  */
-#line 319 "translate.y"
+#line 332 "translate.y"
               {
                 Symbol *symbol = lookup_symbol(current_table, (yyvsp[-4].sval));
                 if (symbol == NULL) {
@@ -1802,192 +1815,192 @@ yyreduce:
                 
                 (yyval.node) = create_func_call_node(symbol, (yyvsp[-1].node_list));
               }
-#line 1806 "translate.tab.c"
+#line 1819 "translate.tab.c"
     break;
 
   case 72: /* unnary_expr: MINUSONE variable  */
-#line 345 "translate.y"
+#line 358 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), MINUSONEOP);
           }
-#line 1814 "translate.tab.c"
+#line 1827 "translate.tab.c"
     break;
 
   case 73: /* unnary_expr: PLUSONE variable  */
-#line 349 "translate.y"
+#line 362 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), PLUSONEOP);
           }
-#line 1822 "translate.tab.c"
+#line 1835 "translate.tab.c"
     break;
 
   case 74: /* unnary_expr: DEREF variable  */
-#line 353 "translate.y"
+#line 366 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), DEREFOP);
           }
-#line 1830 "translate.tab.c"
+#line 1843 "translate.tab.c"
     break;
 
   case 75: /* unnary_expr: REF variable  */
-#line 357 "translate.y"
+#line 370 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), REFOP);
           }
-#line 1838 "translate.tab.c"
+#line 1851 "translate.tab.c"
     break;
 
   case 76: /* arguments: %empty  */
-#line 362 "translate.y"
+#line 375 "translate.y"
                        { (yyval.param) = NULL; }
-#line 1844 "translate.tab.c"
+#line 1857 "translate.tab.c"
     break;
 
   case 77: /* arguments: argument  */
-#line 363 "translate.y"
+#line 376 "translate.y"
                     { (yyval.param) = (yyvsp[0].param); }
-#line 1850 "translate.tab.c"
+#line 1863 "translate.tab.c"
     break;
 
   case 78: /* argument: type ID  */
-#line 367 "translate.y"
+#line 380 "translate.y"
          {
           Param *param = create_param((yyvsp[0].sval), (yyvsp[-1].type));
           (yyval.param) = param;
          }
-#line 1859 "translate.tab.c"
+#line 1872 "translate.tab.c"
     break;
 
   case 79: /* argument: type ID COMMA argument  */
-#line 372 "translate.y"
+#line 385 "translate.y"
          {
           Param *param = create_param((yyvsp[-2].sval), (yyvsp[-3].type));
           link_params(param, (yyvsp[0].param));
           (yyval.param) = param;
          }
-#line 1869 "translate.tab.c"
+#line 1882 "translate.tab.c"
     break;
 
   case 80: /* params: %empty  */
-#line 378 "translate.y"
+#line 391 "translate.y"
                     { (yyval.node_list) = NULL; }
-#line 1875 "translate.tab.c"
+#line 1888 "translate.tab.c"
     break;
 
   case 81: /* params: param  */
-#line 379 "translate.y"
+#line 392 "translate.y"
               { (yyval.node_list) = (yyvsp[0].node_list); }
-#line 1881 "translate.tab.c"
+#line 1894 "translate.tab.c"
     break;
 
   case 82: /* param: expr  */
-#line 383 "translate.y"
+#line 396 "translate.y"
      { 
       (yyval.node_list) = append_to_list(NULL, (yyvsp[0].node)); 
      }
-#line 1889 "translate.tab.c"
+#line 1902 "translate.tab.c"
     break;
 
   case 83: /* param: expr COMMA param  */
-#line 387 "translate.y"
+#line 400 "translate.y"
      { 
       (yyval.node_list) = append_to_list((yyvsp[0].node_list), (yyvsp[-2].node)); 
      }
-#line 1897 "translate.tab.c"
+#line 1910 "translate.tab.c"
     break;
 
   case 84: /* type: TYPEINT  */
-#line 392 "translate.y"
+#line 405 "translate.y"
               { (yyval.type) = TYPE_INT; }
-#line 1903 "translate.tab.c"
+#line 1916 "translate.tab.c"
     break;
 
   case 85: /* type: TYPEFLOAT  */
-#line 393 "translate.y"
+#line 406 "translate.y"
                 { (yyval.type) = TYPE_FLOAT; }
-#line 1909 "translate.tab.c"
+#line 1922 "translate.tab.c"
     break;
 
   case 86: /* type: TYPEBOOL  */
-#line 394 "translate.y"
+#line 407 "translate.y"
                { (yyval.type) = TYPE_BOOL; }
-#line 1915 "translate.tab.c"
+#line 1928 "translate.tab.c"
     break;
 
   case 87: /* type: TYPECHAR  */
-#line 395 "translate.y"
+#line 408 "translate.y"
                { (yyval.type) = TYPE_CHAR; }
-#line 1921 "translate.tab.c"
+#line 1934 "translate.tab.c"
     break;
 
   case 88: /* type: TYPEVOID  */
-#line 396 "translate.y"
+#line 409 "translate.y"
                { (yyval.type) = TYPE_VOID; }
-#line 1927 "translate.tab.c"
+#line 1940 "translate.tab.c"
     break;
 
   case 89: /* type: TYPEDOUBLE  */
-#line 397 "translate.y"
+#line 410 "translate.y"
                  { (yyval.type) = TYPE_FLOAT; }
-#line 1933 "translate.tab.c"
+#line 1946 "translate.tab.c"
     break;
 
   case 90: /* type: TYPELONG  */
-#line 398 "translate.y"
+#line 411 "translate.y"
                { (yyval.type) = TYPE_INT; }
-#line 1939 "translate.tab.c"
+#line 1952 "translate.tab.c"
     break;
 
   case 91: /* type: TYPESHORT  */
-#line 399 "translate.y"
+#line 412 "translate.y"
                 { (yyval.type) = TYPE_INT; }
-#line 1945 "translate.tab.c"
+#line 1958 "translate.tab.c"
     break;
 
   case 92: /* type: type_enum  */
-#line 400 "translate.y"
+#line 413 "translate.y"
                 { (yyval.type) = TYPE_ENUM; }
-#line 1951 "translate.tab.c"
+#line 1964 "translate.tab.c"
     break;
 
   case 93: /* type: type_struct  */
-#line 401 "translate.y"
+#line 414 "translate.y"
                   { (yyval.type) = TYPE_STRUCT; }
-#line 1957 "translate.tab.c"
+#line 1970 "translate.tab.c"
     break;
 
   case 94: /* type: type_union  */
-#line 402 "translate.y"
+#line 415 "translate.y"
                  { (yyval.type) = TYPE_UNION; }
-#line 1963 "translate.tab.c"
+#line 1976 "translate.tab.c"
     break;
 
   case 114: /* literal: LITERALSTRING  */
-#line 449 "translate.y"
+#line 462 "translate.y"
        { 
         (yyval.node) = create_string_node((yyvsp[0].sval));
        }
-#line 1971 "translate.tab.c"
+#line 1984 "translate.tab.c"
     break;
 
   case 115: /* literal: LITERALCHAR  */
-#line 453 "translate.y"
+#line 466 "translate.y"
        { 
         (yyval.node) = create_char_node((yyvsp[0].cval));
        }
-#line 1979 "translate.tab.c"
+#line 1992 "translate.tab.c"
     break;
 
   case 116: /* literal: NULLT  */
-#line 457 "translate.y"
+#line 470 "translate.y"
        { 
         (yyval.node) = create_null_node(); 
        }
-#line 1987 "translate.tab.c"
+#line 2000 "translate.tab.c"
     break;
 
 
-#line 1991 "translate.tab.c"
+#line 2004 "translate.tab.c"
 
       default: break;
     }
@@ -2180,7 +2193,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 462 "translate.y"
+#line 475 "translate.y"
 
 
 /* Error reporting function */
@@ -2201,5 +2214,8 @@ int main() {
     }
     traverse_ast(ast, 0);
     print_table(current_table);
+    initLLVM();
+    codegen(root);
+    generateLLVMIR();
     return 0; 
 }

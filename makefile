@@ -1,5 +1,5 @@
 TARGET = teste 
-INPUTFILE = testes/testeIF.txt
+INPUTFILE = testes/testeSoma.txt
 YACC_SRC = translate.y
 LEX_SRC = lex.l
 YACC_OUT = translate.tab.c

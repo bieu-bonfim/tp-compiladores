@@ -4,10 +4,21 @@
 #include <string.h>
 #include <math.h>
 
+#include <llvm-c/Core.h>
+#include <llvm-c/ExecutionEngine.h>
+#include <llvm-c/Target.h>
+//#include <llvm-c/Transforms/Scalar.h>
+#include <llvm-c/Analysis.h>
+
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
+
+#include "structures/LLVM/codeGen.h"
+#include "structures/LLVM/LLVMAST.h"
+#include "structures/LLVM/NodeTypeAST.h"
+
 
 extern int yyparse();
 extern int invalid_found;
@@ -21,6 +32,8 @@ SymbolTable *current_table;
 ASTNode *ast;
 
 int yylex(void);
+
+extern ASTNode *root;
 
 %}
 
@@ -479,5 +492,8 @@ int main() {
     }
     traverse_ast(ast, 0);
     print_table(current_table);
+    initLLVM();
+    codegen(root);
+    generateLLVMIR();
     return 0; 
 }
