@@ -113,7 +113,11 @@ start_item: decl_func { $$ = $1; }
           | unnary_expr ENDLINE { $$ = $1; }
           ;
 
-decl_import: IMPORT LITERALSTRING ENDLINE { $$ = create_import_node($2); }
+decl_import: IMPORT LITERALSTRING ENDLINE 
+           { 
+            $$ = create_import_node($2); 
+            $$->line = line_number;
+           }
            ;
 
 decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
@@ -125,6 +129,7 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
             ASTNode *node = create_func_node($3, func, $2, $8);
 
             $$ = node;
+            $$->line = line_number;
            }
          ;
 
@@ -138,12 +143,14 @@ decl_stmt: assignment ENDLINE { $$ = $1; }
 stmt_block: OPENBLOCK stmts CLOSEBLOCK
           {
            $$ = create_block_node($2);
+           $$->line = line_number;
           }
           ;
 
 stmt_if: IF expr stmt_block stmt_else
        {
         $$ = create_if_node($2, $3, $4);
+        $$->line = line_number;
        }
        ;
 
@@ -164,6 +171,7 @@ stmt_else: ELSE stmt_block
 stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK
            {
             $$ = create_switch_node($2, $4, $5);
+            $$->line = line_number;
            }
            ;
 
@@ -180,6 +188,7 @@ case_list: /* empty */
 case_stmt: CASE expr DELIMCASE stmts stmt_break
          {
           $$ = create_case_node($2, $4, 0); 
+          $$->line = line_number;
          }
          ;
 
@@ -190,36 +199,42 @@ default_case: /* empty */
             | DEFAULT DELIMCASE stmts stmt_break
             {
              $$ = create_case_node(NULL, $3, 1);
+             $$->line = line_number;
             }
             ;
 
 stmt_return: RETURNT expr ENDLINE
            {
             $$ = create_return_node($2);
+            $$->line = line_number;
            }
            ;
 
 stmt_for: FOR expr COMMA unnary_expr stmt_block
          {
           $$ = create_for_node($2, $4, $5);
+          $$->line = line_number;
          }
         ;
 
 stmt_while: WHILE expr stmt_block
           {
             $$ = create_while_node($2, $3);
+            $$->line = line_number;
           }
           ;
 
 stmt_break: BREAK ENDLINE
           {
             $$ = create_break_node();
+            $$->line = line_number;
           }
           ;
 
 stmt_continue: CONTINUE ENDLINE
              {
               $$ = create_continue_node();
+              $$->line = line_number;
              }
              ;
 
@@ -240,6 +255,7 @@ stmt: decl_stmt { $$ = $1; }
 assignment: variable ASSIGN expr
           {
            $$ = create_assign_node($1->data.var_name, $3);
+           $$->line = line_number;
           }
           ;
 
@@ -256,10 +272,12 @@ opt_assignment: /* empty */
 decl_var: type type_qualifier ID opt_assignment
         {
           $$ = create_var_decl_node($3, $1, $4);
+          $$->line = line_number;
         }
         | type ID opt_assignment 
         {
           $$ = create_var_decl_node($2, $1, $3);
+          $$->line = line_number;
         }
         ;
 
@@ -274,25 +292,37 @@ sign_func: type ID PARAMS arguments
 expr: expr AROP term 
     { 
      $$ = create_bin_arop_node($1, $3, $2); 
+     $$->line = line_number;
     }
     | expr RELOP term 
     { 
      $$ = create_bin_relop_node($1, $3, $2); 
+     $$->line = line_number;
     }
     | expr LOGOP term 
     { 
      $$ = create_bin_logop_node($1, $3, $2); 
+     $$->line = line_number;
     }
     | NOT expr 
     { 
      $$ = create_unop_node($2, NOTOP); 
+     $$->line = line_number;
     }
     | term { $$ = $1; }
     ;
 
 term: literal { $$ = $1; }
-    | INT { $$ = create_int_node($1); }
-    | FLOAT { $$ = create_float_node($1); }
+    | INT 
+    { 
+     $$ = create_int_node($1); 
+     $$->line = line_number;
+    }
+    | FLOAT 
+    { 
+     $$ = create_float_node($1); 
+     $$->line = line_number;
+    }
     | variable { $$ = $1; }
     | bool { $$ = $1; }
     | function_call { $$ = $1; }
@@ -303,6 +333,7 @@ term: literal { $$ = $1; }
 variable: ID accesses attributes
          {
           $$ = create_var_ref_node($1);
+          $$->line = line_number;
          }
         ;
 
@@ -314,34 +345,41 @@ attributes: /* empty */
 bool: TRUE 
      {  
       $$ = create_bool_node(1);
+      $$->line = line_number;
      }
     | FALSE
      {
       $$ = create_bool_node(0);
+      $$->line = line_number;
      }
     ;
 
 function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
              {
               $$ = create_func_call_node($2, $5);
+              $$->line = line_number;
              }
              ;
 
 unnary_expr: MINUSONE variable 
           { 
             $$ = create_unop_node($2, MINUSONEOP);
+            $$->line = line_number;
           }
           | PLUSONE variable 
           { 
             $$ = create_unop_node($2, PLUSONEOP);
+            $$->line = line_number;
           }
           | DEREF variable 
           { 
             $$ = create_unop_node($2, DEREFOP);
+            $$->line = line_number;
           }
           | REF variable 
           { 
             $$ = create_unop_node($2, REFOP);
+            $$->line = line_number;
           }
           ;
 
@@ -478,7 +516,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
   switch (node->type) {
     case AST_TYPE_VAR_DECL:
       if (lookup_symbol(current_table, node->data.var_decl.var_name)) {
-        printf("Semantic Error: Variable '%s' already declared in this scope.\n", node->data.var_decl.var_name);
+        printf("(Line %d) Semantic Error: Variable '%s' already declared in this scope.\n", node->line, node->data.var_decl.var_name);
       }
 
       insert_symbol(current_table, node->data.var_decl.var_name, node->data.var_decl.var_type, NULL);
@@ -487,22 +525,22 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         semantic_analysis(node->data.var_decl.expr, current_table);
 
         if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
-          printf("Semantic Error: Type mismatch in variable '%s' initialization.\n", node->data.var_decl.var_name);
+          printf("(Line %d) Semantic Error: Type mismatch in variable '%s' initialization.\n", node->line, node->data.var_decl.var_name);
         }
       }
       break;
     case AST_TYPE_FUNC:
       if (lookup_symbol(current_table, node->data.func.func_name)) {
-        printf("Semantic Error: Function '%s' already declared in this scope.\n", node->data.func.func_name);
+        printf("(Line %d) Semantic Error: Function '%s' already declared in this scope.\n", node->line, node->data.func.func_name);
       }
       insert_symbol(current_table, node->data.func.func_name, TYPE_FUNC, (void*)node->data.func.func);
       break;
     case AST_TYPE_FUNC_CALL:
       Symbol *func = lookup_symbol(current_table, node->data.func_call.func_name);
       if (func == NULL) {
-        printf("Semantic Error: Function '%s' not declared in this scope.\n", node->data.func_call.func_name);
+        printf("(Line %d) Semantic Error: Function '%s' not declared in this scope.\n", node->line, node->data.func_call.func_name);
       } else if (func->type != TYPE_FUNC) {
-        printf("Semantic Error: '%s' is not a function.\n", node->data.func_call.func_name);
+        printf("(Line %d) Semantic Error: '%s' is not a function.\n", node->line, node->data.func_call.func_name);
       } else {
         Function *function = (Function*)func->value;
         Param *param = function->params;
@@ -510,13 +548,13 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         while (param != NULL && arg != NULL) {
           semantic_analysis(arg->node, current_table);
           if (param->type != arg->node->data_type) {
-            printf("Semantic Error: Type mismatch in function call.\n");
+            printf("(Line %d) Semantic Error: Type mismatch in function call.\n", node->line);
           }
           param = param->next;
           arg = arg->next;
         }
         if (param != NULL || arg != NULL) {
-          printf("Semantic Error: Number of arguments mismatch in function call.\n");
+          printf("(Line %d) Semantic Error: Number of arguments mismatch in function call.\n", node->line);
         }
       }
       break;
@@ -524,7 +562,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_arop.left, current_table);
       semantic_analysis(node->data.bin_arop.right, current_table);
       if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
-        printf("Semantic Error: Type mismatch in binary arithmetic operation.\n");
+        printf("(Line %d) Semantic Error: Type mismatch in binary arithmetic operation.\n", node->line);
       }
       node->data_type = node->data.bin_arop.left->data_type;
       break;
@@ -532,7 +570,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_relop.left, current_table);
       semantic_analysis(node->data.bin_relop.right, current_table);
       if (node->data.bin_relop.left->data_type != node->data.bin_relop.right->data_type) {
-        printf("Semantic Error: Type mismatch in binary relational operation.\n");
+        printf("(Line %d) Semantic Error: Type mismatch in binary relational operation.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
@@ -540,20 +578,26 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_logop.left, current_table);
       semantic_analysis(node->data.bin_logop.right, current_table);
       if (node->data.bin_logop.left->data_type != node->data.bin_logop.right->data_type) {
-        printf("Semantic Error: Type mismatch in binary logical operation.\n");
+        printf("(Line %d) Semantic Error: Type mismatch in binary logical operation.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
     case AST_TYPE_UNOP_NOT:
       semantic_analysis(node->data.unnop.expr, current_table);
       if (node->data.unnop.expr->data_type != TYPE_BOOL) {
-        printf("Semantic Error: Type mismatch in unary logical operation.\n");
+        printf("(Line %d) Semantic Error: Type mismatch in unary logical operation.\n", node->line);
+      }
+      break;
+    case AST_TYPE_UNOP:
+      semantic_analysis(node->data.unnop.expr, current_table);
+      if (node->data.unnop.expr->data_type != TYPE_INT) {
+        printf("(Line %d) Semantic Error: Type mismatch in unary update operation.\n", node->line);
       }
       break;
     case AST_TYPE_VAR:
       Symbol *var = lookup_symbol(current_table, node->data.var_name);
       if (var == NULL) {
-        printf("Semantic Error: Variable '%s' not declared in this scope.\n", node->data.var_name);
+        printf("(Line %d) Semantic Error: Variable '%s' not declared in this scope.\n", node->line, node->data.var_name);
       } else {
         node->data_type = var->type;
       }
@@ -577,7 +621,6 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       node->data_type = TYPE_NULL;
       break;
     case AST_TYPE_BLOCK:
-        printf("stmt\n");
       current_table = create_symbol_table(current_table);
       ASTNodeList *stmt = node->children;
       while (stmt != NULL) {
@@ -589,7 +632,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_IF:
       semantic_analysis(node->data.if_node.condition, current_table);
       if (node->data.if_node.condition->data_type != TYPE_BOOL) {
-        printf("Semantic Error: Type mismatch in if condition.\n");
+        printf("(Line %d) Semantic Error: Type mismatch in if condition.\n", node->line);
       }
       semantic_analysis(node->data.if_node.body_branch, current_table);
       if (node->data.if_node.else_branch != NULL) {
@@ -615,7 +658,28 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         stmts = stmts->next;
       }
       break;
-    
+    case AST_TYPE_FOR:
+      semantic_analysis(node->data.for_node.condition, current_table);
+      if (node->data.for_node.condition->data_type != TYPE_BOOL) {
+        printf("(Line %d) Semantic Error: Type mismatch in for condition.\n", node->line);
+      }
+      semantic_analysis(node->data.for_node.update, current_table);
+      semantic_analysis(node->data.for_node.body, current_table);
+      break;
+    case AST_TYPE_WHILE:
+      semantic_analysis(node->data.while_node.condition, current_table);
+      if (node->data.while_node.condition->data_type != TYPE_BOOL) {
+        printf("(Line %d) Semantic Error: Type mismatch in while condition.\n", node->line);
+      }
+      semantic_analysis(node->data.while_node.body, current_table);
+      break;
+    case AST_TYPE_BREAK:
+      break;
+    case AST_TYPE_CONTINUE:
+      break;
+    case AST_TYPE_RETURN:
+      semantic_analysis(node->data.return_node.expr, current_table);
+      break;
     default:
       break;
   }
