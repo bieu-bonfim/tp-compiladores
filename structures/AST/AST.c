@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Colors.h"
 #include "NodeType.h"
 #include "../Operators.h"
 
@@ -284,13 +285,19 @@ void print_node_type(ASTNode *node, int level) {
   print_indentation(level);
   switch (node->type) {
     case AST_TYPE_INT:
-      printf("└─ Integer Literal: %d\n", node->data.int_val);
+      printf("│\n");
+      print_indentation(level);
+      printf(RESET "└───{" RESET "🌀 " PINK_TEXT "Glifo" RESET " infundido com: " PINK_TEXT "%d"RESET"}\n", node->data.int_val);
       break;
     case AST_TYPE_FLOAT:
-      printf("└─ Float Literal: %f\n", node->data.float_val);
+      printf("│\n");
+      print_indentation(level);
+      printf(RESET "└───{" RESET "🌀 " PINK_TEXT "Fractal" RESET " infundido com: " PINK_TEXT "%f"RESET "}\n", node->data.float_val);
       break;
     case AST_TYPE_BIN_AROP:
-      printf("└─ Binary Arithmetic Operation\n");
+      printf("│\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" BLUE_TEXT "🧿 Manipulacao Aritmetica" RESET"}\n");
       if (node->data.bin_arop.left != NULL)
       {
         traverse_ast(node->data.bin_arop.left, level + 1);
@@ -302,7 +309,9 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_BIN_RELOP:
-      printf("└─ Binary Relational Operation\n");
+      printf("|\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" BLUE_TEXT "🧿 Manipulacao Relacional " RESET "}\n");
       if (node->data.bin_relop.left != NULL)
       {
         traverse_ast(node->data.bin_relop.left, level + 1);
@@ -314,7 +323,9 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_BIN_LOGOP:
-      printf("└─ Binary Logical Operation\n");
+      printf("|\n");
+      print_indentation(level);
+      printf(BLUE_TEXT "├──" "┬─{" "🧿 Manipulacao Logica " RESET "}\n");
       if (node->data.bin_logop.left != NULL)
       {
         traverse_ast(node->data.bin_logop.left, level + 1);
@@ -326,42 +337,63 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_UNOP:
-      printf("└─ Unary Operation\n");
+      printf("|\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" BLUE_TEXT "🧿 Manipulacao Unaria" RESET "}\n");
       if (node->data.unnop.expr != NULL)
       {
         traverse_ast(node->data.unnop.expr, level + 1);
       }
       break;
     case AST_TYPE_VAR:
-      printf("└─ Variable Reference: %s\n", node->data.var_name);
+      printf("|\n");
+      print_indentation(level);
+      printf("├──" "──{""Referenciando Essencia de Variavel: "PINK_TEXT "%s" RESET " }\n", node->data.var_name);
       break;
     case AST_TYPE_ASSIGN:
-      printf("└─ Assignment\n");
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{"YELLOW_TEXT"💫 Infusao " RESET "}\n");
       if (node->data.assign.expr != NULL)
       {
         traverse_ast(node->data.assign.expr, level + 1);
       }
       break;
     case AST_TYPE_FUNC_CALL:
-      printf("└─ Function Call\n");
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{"  GREEN_TEXT "🔥 Conjuracao de Magia " RESET "}\n");
       break;
     case AST_NODE_ROOT:
-      printf("└─ Root\n");
+      printf("├──" "┬─{" YELLOW_TEXT " ✨ Nucleo Arcano" RESET " }" "\n");
       break;
     case AST_TYPE_LONG:
-      printf("└─ Long Literal: %ld\n", node->data.long_val);
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{" RESET "🌀 " PINK_TEXT "Arquiglifo" RESET " infundido com: " PINK_TEXT "%ld"RESET "\n", node->data.long_val);
       break;
     case AST_TYPE_SHORT:
-      printf("└─ Short Literal: %d\n", node->data.short_val);
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{" RESET "🌀 " PINK_TEXT "Semiglifo" RESET " infundido com: " PINK_TEXT "%d" RESET "}\n", node->data.short_val);
       break;
     case AST_TYPE_DOUBLE:
-      printf("└─ Double Literal: %f\n", node->data.double_val);
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{" RESET "🌀 " PINK_TEXT "Arquifractal" RESET " infundido com: " PINK_TEXT "%f" RESET "}\n", node->data.double_val);
       break;
     case AST_TYPE_CHAR:
-      printf("└─ Char Literal: %c\n", node->data.char_val);
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{" RESET "🌀 " PINK_TEXT "Runa" RESET " infundido com: " PINK_TEXT"%c "RESET "}" "\n" , node->data.char_val);
       break;
     case AST_TYPE_FUNC:
-      printf("└─ Function\n");
+      printf("│\n");
+      print_indentation(level);
+      printf( "├──" "┬─{" GREEN_TEXT"📜 Preparar Magia: %s " RESET "} | " RESET "🌙 Ingredientes: ", node->data.func.func_name);
+      print_param_names(node->data.func.func);
+      // node->data.func.func_name
+      // node->data.func.func->
       if (node->data.func.body != NULL)
       {
         traverse_ast(node->data.func.body, level + 1);
@@ -371,10 +403,14 @@ void print_node_type(ASTNode *node, int level) {
       printf("└─ Import: %s\n", node->data.import.name);
       break;
     case AST_TYPE_RETURN:
-      printf("└─ Return\n");
+      printf("│\n");
+      print_indentation(level);
+      printf("└───{" YELLOW_TEXT"🌟 Regressus " RESET "}\n");
       break;
     case AST_TYPE_IF:
-      printf("└─ If\n");
+      printf("│\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" YELLOW_TEXT "🪬  Ponderar " RESET "}\n");
       if (node->data.if_node.condition != NULL)
       {
         traverse_ast(node->data.if_node.condition, level + 1);
@@ -389,7 +425,9 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_WHILE:
-      printf("└─ While\n");
+      printf("|\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" YELLOW_TEXT "⏳ Dilatar Tempo " RESET "\n");
       if (node->data.while_node.condition != NULL)
       {
         traverse_ast(node->data.while_node.condition, level + 1);
@@ -400,7 +438,9 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_FOR:
-      printf("└─ For\n");
+      printf("|\n");
+      print_indentation(level);
+      printf(RESET "├──" "┬─{" YELLOW_TEXT "⌛ Fraturar Tempo " RESET "}\n");
       if (node->data.for_node.condition != NULL)
       {
         traverse_ast(node->data.for_node.condition, level + 1);
@@ -421,14 +461,18 @@ void print_node_type(ASTNode *node, int level) {
       printf("└─ Continue\n");
       break;
     case AST_TYPE_VAR_DECL:
-      printf("└─ Variable Declaration\n");
+      printf("│\n");
+      print_indentation(level);
+      printf("├──" "┬─{" PINK_TEXT "🔮 Infusao Primitiva" RESET" }" "\n");
       if (node->data.var_decl.expr != NULL)
       {
         traverse_ast(node->data.var_decl.expr, level + 1);
       }
       break;
     case AST_TYPE_BLOCK:
-      printf("└─ Block\n");
+      printf("|\n");
+      print_indentation(level);
+      printf("├──" "┬─{" YELLOW_TEXT "🫴  Expansao de Escopo "RESET"}\n");
       break;
     case AST_TYPE_BOOL:
       printf("└─ Boolean Literal: %s\n", node->data.int_val ? "veritas" : "falsum");
@@ -478,9 +522,24 @@ void print_node_type(ASTNode *node, int level) {
   }
 }
 
+void print_param_names(Function *func) {
+    if (func == NULL || func->params == NULL) {
+        printf("\n");
+        return;
+    }
+
+    Param *current = func->params;
+    while (current != NULL) {
+        printf(PINK_TEXT "%s %s" RESET ", ", type_to_string(current->type), current->name);
+        current = current->next;
+    }
+
+    printf("\n");
+}
+
 void print_indentation(int level) {
     for (int i = 0; i < level; i++) {
-        printf("  "); 
+        printf("│  "); 
     }
 }
 
@@ -488,19 +547,29 @@ void print_ar_operators(ArOp op, int level) {
     print_indentation(level);
     switch (op) {
         case PLUS:
-            printf("└─ Add\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" RED_TEXT "💥 Fundir " RESET "}\n");
             break;
         case MINUS:
-            printf("└─ Subtract\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" RED_TEXT "💥 Dissolver "RESET"}\n");
             break;
         case MULT:
-            printf("└─ Multiply\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" RED_TEXT "💥 Replicar "RESET"}\n");
             break;
         case DIV:
-            printf("└─ Divide\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" RED_TEXT "💥 Fragmentar "RESET"}\n");
             break;
         case MOD:
-            printf("└─ Modulus\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" RED_TEXT "💥 Transmoglifar " RESET"}\n");
             break;
     }
 }
@@ -509,22 +578,34 @@ void print_rel_operators(RelOp op, int level) {
     print_indentation(level);
     switch (op) {
         case EQ:
-            printf("└─ Equal\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT "🧪 For Equivalente a " RESET "}\n");
             break;
         case NE:
-            printf("└─ Not Equal\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT "🧪 For Distinto de " RESET"}\n");
             break;
         case LT:
-            printf("└─ Less Than\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT"🧪  For Inferior a " RESET"}\n");
             break;
         case GT:
-            printf("└─ Greater Than\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT "🧪  For Superior a "RESET"}\n");
             break;
         case LE:
-            printf("└─ Less Than or Equal\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT "🧪  For Infraequivalente a "RESET"}\n");
             break;
         case GE:
-            printf("└─ Greater Than or Equal\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "──{" CYAN_TEXT"🧪 For Superequivalente a "RESET"}\n");
             break;
     }
 }
@@ -533,10 +614,14 @@ void print_log_operators(LogOp op, int level) {
     print_indentation(level);
     switch (op) {
         case ANDOP:
-            printf("└─ And\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "┬─{" CYAN_TEXT" 🏛️ Assim Como " RESET"}\n");
             break;
         case OROP:
-            printf("└─ Or\n");
+            printf("|\n");
+            print_indentation(level);
+            printf("├──" "┬─{" CYAN_TEXT " 🏛️ Ou Entao " RESET"}\n");
             break;
     }
 }
