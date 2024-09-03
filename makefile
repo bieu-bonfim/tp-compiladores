@@ -12,6 +12,8 @@ TYPE_SRC = structures/Types.c
 TYPE_OBJ = Types.o
 AST_SRC = structures/AST/AST.c
 AST_OBJ = AST.o
+CODE_GEN = structures/LLVM/codeGen.cpp
+LLVMAST = structures/LLVM/LLVMAST.cpp
 
 LIBS = -lfl
 
@@ -37,8 +39,8 @@ $(TYPE_OBJ): $(TYPE_SRC)
 $(AST_OBJ): $(AST_SRC)
 	$(CC) -c $(AST_SRC) -o $(AST_OBJ)
 
-$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ)
-	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(LIBS)
+$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(CODE_GEN) $(LLVMAST) 
+	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ)
 
 run: all
 	./$(TARGET) < $(INPUTFILE)
