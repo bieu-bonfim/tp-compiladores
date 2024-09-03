@@ -4,9 +4,21 @@
 #include <string.h>
 #include <math.h>
 
+#include <llvm-c/Core.h>
+#include <llvm-c/ExecutionEngine.h>
+#include <llvm-c/Target.h>
+//#include <llvm-c/Transforms/Scalar.h>
+#include <llvm-c/Analysis.h>
+
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
+#include "structures/AST/AST.h"
+
+#include "structures/LLVM/codeGen.h"
+#include "structures/LLVM/LLVMAST.h"
+#include "structures/LLVM/NodeTypeAST.h"
+
 
 extern int yyparse();
 extern int invalid_found;
@@ -17,24 +29,11 @@ int error_found = 0;
 void yyerror(const char *s);
 
 SymbolTable *current_table;
-Expression *evaluate_arithmetic(Expression left, Expression right, ArOp op);
-Expression *evaluate_relational(Expression left, Expression right, RelOp op);
-Expression *evaluate_and(Expression left, Expression right);
-Expression *evaluate_or(Expression left, Expression right);
-Expression *evaluate_not(Expression expr);
-Expression *id_to_expression(char *id);
-void* perform_arithmetic(Expression left, Expression right, ArOp op);
-void* perform_int_arithmetic(void *left, void *right, ArOp op);
-void* perform_float_arithmetic(void *left, void *right, ArOp op);
-void* perform_double_arithmetic(void *left, void *right, ArOp op);
-void* perform_long_arithmetic(void *left, void *right, ArOp op);
-void* perform_short_arithmetic(void *left, void *right, ArOp op);
-Expression* create_expression(Type type, void *value);
-void assign_value_to_symbol(Symbol *symbol, Expression *expr);
-void assign_value_to_expression(Symbol *symbol, Expression *expr);
-void apply_unary_operation(Expression *result, Symbol *operand, int operation);
+ASTNode *ast;
 
 int yylex(void);
+
+extern ASTNode *root;
 
 %}
 
@@ -56,6 +55,8 @@ int yylex(void);
     ArOp arOp;
     RelOp relOp;
     LogOp logOp;
+    struct ASTNodeList *node_list;
+    struct ASTNode *node;
 }
 
 
@@ -68,7 +69,7 @@ int yylex(void);
 %token <ival> TRUE
 %token <ival> FALSE
 %token <relOp> RELOP
-%token <logOp> AND OR NOT
+%token <logOp> LOGOP NOT
 %token <arOp> AROP
 
 %token ASSIGN ENDLINE
@@ -85,42 +86,40 @@ int yylex(void);
 %left RELOP       
 %left AROP              
 %left AND                 
+%left LOGOP                 
 %left OR    
 %left POINT DOT
 
 %type <param> argument
 %type <param> arguments
-%type <param> params
-%type <param> param
 %type <type> type
-%type <result> assignment
-%type <result> opt_assignment
-%type <result> expr
-%type <result> term
-%type <result> literal
-%type <symbol> variable
-%type <result> bool
-%type <result> function_call
-%type <result> unary_expr
+%type <node> assignment
+%type <node> opt_assignment
+%type <node> expr
+%type <node> term
+%type <node> variable
 
+%type <node_list> start stmts param params
+%type <node> start_item decl_func stmt_block decl_import unnary_expr bool function_call literal stmt decl_var decl_stmt stmt_continue
+%type <node> stmt_break stmt_return stmt_for stmt_while stmt_if stmt_switch stmt_else
+%type sign_func type_def
 
 %%
 
-begin: start
+begin: start { ast = create_root_node($1); }
      ;
 
-start: /* empty */
-      | start start_item
+start: /* empty */ { $$ = NULL; }
+      | start start_item { $$ = append_to_list($1, $2); }
       ;
 
-start_item: decl_stmt
-          | decl_func
-          | decl_import
-          | unary_expr ENDLINE
-          | stmts
+start_item: decl_func { $$ = $1; }
+          | decl_import { $$ = $1; }
+          | stmt { $$ = $1; }
+          | unnary_expr ENDLINE { $$ = $1; }
           ;
 
-decl_import: IMPORT LITERALSTRING ENDLINE
+decl_import: IMPORT LITERALSTRING ENDLINE { $$ = create_import_node($2); }
            ;
 
 decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
@@ -129,13 +128,17 @@ decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block
             Param *param = $6;
             add_parameter_list(func, &param);
             Symbol *new_symbol = insert_symbol(current_table, $3, TYPE_FUNC, (void*)func);
+
+            ASTNode *node = create_func_node(new_symbol, $8);
+
+            $$ = node;
            }
          ;
 
-decl_stmt: assignment ENDLINE
-         | sign_func ENDLINE
-         | type_def
-         | decl_var ENDLINE
+decl_stmt: assignment ENDLINE { $$ = $1; }
+         | sign_func ENDLINE { $$ = NULL; }
+         | type_def { $$ = NULL; }
+         | decl_var ENDLINE { $$ = $1; }
          ;
 
 stmt_block: OPENBLOCK 
@@ -152,11 +155,23 @@ stmt_block: OPENBLOCK
           ;
 
 stmt_if: IF expr stmt_block stmt_else
+       {
+        $$ = create_if_node($2, $3, $4);
+       }
        ;
 
 stmt_else: ELSE stmt_block
+         {
+          $$ = $2;
+         }
          | ELSE stmt_if
+         {
+          $$ = $2;
+         }
          | /* empty */
+         {
+          $$ = NULL;
+         }
          ;
 
 stmt_switch: SWITCH expr 
@@ -186,52 +201,64 @@ default_case: /* empty */
             ;
 
 stmt_return: RETURNT expr ENDLINE
+           {
+            $$ = create_return_node($2);
+           }
            ;
 
-stmt_for: FOR expr COMMA unary_expr stmt_block
+stmt_for: FOR expr COMMA unnary_expr stmt_block
+         {
+          $$ = create_for_node($2, $4, $5);
+         }
         ;
 
 stmt_while: WHILE expr stmt_block
+          {
+            $$ = create_while_node($2, $3);
+          }
           ;
 
 stmt_break: BREAK ENDLINE
+          {
+            $$ = create_break_node();
+          }
           ;
 
 stmt_continue: CONTINUE ENDLINE
+             {
+              $$ = create_continue_node();
+             }
              ;
 
-stmts: /* empty */
-     | stmts stmt
+stmts: /* empty */ { $$ = NULL; }
+     | stmts stmt { $$ = append_to_list($1, $2); }
      ;
 
 stmt: decl_stmt
-    | stmt_if
-    | stmt_switch
-    | stmt_while
-    | stmt_for
-    | stmt_return
-    | stmt_break
-    | stmt_continue
+    | stmt_if { $$ = $1; }
+    | stmt_switch { $$ = $1; }
+    | stmt_while { $$ = $1; }
+    | stmt_for { $$ = $1; }
+    | stmt_return { $$ = $1; }
+    | stmt_break { $$ = $1; }
+    | stmt_continue { $$ = $1; }
     ;
 
 assignment: variable ASSIGN expr
            {
-            Symbol *symbol = lookup_symbol(current_table, $1->name);
+            Symbol *symbol = $1->data.symbol;
             if (symbol == NULL) {
                 yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
             } else {
-                assign_value_to_symbol(symbol, $3);
+                $$ = create_assign_node(symbol, $3);
             }
            }
           ;
 
 opt_assignment: /* empty */ 
-               { 
-                Expression *expression = (Expression*)malloc(sizeof(Expression)); 
-                expression->type = TYPE_VOID;
-                expression->value = NULL;
-                $$ = expression; 
-               }
+              { 
+               $$ = NULL; 
+              }
               | ASSIGN expr 
               { 
                $$ = $2; 
@@ -239,19 +266,15 @@ opt_assignment: /* empty */
               ;
 
 decl_var: type type_qualifier ID opt_assignment
-          { 
-           if ($4->type != $1 && $4->type != TYPE_VOID) {
-             yyerror("\033[0;34mInscricao Arcana\033[0m nao inicializada com o tipo correto...\n");
-           }
-           Symbol *new_symbol = insert_symbol(current_table, $3, $1, $4->value); 
-          }
+        {
+          Symbol *symbol = insert_symbol(current_table, $3, $1, NULL);
+          $$ = create_var_decl_node(symbol, $4);
+        }
         | type ID opt_assignment 
-          { 
-           if ($3->type != $1 && $3->type != TYPE_VOID) {
-             yyerror("\033[0;34mInscricao Arcana\033[0m nao inicializada com o tipo correto...\n");
-           }
-           Symbol *new_symbol = insert_symbol(current_table, $2, $1, $3->value); 
-          }
+        {
+          Symbol *symbol = insert_symbol(current_table, $2, $1, NULL);
+          $$ = create_var_decl_node(symbol, $3);
+        }
         ;
 
 type_qualifier: CONST
@@ -262,38 +285,20 @@ type_qualifier: CONST
 sign_func: type ID PARAMS arguments
          ;
 
-expr: expr AROP term { $$ = evaluate_arithmetic(*$1, *$3, $2); }
-    | expr RELOP term { $$ = evaluate_relational(*$1, *$3, $2); }
-    | expr AND term { $$ = evaluate_and(*$1, *$3); }
-    | expr OR term { $$ = evaluate_or(*$1, *$3); }
-    | NOT expr { $$ = evaluate_not(*$2); }
+expr: expr AROP term { $$ = create_bin_arop_node($1, $3, $2); }
+    | expr RELOP term { $$ = create_bin_relop_node($1, $3, $2); }
+    | expr LOGOP term { $$ = create_bin_logop_node($1, $3, $2); }
+    | NOT expr { $$ = create_unop_node($2, NOTOP); }
     | term { $$ = $1; }
     ;
 
 term: literal { $$ = $1; }
-    | INT 
-    { 
-     Expression *result = create_expression(TYPE_INT, NULL);
-     result->value = malloc(sizeof(int));
-     *(int*)result->value = $1;
-     $$ = result; 
-    }
-    | FLOAT 
-    {
-     Expression *result = create_expression(TYPE_FLOAT, NULL);
-     result->value = malloc(sizeof(float));
-     *(float*)result->value = $1;
-     $$ = result; 
-    }
-    | variable 
-    { 
-     Expression *result = create_expression($1->type, NULL);
-     assign_value_to_expression($1, result);
-     $$ = result; 
-    }
+    | INT { $$ = create_int_node($1); }
+    | FLOAT { $$ = create_float_node($1); }
+    | variable { $$ = $1; }
     | bool { $$ = $1; }
     | function_call { $$ = $1; }
-    | unary_expr { $$ = $1; }
+    | unnary_expr { $$ = $1; }
     | OPENBRACK expr CLOSEBRACK { $$ = $2; }
     ;
 
@@ -303,7 +308,8 @@ variable: ID accesses attributes
           if (symbol == NULL) {
             yyerror("\033[0;34mInscricao arcana\033[0m nao encontrada...\n");
           }
-          $$ = symbol;
+          // $$ = create_var_node(symbol, $2, $3);
+          $$ = create_var_ref_node(symbol);
          }
         ;
 
@@ -314,21 +320,11 @@ attributes: /* empty */
 
 bool: TRUE 
      {  
-      Expression *result = (Expression*)malloc(sizeof(Expression));
-      result->type = TYPE_BOOL;
-      int *value = (int*)malloc(sizeof(int));
-      *value = 1;
-      result->value = (void*)value;
-      $$ = result;
+      $$ = create_bool_node(1);
      }
     | FALSE
      {
-      Expression *result = (Expression*)malloc(sizeof(Expression));
-      result->type = TYPE_BOOL;
-      int *value = (int*)malloc(sizeof(int));
-      *value = 0;
-      result->value = (void*)value;
-      $$ = result;
+      $$ = create_bool_node(0);
      }
     ;
 
@@ -342,54 +338,37 @@ function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK
                   yyerror("Simbolo nao e uma \033[0;32mmagia\033[0m...\n");
                 }
                 Function *func = (Function *)symbol->value;
-                Param *param = $5;
-                if (func->params != NULL) {
-                  if (param_list_length(param) != param_list_length(func->params)) {
-                    yyerror("Numero de componentes incorreto...\n");
-                  }
-                  Param *current = func->params;
-                  while (current != NULL) {
-                    if (current->type != param->type) {
-                      yyerror("Tipo de componente incorreto...\n");
-                    }
-                    current = current->next;
-                    param = param->next;
-                  }
-                }
-                Expression *result = create_expression(func->type, NULL);
-                // TODO: Call function
-                result->value = allocate_and_initialize(result->type);
-                $$ = result;
+                ASTNodeList *params = $5;
+                // if (func->params != NULL) {
+                //   Param *current = func->params;
+                //   while (current != NULL) {
+                //     if (current->type != param->type) {
+                //       yyerror("Tipo de componente incorreto...\n");
+                //     }
+                //     current = current->next;
+                //     param = param->next;
+                //   }
+                // }
+                
+                $$ = create_func_call_node(symbol, $5);
               }
              ;
 
-unary_expr: MINUSONE variable 
+unnary_expr: MINUSONE variable 
           { 
-            Expression *result = create_expression($2->type, NULL);
-            apply_unary_operation(result, $2, MINUSONEOP);
-            Symbol *symbol = lookup_symbol(current_table, $2->name);
-            assign_value_to_symbol(symbol, result);
-            $$ = result; 
+            $$ = create_unop_node($2, MINUSONEOP);
           }
           | PLUSONE variable 
           { 
-            Expression *result = create_expression($2->type, NULL);
-            apply_unary_operation(result, $2, PLUSONEOP);
-            Symbol *symbol = lookup_symbol(current_table, $2->name);
-            assign_value_to_symbol(symbol, result);
-            $$ = result; 
+            $$ = create_unop_node($2, PLUSONEOP);
           }
           | DEREF variable 
           { 
-            Expression *result = create_expression($2->type, NULL);
-            apply_unary_operation(result, $2, DEREFOP);
-            $$ = result; 
+            $$ = create_unop_node($2, DEREFOP);
           }
           | REF variable 
           { 
-            Expression *result = create_expression($2->type, NULL);
-            apply_unary_operation(result, $2, REFOP);
-            $$ = result; 
+            $$ = create_unop_node($2, REFOP);
           }
           ;
 
@@ -415,14 +394,11 @@ params: /* empty */ { $$ = NULL; }
 
 param: expr 
      { 
-      Param *param = create_param("", $1->type);
-      $$ = param; 
+      $$ = append_to_list(NULL, $1); 
      }
      | expr COMMA param 
      { 
-      Param *param = create_param("", $1->type);
-      link_params(param, $3);
-      $$ = param; 
+      $$ = append_to_list($3, $1); 
      }
      ;
 
@@ -484,22 +460,15 @@ access: OPENARRAY expr CLOSEARRAY
 
 literal: LITERALSTRING 
        { 
-        Expression *result = create_expression(TYPE_STRING, NULL);        
-        result->value = malloc(sizeof(char) * (strlen($1) + 1));
-        strcpy((char*)result->value, $1);
-        $$ = result;
+        $$ = create_string_node($1);
        }
        | LITERALCHAR 
        { 
-        Expression *result = create_expression(TYPE_CHAR, NULL);
-        result->value = malloc(sizeof(char));
-        *(char*)result->value = $1;
-        $$ = result;
+        $$ = create_char_node($1);
        }
        | NULLT 
        { 
-        Expression *result = create_expression(TYPE_VOID, NULL);
-        $$ = result; 
+        $$ = create_null_node(); 
        }
        ;
 
@@ -521,460 +490,10 @@ int main() {
     } else {
         printf("\nCodigo sintaticamente correto.\n");
     }
+    traverse_ast(ast, 0);
     print_table(current_table);
+    initLLVM();
+    codegen(root);
+    generateLLVMIR();
     return 0; 
-}
-
-Expression* evaluate_arithmetic(Expression left, Expression right, ArOp op) {
-    Expression *result = (Expression*)malloc(sizeof(Expression));
-    
-    if (left.type != right.type) {
-        yyerror("\033[0;36mTipos arcanos\033[0m incompativeis...\n");
-    }
-
-    result->value = perform_arithmetic(left, right, op);
-    result->type = left.type;
-    return result;
-}
-
-void* perform_arithmetic(Expression left, Expression right, ArOp op) {
-    switch (left.type) {
-        case TYPE_INT:
-            return perform_int_arithmetic(left.value, right.value, op);
-        case TYPE_FLOAT:
-            return perform_float_arithmetic(left.value, right.value, op);
-        case TYPE_DOUBLE:
-            return perform_double_arithmetic(left.value, right.value, op);
-        case TYPE_LONG:
-            return perform_long_arithmetic(left.value, right.value, op);
-        case TYPE_SHORT:
-            return perform_short_arithmetic(left.value, right.value, op);
-        default:
-            yyerror("Tipo de \033[0;36minscricao arcana\033[0m nao suportado...\n");
-    }
-}
-
-void* perform_int_arithmetic(void *left, void *right, ArOp op) {
-    int *l = (int*)left;
-    int *r = (int*)right;
-    int *result = (int*)malloc(sizeof(int));
-    switch (op) {
-        case PLUS:
-            *result = *l + *r;
-            break;
-        case MINUS:
-            *result = *l - *r;
-            break;
-        case MULT:
-            *result = *l * *r;
-            break;
-        case DIV:
-            *result = *l / *r;
-            break;
-        case MOD:
-            *result = *l % *r;
-            break;
-    }
-    return (void*)result;
-}
-
-void *perform_float_arithmetic(void *left, void *right, ArOp op) {
-    float *l = (float*)left;
-    float *r = (float*)right;
-    float *result = (float*)malloc(sizeof(float));
-    switch (op) {
-        case PLUS:
-            *result = *l + *r;
-            break;
-        case MINUS:
-            *result = *l - *r;
-            break;
-        case MULT:
-            *result = *l * *r;
-            break;
-        case DIV:
-            *result = *l / *r;
-            break;
-        case MOD:
-            yyerror("\033[0;36mManipulacao arcana\033[0m nao suportada para fractais...\n");
-            break;
-    }
-    return (void*)result;
-}
-
-void *perform_double_arithmetic(void *left, void *right, ArOp op) {
-    double *l = (double*)left;
-    double *r = (double*)right;
-    double *result = (double*)malloc(sizeof(double));
-    switch (op) {
-        case PLUS:
-            *result = *l + *r;
-            break;
-        case MINUS:
-            *result = *l - *r;
-            break;
-        case MULT:
-            *result = *l * *r;
-            break;
-        case DIV:
-            *result = *l / *r;
-            break;
-        case MOD:
-            yyerror("\033[0;36mManipulacao arcana\033[0m nao suportada para Arquifractais...\n");
-            break;
-    }
-    return (void*)result;
-}
-
-void *perform_long_arithmetic(void *left, void *right, ArOp op) {
-    long *l = (long*)left;
-    long *r = (long*)right;
-    long *result = (long*)malloc(sizeof(long));
-    switch (op) {
-        case PLUS:
-            *result = *l + *r;
-            break;
-        case MINUS:
-            *result = *l - *r;
-            break;
-        case MULT:
-            *result = *l * *r;
-            break;
-        case DIV:
-            *result = *l / *r;
-            break;
-        case MOD:
-            *result = *l % *r;
-            break;
-    }
-    return (void*)result;
-}
-
-void *perform_short_arithmetic(void *left, void *right, ArOp op) {
-    short *l = (short*)left;
-    short *r = (short*)right;
-    short *result = (short*)malloc(sizeof(short));
-    switch (op) {
-        case PLUS:
-            *result = *l + *r;
-            break;
-        case MINUS:
-            *result = *l - *r;
-            break;
-        case MULT:
-            *result = *l * *r;
-            break;
-        case DIV:
-            *result = *l / *r;
-            break;
-        case MOD:
-            *result = *l % *r;
-            break;
-    }
-    return (void*)result;
-}
-
-Expression* evaluate_relational(Expression left, Expression right, RelOp op) {
-    Expression *result = (Expression*)malloc(sizeof(Expression));
-    result->type = TYPE_BOOL;
-    int* value = (int*)malloc(sizeof(int));
-
-    if (left.type != right.type) {
-        yyerror("Tipos incompativeis...\n");
-    }
-
-    switch (op) {
-        case GT:
-            *value = (int*)left.value > (int*)right.value;
-            break;
-        case LT:
-            *value = (int*)left.value < (int*)right.value;
-            break;
-        case GE:
-            *value = (int*)left.value >= (int*)right.value;
-            break;
-        case LE:
-            *value = (int*)left.value <= (int*)right.value;
-            break;
-        case EQ:
-            *value = (int*)left.value == (int*)right.value;
-            break;
-        case NE:
-            *value = (int*)left.value != (int*)right.value;
-            break;
-    }
-    result->value = (void*)value;
-    return result;
-}
-
-Expression *evaluate_and(Expression left, Expression right) {
-    Expression *result = (Expression*)malloc(sizeof(Expression));
-    result->type = TYPE_BOOL;
-    int* value = (int*)malloc(sizeof(int));
-
-    if (left.type != right.type) {
-        yyerror("Tipos incompativeis...\n");
-    }
-
-    *value = (int*)left.value && (int*)right.value;
-    result->value = (void*)value;
-    return result;
-}
-
-Expression* evaluate_or(Expression left, Expression right) {
-    Expression* result = (Expression*)malloc(sizeof(Expression));
-    result->type = TYPE_BOOL;
-    int* value = (int*)malloc(sizeof(int));
-
-    if (left.type != right.type) {
-        yyerror("Tipos incompativeis...\n");
-    }
-
-    *value = (int*)left.value || (int*)right.value;
-    result->value = (void*)value;
-    return result;
-}
-
-Expression* evaluate_not(Expression expr) {
-    Expression *result = (Expression*)malloc(sizeof(Expression));
-    if (expr.type != TYPE_BOOL) {
-        yyerror("Tipos incompativeis...\n");
-    }
-    int* value = (int*)malloc(sizeof(int));
-
-    result->type = TYPE_BOOL;
-    *value = (!(int*)expr.value);
-    result->value = (void*)value;
-    return result;
-}
-
-Expression* id_to_expression(char *id) {
-    Symbol *symbol = lookup_symbol(current_table, id);
-    if (symbol == NULL) {
-        yyerror("\033[0;36mInscricao arcana\033[0m nao encontrada...\n");
-    }
-    Expression *result = (Expression*)malloc(sizeof(Expression));
-    result->type = symbol->type;
-    result->value = symbol->value;
-    return result;
-}
-
-Expression* create_expression(Type type, void *value) {
-    Expression *expression = (Expression*)malloc(sizeof(Expression));
-    expression->type = type;
-    expression->value = value;
-    return expression;
-}
-
-void assign_value_to_symbol(Symbol *symbol, Expression *expr) {
-    if (symbol == NULL || expr == NULL) {
-        yyerror("Inscricao ou manipulacao arcana incompativel...\n");
-        return;
-    }
-
-    if (symbol->type != expr->type) {
-        yyerror("Tipos incompativeis...\n");
-        return;
-    }
-
-    if (symbol->value != NULL) {
-        free(symbol->value);
-    }
-
-    switch (expr->type) {
-        case TYPE_INT:
-            symbol->value = malloc(sizeof(int));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(int*)symbol->value = *(int*)expr->value;
-            break;
-
-        case TYPE_FLOAT:
-            symbol->value = malloc(sizeof(float));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(float*)symbol->value = *(float*)expr->value;
-            break;
-
-        case TYPE_DOUBLE:
-            symbol->value = malloc(sizeof(double));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(double*)symbol->value = *(double*)expr->value;
-            break;
-
-        case TYPE_LONG:
-            symbol->value = malloc(sizeof(long));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(long*)symbol->value = *(long*)expr->value;
-            break;
-
-        case TYPE_SHORT:
-            symbol->value = malloc(sizeof(short));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(short*)symbol->value = *(short*)expr->value;
-            break;
-
-        case TYPE_BOOL:
-            symbol->value = malloc(sizeof(_Bool));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(_Bool*)symbol->value = *(_Bool*)expr->value;
-            break;
-
-        case TYPE_CHAR:
-            symbol->value = malloc(sizeof(char));
-            if (symbol->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(char*)symbol->value = *(char*)expr->value;
-            break;
-        default:
-            yyerror("\033[0;35mFluxo mistico\033[0m desconhecido...\n");
-            return;
-    }
-}
-
-
-void assign_value_to_expression(Symbol *symbol, Expression *expr) {
-    if (symbol == NULL || expr == NULL) {
-        yyerror("Inscricao arcana ou expressao magica nao compativel...\n");
-        return;
-    }
-
-    if (symbol->type != expr->type) {
-        yyerror("Tipos incompativeis...\n");
-        return;
-    }
-
-    switch (symbol->type) {
-        case TYPE_INT:
-            expr->value = malloc(sizeof(int));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(int*)expr->value = *(int*)symbol->value;
-            break;
-
-        case TYPE_FLOAT:
-            expr->value = malloc(sizeof(float));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(float*)expr->value = *(float*)symbol->value;
-            break;
-
-        case TYPE_DOUBLE:
-            expr->value = malloc(sizeof(double));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(double*)expr->value = *(double*)symbol->value;
-            break;
-
-        case TYPE_LONG:
-            expr->value = malloc(sizeof(long));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(long*)expr->value = *(long*)symbol->value;
-            break;
-
-        case TYPE_SHORT:
-            expr->value = malloc(sizeof(short));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(short*)expr->value = *(short*)symbol->value;
-            break;
-
-        case TYPE_BOOL:
-            expr->value = malloc(sizeof(_Bool));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(_Bool*)expr->value = *(_Bool*)symbol->value;
-            break;
-
-        case TYPE_CHAR:
-            expr->value = malloc(sizeof(char));
-            if (expr->value == NULL) {
-                yyerror("\033[0;35mAlocacao mistica\033[0m falhou...\n");
-                return;
-            }
-            *(char*)expr->value = *(char*)symbol->value;
-            break;
-        default:
-            yyerror("Manipulacao mistica desconhecida...\n");
-            return;
-    }
-}
-
-void apply_unary_operation(Expression *result, Symbol *operand, int operation) {
-    switch (operation) {
-        case MINUSONEOP:
-            if (operand->type == TYPE_INT) {
-                int value = *(int*)operand->value;
-                value--;
-                result->value = malloc(sizeof(int));
-                *(int*)result->value = value;
-            } else if (operand->type == TYPE_FLOAT) {
-                float value = *(float*)operand->value;
-                value--;
-                result->value = malloc(sizeof(float));
-                *(float*)result->value = value;
-            } else {
-                yyerror("Encantamento invalido...\n");
-            }
-            break;
-
-        case PLUSONEOP:
-            if (operand->type == TYPE_INT) {
-                int value = *(int*)operand->value;
-                value++;
-                result->value = malloc(sizeof(int));
-                *(int*)result->value = value;
-            } else if (operand->type == TYPE_FLOAT) {
-                float value = *(float*)operand->value;
-                value++;
-                result->value = malloc(sizeof(float));
-                *(float*)result->value = value;
-            } else {
-                yyerror("Encantamento invalido...\n");
-            }
-            break;
-
-        case DEREFOP:
-            /* result->value = *(void**)operand->value; */
-            break;
-
-        case REFOP:
-            /* result->value = &operand->value; */
-            break;
-
-        default:
-            yyerror("Encantamento falhou...");
-    }
-    result->type = operand->type;
 }

@@ -1,5 +1,5 @@
 TARGET = teste 
-INPUTFILE = testes/testeIF.txt
+INPUTFILE = testes/testeSoma.txt
 YACC_SRC = translate.y
 LEX_SRC = lex.l
 YACC_OUT = translate.tab.c
@@ -10,6 +10,8 @@ FUNC_SRC = structures/Function.c
 FUNC_OBJ = Function.o
 TYPE_SRC = structures/Types.c
 TYPE_OBJ = Types.o
+AST_SRC = structures/AST/AST.c
+AST_OBJ = AST.o
 
 LIBS = -lfl
 
@@ -32,11 +34,14 @@ $(FUNC_OBJ): $(FUNC_SRC)
 $(TYPE_OBJ): $(TYPE_SRC)
 	$(CC) -c $(TYPE_SRC) -o $(TYPE_OBJ)
 
-$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ)
-	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(LIBS)
+$(AST_OBJ): $(AST_SRC)
+	$(CC) -c $(AST_SRC) -o $(AST_OBJ)
+
+$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ)
+	$(CC) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(LIBS)
 
 run: all
 	./$(TARGET) < $(INPUTFILE)
 
 clean:
-	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ)
+	rm -f $(TARGET) $(YACC_OUT) yacc.tab.h $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ)

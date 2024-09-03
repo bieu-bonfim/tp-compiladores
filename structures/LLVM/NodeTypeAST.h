@@ -1,0 +1,63 @@
+#ifndef NODETYPES_H
+#define NODETYPES_H
+
+enum class ASTNodeType {
+    AST_TYPE_INT,
+    AST_TYPE_FLOAT,
+    AST_TYPE_BIN_AROP,
+    AST_TYPE_BIN_RELOP,
+    AST_TYPE_BIN_LOGOP,
+    AST_TYPE_UNOP,
+    AST_TYPE_VAR,
+    AST_TYPE_ASSIGN,
+    AST_TYPE_FUNC_CALL,
+    AST_NODE_ROOT,
+    AST_TYPE_LONG,
+    AST_TYPE_SHORT,
+    AST_TYPE_DOUBLE,
+    AST_TYPE_CHAR,
+    AST_TYPE_FUNC,
+    AST_TYPE_IMPORT,
+    AST_TYPE_RETURN,
+    AST_TYPE_IF,
+    AST_TYPE_WHILE,
+    AST_TYPE_FOR,
+    AST_TYPE_BREAK,
+    AST_TYPE_CONTINUE,
+    AST_TYPE_VAR_DECL,
+    AST_TYPE_BLOCK,
+    AST_TYPE_DECL,
+    AST_TYPE_STRUCT_DECL,
+    AST_TYPE_BOOL,
+    AST_TYPE_NULL,
+    AST_TYPE_STRING,
+    AST_TYPE_VOID
+};
+
+enum ArOp {
+    ADD,
+    SUB,
+    MUL,
+    DIV
+};
+
+enum RelOp {
+    LT,
+    GT,
+    LE,
+    GE,
+    EQ,
+    NE
+};
+
+enum LogOp {
+    AND,
+    OR
+};
+
+enum UnOp {
+    NEG,
+    NOT
+};
+
+#endif

@@ -10,7 +10,6 @@
 typedef struct Param {
     Type type;
     char *name;
-    void* value;
     struct Param *next;
 } Param;
 
