@@ -2247,7 +2247,11 @@ int main() {
     semantic_analysis(ast, current_table);
     traverse_ast(ast, 0);
     print_table(current_table);
+<<<<<<< HEAD
     generateTAC(ast);
+=======
+    TAC *teste = (TAC*)malloc(sizeof(TAC));
+>>>>>>> 6a424128f693997edfb02f5c85c65d1b904a0a1b
     return 0; 
 }
 

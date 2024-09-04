@@ -1,4 +1,5 @@
 #include "Function.h"
+#include "./AST/Colors.h"
 
 Function *create_function(Type type) {
     Function *func = (Function *)malloc(sizeof(Function));
@@ -51,14 +52,9 @@ void free_function(Function *func) {
 }
 
 void print_function(Function func) {
-    printf("\nFunction type: ");
-    printf("%s", type_to_string(func.type));
-    printf(" params: ");
     Param *current = func.params;
     while (current != NULL) {
-        
-        printf("%s %s, ", type_to_string(current->type), current->name);
+        printf("│"BLACK_BG GREEN_TEXT" %-14s "RESET BLACK_BG"│"GREEN_TEXT" %-14s "RESET BLACK_BG "│"GREEN_TEXT" %-14s "RESET"│\n", current->name,type_to_string(current->type),  "");
         current = current->next;
     }
-    printf("\n");
 }
