@@ -16,6 +16,7 @@ CODE_GEN = structures/LLVM/codeGen.cpp
 CODE_GEN_OBJ = codeGen.o
 LLVMAST = structures/LLVM/LLVMAST.cpp
 LLVMAST_OBJ = LLVMAST.o
+TRANSLATE_TAB_OBJ = translate.tab.o
 
 LIBS = -lfl `llvm-config --libs --system-libs --cflags --ldflags`
 
@@ -50,8 +51,8 @@ $(CODE_GEN_OBJ): $(CODE_GEN)
 $(LLVMAST_OBJ): $(LLVMAST)
 	$(CXX) $(CXXFLAGS) -c $(LLVMAST) -o $(LLVMAST_OBJ) `llvm-config --cxxflags`
 
-$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(CODE_GEN_OBJ) $(LLVMAST_OBJ)
-	$(CXX) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(CODE_GEN_OBJ) $(LLVMAST_OBJ) $(LIBS)
+$(TARGET): $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(CODE_GEN_OBJ) $(LLVMAST_OBJ) $(TRANSLATE_TAB_OBJ)
+	$(CXX) -o $(TARGET) $(YACC_OUT) $(LEX_OUT) $(SYM_OBJ) $(FUNC_OBJ) $(TYPE_OBJ) $(AST_OBJ) $(CODE_GEN_OBJ) $(LLVMAST_OBJ) $(TRANSLATE_TAB_OBJ) $(LIBS)
 
 run: all
 	./$(TARGET) < $(INPUTFILE)

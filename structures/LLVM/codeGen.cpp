@@ -50,6 +50,8 @@ llvm::Value* codegen(ASTNode* node) {
                     return Builder->CreateMul(left, right, "multmp");
                 case DIV:
                     return Builder->CreateSDiv(left, right, "divtmp");
+                case MOD:
+                    return Builder->CreateSRem(left, right, "modtmp");
                 default:
                     return nullptr;
             }
@@ -89,10 +91,14 @@ llvm::Value* codegen(ASTNode* node) {
         case ASTNodeType::AST_TYPE_UNOP: {
             llvm::Value* expr = codegen(node->data.unnop.expr.get());
             switch (node->data.unnop.op) {
-                case MINUSOP:
-                    return Builder->CreateNeg(expr, "negtmp");
                 case NOTOP:
                     return Builder->CreateNot(expr, "nottmp");
+                case MINUSONEOP:
+                    return Builder->CreateSub(expr, llvm::ConstantInt::get(TheContext, llvm::APInt(32, 1)), "minusone");
+                case PLUSONEOP:
+                    return Builder->CreateAdd(expr, llvm::ConstantInt::get(TheContext, llvm::APInt(32, 1)), "plusone");
+                case REFOP:
+                    return expr;
                 default:
                     return nullptr;
             }
@@ -104,14 +110,12 @@ llvm::Value* codegen(ASTNode* node) {
 }
 
 llvm::Function* createFunction(ASTNode* func_node) {
-    // Exemplo simplificado
     llvm::FunctionType* funcType = llvm::FunctionType::get(llvm::Type::getVoidTy(TheContext), false);
     llvm::Function* func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "func_name", TheModule.get());
 
     llvm::BasicBlock* entry = llvm::BasicBlock::Create(TheContext, "entry", func);
     Builder->SetInsertPoint(entry);
 
-    // Gere o corpo da função
     codegen(func_node->data.func.body.get());
 
     Builder->CreateRetVoid();
@@ -124,7 +128,7 @@ llvm::Function* createFunction(ASTNode* func_node) {
 void generateLLVMIR() {
     TheModule->print(llvm::outs(), nullptr);
 
-    // Para salvar em arquivo
+    //Salvar a árvore em um arquivo
     std::error_code EC;
     llvm::raw_fd_ostream OS("output.ll", EC);
     TheModule->print(OS, nullptr);

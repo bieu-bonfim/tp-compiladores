@@ -20,7 +20,7 @@ typedef enum RelOp {
 
 typedef enum LogOp {
     ANDOP,
-    OROP,
+    OROP
 } LogOp;
 
 typedef enum UnnOp {
@@ -29,7 +29,7 @@ typedef enum UnnOp {
     REFOP,
     DEREFOP,
     NOTOP,
-    MINUSOP,
+    MINUSOP
 } UnnOp;
 
 #endif
