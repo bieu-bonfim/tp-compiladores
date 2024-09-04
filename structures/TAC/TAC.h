@@ -27,11 +27,11 @@ typedef struct TAC {
 } TAC;
 
 
-char* create_temp_var();
-TAC* create_tac(TACOp op, char *result, char *arg1, char *arg2);
-TAC* generate_tac(ASTNode *node, SymbolTable *table);
-TAC* combine_tac(TAC *first, TAC *second);
-void print_tac(TAC *tac);
+void generateTAC(ASTNode *node);
+char* generateTempVar();
+char* generateLabel();
+const char* getArOpString(ArOp op);
+
 
 
 #endif
