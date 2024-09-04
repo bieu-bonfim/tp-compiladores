@@ -54,6 +54,4 @@ Preparar magia de Glifo principal, Componentes: [] _/
     Fraturar tempo se num1 for inferior a num2, Encantar num2 _/
         num3 será Encantar num3...
     \_
-
-
 \_
