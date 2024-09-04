@@ -509,8 +509,6 @@ int main() {
     traverse_ast(ast, 0);
     print_table(current_table);
     TAC *teste = (TAC*)malloc(sizeof(TAC));
-    teste = generate_tac(ast, current_table);
-    print_tac(teste);
     return 0; 
 }
 
