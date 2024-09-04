@@ -21,7 +21,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <functional>
+#include <cstddef>
 
+// Definição da estrutura ASTNode e ASTNodeList
 struct ASTNode;
 using ASTNodePtr = std::shared_ptr<ASTNode>;
 
@@ -29,7 +34,7 @@ struct ASTNodeList {
     ASTNodePtr node;
     std::shared_ptr<ASTNodeList> next;
 
-    ASTNodeList(ASTNodePtr node, std::shared_ptr<ASTNodeList> next = nullptr)
+    ASTNodeList(ASTNodePtr node, std::shared_ptr<ASTNodeList> next)
         : node(node), next(next) {}
 };
 
@@ -121,39 +126,40 @@ struct ASTNode {
 
     std::shared_ptr<ASTNodeList> children;
 
+    // Construtor para inicializar o tipo do nó
     ASTNode(ASTNodeType type) : type(type), data_type(Type()) {}
 };
 
-ASTNodePtr append_to_list(std::shared_ptr<ASTNodeList> list, ASTNodePtr node);
-ASTNodePtr create_root_node(std::shared_ptr<ASTNodeList> children);
-ASTNode* create_int_node(int val);
-ASTNode* create_float_node(float val);
-ASTNode* create_var_decl_node(Symbol* symbol, ASTNode *expr);
-ASTNode* create_var_ref_node(Symbol* symbol);
-ASTNode* create_func_call_node(Symbol *func_symbol, ASTNodeList *args);
-ASTNode* create_func_call_node(Symbol *func_symbol, ASTNodeList *args);
-ASTNode* create_bin_arop_node(ASTNode *left, ASTNode *right, ArOp op);
-ASTNode* create_bin_relop_node(ASTNode *left, ASTNode *right, RelOp op);
-ASTNode* create_bin_logop_node(ASTNode *left, ASTNode *right, LogOp op);
-ASTNode* create_unop_node(ASTNode *expr, UnnOp op);
-ASTNode* create_assign_node(Symbol* symbol, ASTNode *expr);
-ASTNode* create_long_node(long val);
-ASTNode* create_short_node(short val);
-ASTNode* create_double_node(double val);
-ASTNode* create_char_node(char val);
-ASTNode* create_import_node(char *name);
-ASTNode* create_bool_node(int val);
-ASTNode* create_null_node();
-ASTNode* create_string_node(char *val);
-ASTNode* create_return_node(ASTNode *expr);
-ASTNode* create_if_node(ASTNode *condition, ASTNode *body_branch, ASTNode *else_branch);
-ASTNode* create_while_node(ASTNode *condition, ASTNode *body);
-ASTNode* create_for_node(ASTNode *condition, ASTNode *update, ASTNode *body);
-ASTNode* create_break_node();
-ASTNode* create_continue_node();
+// Declarações de funções para manipulação da AST
+std::shared_ptr<ASTNodeList> append_to_list(std::shared_ptr<ASTNodeList> list, std::shared_ptr<ASTNode> node);
+std::shared_ptr<ASTNode> create_root_node(std::shared_ptr<ASTNodeList> children);  // Declaração da função create_root_node
+std::shared_ptr<ASTNode> create_int_node(int val);
+std::shared_ptr<ASTNode> create_float_node(float val);
+std::shared_ptr<ASTNode> create_var_decl_node(Symbol* symbol, std::shared_ptr<ASTNode> expr);
+std::shared_ptr<ASTNode> create_var_ref_node(Symbol* symbol);
+std::shared_ptr<ASTNode> create_func_call_node(Symbol* func_symbol, std::shared_ptr<ASTNodeList> args);
+std::shared_ptr<ASTNode> create_bin_arop_node(std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right, ArOp op);
+std::shared_ptr<ASTNode> create_bin_relop_node(std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right, RelOp op);
+std::shared_ptr<ASTNode> create_bin_logop_node(std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right, LogOp op);
+std::shared_ptr<ASTNode> create_unop_node(std::shared_ptr<ASTNode> expr, UnnOp op);
+std::shared_ptr<ASTNode> create_assign_node(Symbol* symbol, std::shared_ptr<ASTNode> expr);
+std::shared_ptr<ASTNode> create_long_node(long val);
+std::shared_ptr<ASTNode> create_short_node(short val);
+std::shared_ptr<ASTNode> create_double_node(double val);
+std::shared_ptr<ASTNode> create_char_node(char val);
+std::shared_ptr<ASTNode> create_import_node(const std::string& name);
+std::shared_ptr<ASTNode> create_bool_node(int val);
+std::shared_ptr<ASTNode> create_null_node();
+std::shared_ptr<ASTNode> create_string_node(const std::string& val);
+std::shared_ptr<ASTNode> create_return_node(std::shared_ptr<ASTNode> expr);
+std::shared_ptr<ASTNode> create_if_node(std::shared_ptr<ASTNode> condition, std::shared_ptr<ASTNode> body_branch, std::shared_ptr<ASTNode> else_branch);
+std::shared_ptr<ASTNode> create_while_node(std::shared_ptr<ASTNode> condition, std::shared_ptr<ASTNode> body);
+std::shared_ptr<ASTNode> create_for_node(std::shared_ptr<ASTNode> condition, std::shared_ptr<ASTNode> update, std::shared_ptr<ASTNode> body);
+std::shared_ptr<ASTNode> create_break_node();
+std::shared_ptr<ASTNode> create_continue_node();
 
-void traverse_ast(ASTNodePtr node, int level);
-void print_node_type(ASTNodePtr node, int level);
+void traverse_ast(std::shared_ptr<ASTNode> node, int level);
+void print_node_type(std::shared_ptr<ASTNode> node, int level);
 void print_indentation(int level);
 
 #endif

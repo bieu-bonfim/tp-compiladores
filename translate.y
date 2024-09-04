@@ -9,15 +9,17 @@
 #include <llvm-c/Target.h>
 //#include <llvm-c/Transforms/Scalar.h>
 #include <llvm-c/Analysis.h>
+#include </usr/include/c++/13/cassert>
+#include </usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h>
 
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
-
 #include "structures/LLVM/codeGen.h"
 #include "structures/LLVM/LLVMAST.h"
 #include "structures/LLVM/NodeTypeAST.h"
+#include "structures/Function.h"
 
 
 extern int yyparse();
@@ -41,6 +43,11 @@ extern ASTNode *root;
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
+#include "structures/AST/AST.h"
+#include "structures/LLVM/codeGen.h"
+#include "structures/LLVM/LLVMAST.h"
+#include "structures/LLVM/NodeTypeAST.h"
+#include "structures/Function.h"
 }
 
 %union {

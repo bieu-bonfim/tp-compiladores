@@ -1,6 +1,10 @@
 #ifndef NODETYPES_H
 #define NODETYPES_H
 
+#include <iostream>
+#include <vector>
+#include <llvm/IR/Value.h>
+
 enum class ASTNodeType {
     AST_TYPE_INT,
     AST_TYPE_FLOAT,
@@ -32,32 +36,6 @@ enum class ASTNodeType {
     AST_TYPE_NULL,
     AST_TYPE_STRING,
     AST_TYPE_VOID
-};
-
-enum ArOp {
-    ADD,
-    SUB,
-    MUL,
-    DIV
-};
-
-enum RelOp {
-    LT,
-    GT,
-    LE,
-    GE,
-    EQ,
-    NE
-};
-
-enum LogOp {
-    AND,
-    OR
-};
-
-enum UnOp {
-    NEG,
-    NOT
 };
 
 #endif

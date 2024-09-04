@@ -45,13 +45,18 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 40 "translate.y"
+#line 42 "translate.y"
 
 #include "structures/SymbolTable.h"
 #include "structures/Expression.h"
 #include "structures/Operators.h"
+#include "structures/AST/AST.h"
+#include "structures/LLVM/codeGen.h"
+#include "structures/LLVM/LLVMAST.h"
+#include "structures/LLVM/NodeTypeAST.h"
+#include "structures/Function.h"
 
-#line 55 "translate.tab.h"
+#line 60 "translate.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -131,7 +136,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 46 "translate.y"
+#line 53 "translate.y"
 
     int ival;
     float fval;
@@ -147,7 +152,7 @@ union YYSTYPE
     struct ASTNodeList *node_list;
     struct ASTNode *node;
 
-#line 151 "translate.tab.h"
+#line 156 "translate.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

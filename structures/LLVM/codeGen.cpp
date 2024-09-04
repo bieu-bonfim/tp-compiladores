@@ -42,11 +42,11 @@ llvm::Value* codegen(ASTNode* node) {
             llvm::Value* left = codegen(node->data.bin_arop.left.get());
             llvm::Value* right = codegen(node->data.bin_arop.right.get());
             switch (node->data.bin_arop.op) {
-                case ADD:
+                case PLUS:
                     return Builder->CreateAdd(left, right, "addtmp");
-                case SUB:
+                case MINUS:
                     return Builder->CreateSub(left, right, "subtmp");
-                case MUL:
+                case MULT:
                     return Builder->CreateMul(left, right, "multmp");
                 case DIV:
                     return Builder->CreateSDiv(left, right, "divtmp");
@@ -78,9 +78,9 @@ llvm::Value* codegen(ASTNode* node) {
             llvm::Value* left = codegen(node->data.bin_logop.left.get());
             llvm::Value* right = codegen(node->data.bin_logop.right.get());
             switch (node->data.bin_logop.op) {
-                case AND:
+                case ANDOP:
                     return Builder->CreateAnd(left, right, "andtmp");
-                case OR:
+                case OROP:
                     return Builder->CreateOr(left, right, "ortmp");
                 default:
                     return nullptr;
@@ -89,9 +89,9 @@ llvm::Value* codegen(ASTNode* node) {
         case ASTNodeType::AST_TYPE_UNOP: {
             llvm::Value* expr = codegen(node->data.unnop.expr.get());
             switch (node->data.unnop.op) {
-                case NEG:
+                case MINUSOP:
                     return Builder->CreateNeg(expr, "negtmp");
-                case NOT:
+                case NOTOP:
                     return Builder->CreateNot(expr, "nottmp");
                 default:
                     return nullptr;
