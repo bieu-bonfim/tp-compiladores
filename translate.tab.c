@@ -2248,7 +2248,6 @@ int main() {
     semantic_analysis(ast, current_table);
     traverse_ast(ast, 0);
     print_table(current_table);
-    generateTAC(ast);
     return 0; 
 }
 
