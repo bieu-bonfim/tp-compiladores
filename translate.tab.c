@@ -2247,11 +2247,7 @@ int main() {
     semantic_analysis(ast, current_table);
     traverse_ast(ast, 0);
     print_table(current_table);
-<<<<<<< HEAD
     generateTAC(ast);
-=======
-    TAC *teste = (TAC*)malloc(sizeof(TAC));
->>>>>>> 6a424128f693997edfb02f5c85c65d1b904a0a1b
     return 0; 
 }
 
@@ -2271,7 +2267,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         semantic_analysis(node->data.var_decl.expr, current_table);
 
         if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
-          printf("(Line %d) Semantic Error: Type mismatch in variable '%s' initialization.\n", node->line, node->data.var_decl.var_name);
+          printf("(Linha %d) Semantic Error: Tipo incompativel com a variavel '%s' para inicializacao.\n", node->line, node->data.var_decl.var_name);
         }
       }
       break;
@@ -2308,7 +2304,10 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_arop.left, current_table);
       semantic_analysis(node->data.bin_arop.right, current_table);
       if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
-        printf("(Line %d) Semantic Error: Type mismatch in binary arithmetic operation.\n", node->line);
+        printf("(Linha %d) Semantic Error: Tipos incompativeis na operacao aritmetica.\n", node->line);
+      }
+      if ((node->data.bin_arop.left->data_type != TYPE_INT || node->data.bin_arop.right->data_type != TYPE_INT) && node->data.bin_arop.op == MOD) {
+        printf("(Linha %d) Semantic Error: Tipo invalido para operacao aritmetica.\n", node->line);
       }
       node->data_type = node->data.bin_arop.left->data_type;
       break;
@@ -2403,6 +2402,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         semantic_analysis(stmts->node, current_table);
         stmts = stmts->next;
       }
+      current_table = current_table->parent;
       break;
     case AST_TYPE_FOR:
       semantic_analysis(node->data.for_node.condition, current_table);
@@ -2415,7 +2415,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_WHILE:
       semantic_analysis(node->data.while_node.condition, current_table);
       if (node->data.while_node.condition->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in while condition.\n", node->line);
+        printf("(Linha %d) Semantic Error: Tipos incompativeis no condicional do WHILE.\n", node->line);
       }
       semantic_analysis(node->data.while_node.body, current_table);
       break;

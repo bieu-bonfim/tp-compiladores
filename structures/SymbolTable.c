@@ -171,9 +171,9 @@ void print_table(SymbolTable *table) {
 
     printf("└────────────────┴────────────────┴────────────────┘\n");
 
-    if (table->parent) {
-        print_table(table->parent);
-    }
+    // if (table->parent) {
+    //     print_table(table->parent);
+    // }
 }
 
 
