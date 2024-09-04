@@ -51,7 +51,7 @@ void free_function(Function *func) {
 }
 
 void print_function(Function func) {
-    printf("Function: ");
+    printf("\nFunction type: ");
     printf("%s", type_to_string(func.type));
     printf(" params: ");
     Param *current = func.params;

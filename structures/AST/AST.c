@@ -56,17 +56,23 @@ ASTNode* create_bin_logop_node(ASTNode *left, ASTNode *right, LogOp op) {
 
 ASTNode* create_unop_node(ASTNode *expr, UnnOp op) {
   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
-  node->type = AST_TYPE_UNOP;
-  node->data_type = expr->data_type;
+  if (op == NOTOP) {
+    node->data_type = TYPE_BOOL;
+    node->type = AST_TYPE_UNOP_NOT;
+  } else {
+    node->type = AST_TYPE_UNOP;
+    node->data_type = expr->data_type;
+  }
   node->data.unnop.expr = expr;
   node->data.unnop.op = op;
   return node;
 }
 
-ASTNode* create_var_decl_node(char* var_name, ASTNode *expr) {
+ASTNode* create_var_decl_node(char* var_name, Type var_type, ASTNode *expr) {
   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
   node->type = AST_TYPE_VAR_DECL;
   node->data.var_decl.var_name = var_name;
+  node->data.var_decl.var_type = var_type;
   node->data.var_decl.expr = expr;
   return node;
 }
