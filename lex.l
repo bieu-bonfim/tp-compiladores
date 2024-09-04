@@ -220,7 +220,7 @@ referenciar Lembrança[ ]de[ ]
 
 {variavel} {printf("%s", yytext); yylval.sval = strdup(yytext); return ID; }
 
-.                 { printf("\033[0;36mErro de Infusao...\033[0m A magia foi profanada na linha %d... A seguinte ranhura foi condenada: %s\n", line_number, yytext); }
+.                 { printf("\033[0;36m\nErro de Infusao...\033[0m A magia foi profanada na linha %d... A seguinte ranhura foi condenada: %s\n", line_number, yytext); }
 
 
 %% 

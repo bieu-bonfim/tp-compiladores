@@ -2253,7 +2253,6 @@ int main() {
 }
 
 void semantic_analysis(ASTNode *node, SymbolTable *table) {
- 
  if (node == NULL) return;
 
   switch (node->type) {
