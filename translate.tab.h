@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 31 "translate.y"
+#line 32 "translate.y"
 
 #include "structures/AST/AST.h"
 #include "structures/SymbolTable.h"
@@ -134,7 +134,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 40 "translate.y"
+#line 41 "translate.y"
 
     int ival;
     float fval;

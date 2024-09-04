@@ -10,6 +10,7 @@
 #include "structures/AST/AST.h"
 #include "structures/Types.h"
 #include "structures/TAC/TAC.h"
+#include "structures/AST/Colors.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -500,9 +501,9 @@ int main() {
     current_table = global_table;
     yyparse();
     if (error_found) {
-        printf("\nCodigo sintaticamente incorreto.\n");
+        printf("\n\n"RED_TEXT"-- Codigo sintaticamente incorreto.--"RESET"\n");
     } else {
-        printf("\nCodigo sintaticamente correto.\n");
+        printf("\n\n"GREEN_TEXT"--Codigo sintaticamente correto.--"RESET"\n");
     }
     printf("\n");
     semantic_analysis(ast, current_table);
@@ -519,7 +520,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
   switch (node->type) {
     case AST_TYPE_VAR_DECL:
       if (lookup_symbol(current_table, node->data.var_decl.var_name)) {
-        printf("(Linha %d) Semantic Error: Variavel '%s' ja declarada no escopo atual.\n", node->line, node->data.var_decl.var_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Essencia "PINK_TEXT"'%s'"RESET" ja usada no escopo atual.\n\n", node->line, node->data.var_decl.var_name);
       }
 
       insert_symbol(current_table, node->data.var_decl.var_name, node->data.var_decl.var_type, NULL);
@@ -528,22 +529,22 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         semantic_analysis(node->data.var_decl.expr, current_table);
 
         if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
-          printf("(Linha %d) Semantic Error: Tipo incompativel com a variavel '%s' para inicializacao.\n", node->line, node->data.var_decl.var_name);
+          printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo incompativel com a essencia "PINK_TEXT"'%s'"RESET" para inicializacao.\n", node->line, node->data.var_decl.var_name);
         }
       }
       break;
     case AST_TYPE_FUNC:
       if (lookup_symbol(current_table, node->data.func.func_name)) {
-        printf("(Line %d) Semantic Error: Function '%s' already declared in this scope.\n", node->line, node->data.func.func_name);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Magia "GREEN_TEXT"'%s'"RESET" ja preparada neste escopo.\n", node->line, node->data.func.func_name);
       }
       insert_symbol(current_table, node->data.func.func_name, TYPE_FUNC, (void*)node->data.func.func);
       break;
     case AST_TYPE_FUNC_CALL:
       Symbol *func = lookup_symbol(current_table, node->data.func_call.func_name);
       if (func == NULL) {
-        printf("(Linha %d) Semantic Error: Funcao '%s' nao declarada nesse escopo.\n", node->line, node->data.func_call.func_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Magia "GREEN_TEXT"'%s'"RESET" nao declarada nesse escopo.\n", node->line, node->data.func_call.func_name);
       } else if (func->type != TYPE_FUNC) {
-        printf("(Linha %d) Semantic Error: '%s' nao e uma funcao.\n", node->line, node->data.func_call.func_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" "GREEN_TEXT"'%s'"RESET" nao e uma magia conhecida.\n", node->line, node->data.func_call.func_name);
       } else {
         Function *function = (Function*)func->value;
         Param *param = function->params;
@@ -551,13 +552,13 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         while (param != NULL && arg != NULL) {
           semantic_analysis(arg->node, current_table);
           if (param->type != arg->node->data_type) {
-            printf("(Linha %d) Semantic Error: Tipos de parametros incompativeis na chamada.\n", node->line);
+            printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos de ingredientes incompativeis na conjuracao da magia.\n", node->line);
           }
           param = param->next;
           arg = arg->next;
         }
         if (param != NULL || arg != NULL) {
-          printf("(Linha %d) Semantic Error: Numero de parametros incompativel.\n", node->line);
+          printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Numero de ingredientes incompativel.\n", node->line);
         }
       }
       break;
@@ -565,10 +566,10 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_arop.left, current_table);
       semantic_analysis(node->data.bin_arop.right, current_table);
       if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
-        printf("(Linha %d) Semantic Error: Tipos incompativeis na operacao aritmetica.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao aritmetica.\n", node->line);
       }
       if ((node->data.bin_arop.left->data_type != TYPE_INT || node->data.bin_arop.right->data_type != TYPE_INT) && node->data.bin_arop.op == MOD) {
-        printf("(Linha %d) Semantic Error: Tipo invalido para operacao aritmetica.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo invalido para operacao aritmetica.\n", node->line);
       }
       node->data_type = node->data.bin_arop.left->data_type;
       break;
@@ -576,7 +577,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_relop.left, current_table);
       semantic_analysis(node->data.bin_relop.right, current_table);
       if (node->data.bin_relop.left->data_type != node->data.bin_relop.right->data_type) {
-        printf("(Line %d) Semantic Error: Type mismatch in binary relational operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao relacional.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
@@ -584,26 +585,26 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_logop.left, current_table);
       semantic_analysis(node->data.bin_logop.right, current_table);
       if (node->data.bin_logop.left->data_type != node->data.bin_logop.right->data_type) {
-        printf("(Line %d) Semantic Error: Type mismatch in binary logical operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao logica.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
     case AST_TYPE_UNOP_NOT:
       semantic_analysis(node->data.unnop.expr, current_table);
       if (node->data.unnop.expr->data_type != TYPE_BOOL) {
-        printf("(Linha %d) Semantic Error: Tipo nao permitido para operador de negacao unario.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo nao permitido para operador de negacao unario.\n", node->line);
       }
       break;
     case AST_TYPE_UNOP:
       semantic_analysis(node->data.unnop.expr, current_table);
       if (node->data.unnop.expr->data_type != TYPE_INT) {
-        printf("(Line %d) Semantic Error: Type mismatch in unary update operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao de atualizao unaria.\n", node->line);
       }
       break;
     case AST_TYPE_VAR:
       Symbol *var = lookup_symbol(current_table, node->data.var_name);
       if (var == NULL) {
-        printf("(Line %d) Semantic Error: Variable '%s' not declared in this scope.\n", node->line, node->data.var_name);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Essencia "PINK_TEXT"'%s'"RESET" nao infundida neste escopo.\n", node->line, node->data.var_name);
       } else {
         node->data_type = var->type;
       }
@@ -638,7 +639,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_IF:
       semantic_analysis(node->data.if_node.condition, current_table);
       if (node->data.if_node.condition->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in if condition.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Erro de tipos durante ponderamento.\n", node->line);
       }
       semantic_analysis(node->data.if_node.body_branch, current_table);
       if (node->data.if_node.else_branch != NULL) {
@@ -668,7 +669,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_FOR:
       semantic_analysis(node->data.for_node.condition, current_table);
       if (node->data.for_node.condition->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in for condition.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Erro de tipos na fratura temporal.\n", node->line);
       }
       semantic_analysis(node->data.for_node.update, current_table);
       semantic_analysis(node->data.for_node.body, current_table);
@@ -676,7 +677,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_WHILE:
       semantic_analysis(node->data.while_node.condition, current_table);
       if (node->data.while_node.condition->data_type != TYPE_BOOL) {
-        printf("(Linha %d) Semantic Error: Tipos incompativeis no condicional do WHILE.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na dilatacao temporal.\n", node->line);
       }
       semantic_analysis(node->data.while_node.body, current_table);
       break;

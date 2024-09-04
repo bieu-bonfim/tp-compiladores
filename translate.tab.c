@@ -80,6 +80,7 @@
 #include "structures/AST/AST.h"
 #include "structures/Types.h"
 #include "structures/TAC/TAC.h"
+#include "structures/AST/Colors.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -97,7 +98,7 @@ int yylex(void);
 void semantic_analysis(ASTNode *node, SymbolTable *table);
 
 
-#line 101 "translate.tab.c"
+#line 102 "translate.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -631,18 +632,18 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   105,   105,   108,   109,   112,   113,   114,   115,   118,
-     125,   138,   139,   140,   141,   142,   145,   152,   159,   163,
-     168,   173,   181,   184,   190,   198,   201,   208,   215,   222,
-     229,   236,   243,   244,   247,   248,   249,   250,   251,   252,
-     253,   254,   257,   265,   268,   274,   279,   286,   287,   288,
-     291,   294,   299,   304,   309,   314,   317,   318,   323,   328,
-     329,   330,   331,   332,   335,   342,   343,   344,   347,   352,
-     359,   366,   371,   376,   381,   388,   389,   392,   397,   404,
-     405,   408,   412,   418,   419,   420,   421,   422,   423,   424,
-     425,   426,   427,   428,   431,   434,   435,   438,   441,   442,
-     445,   448,   449,   452,   453,   454,   455,   458,   461,   464,
-     467,   468,   471,   474,   478,   482
+       0,   106,   106,   109,   110,   113,   114,   115,   116,   119,
+     126,   139,   140,   141,   142,   143,   146,   153,   160,   164,
+     169,   174,   182,   185,   191,   199,   202,   209,   216,   223,
+     230,   237,   244,   245,   248,   249,   250,   251,   252,   253,
+     254,   255,   258,   266,   269,   275,   280,   287,   288,   289,
+     292,   295,   300,   305,   310,   315,   318,   319,   324,   329,
+     330,   331,   332,   333,   336,   343,   344,   345,   348,   353,
+     360,   367,   372,   377,   382,   389,   390,   393,   398,   405,
+     406,   409,   413,   419,   420,   421,   422,   423,   424,   425,
+     426,   427,   428,   429,   432,   435,   436,   439,   442,   443,
+     446,   449,   450,   453,   454,   455,   456,   459,   462,   465,
+     468,   469,   472,   475,   479,   483
 };
 #endif
 
@@ -1376,58 +1377,58 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* begin: start  */
-#line 105 "translate.y"
+#line 106 "translate.y"
              { ast = create_root_node((yyvsp[0].node_list)); }
-#line 1382 "translate.tab.c"
+#line 1383 "translate.tab.c"
     break;
 
   case 3: /* start: %empty  */
-#line 108 "translate.y"
+#line 109 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1388 "translate.tab.c"
+#line 1389 "translate.tab.c"
     break;
 
   case 4: /* start: start start_item  */
-#line 109 "translate.y"
+#line 110 "translate.y"
                          { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1394 "translate.tab.c"
+#line 1395 "translate.tab.c"
     break;
 
   case 5: /* start_item: decl_func  */
-#line 112 "translate.y"
+#line 113 "translate.y"
                       { (yyval.node) = (yyvsp[0].node); }
-#line 1400 "translate.tab.c"
+#line 1401 "translate.tab.c"
     break;
 
   case 6: /* start_item: decl_import  */
-#line 113 "translate.y"
+#line 114 "translate.y"
                         { (yyval.node) = (yyvsp[0].node); }
-#line 1406 "translate.tab.c"
+#line 1407 "translate.tab.c"
     break;
 
   case 7: /* start_item: stmt  */
-#line 114 "translate.y"
+#line 115 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1412 "translate.tab.c"
+#line 1413 "translate.tab.c"
     break;
 
   case 8: /* start_item: unnary_expr ENDLINE  */
-#line 115 "translate.y"
+#line 116 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1418 "translate.tab.c"
+#line 1419 "translate.tab.c"
     break;
 
   case 9: /* decl_import: IMPORT LITERALSTRING ENDLINE  */
-#line 119 "translate.y"
+#line 120 "translate.y"
            { 
             (yyval.node) = create_import_node((yyvsp[-1].sval)); 
             (yyval.node)->line = line_number;
            }
-#line 1427 "translate.tab.c"
+#line 1428 "translate.tab.c"
     break;
 
   case 10: /* decl_func: DECLFUNC type ID PARAMS OPENBRACK arguments CLOSEBRACK stmt_block  */
-#line 126 "translate.y"
+#line 127 "translate.y"
            {
             Function *func = create_function((yyvsp[-6].type));
             Param *param = (yyvsp[-2].param);
@@ -1438,599 +1439,599 @@ yyreduce:
             (yyval.node) = node;
             (yyval.node)->line = line_number;
            }
-#line 1442 "translate.tab.c"
+#line 1443 "translate.tab.c"
     break;
 
   case 11: /* decl_stmt: assignment ENDLINE  */
-#line 138 "translate.y"
+#line 139 "translate.y"
                               { (yyval.node) = (yyvsp[-1].node); }
-#line 1448 "translate.tab.c"
+#line 1449 "translate.tab.c"
     break;
 
   case 12: /* decl_stmt: sign_func ENDLINE  */
-#line 139 "translate.y"
+#line 140 "translate.y"
                              { (yyval.node) = NULL; }
-#line 1454 "translate.tab.c"
+#line 1455 "translate.tab.c"
     break;
 
   case 13: /* decl_stmt: type_def  */
-#line 140 "translate.y"
+#line 141 "translate.y"
                     { (yyval.node) = NULL; }
-#line 1460 "translate.tab.c"
+#line 1461 "translate.tab.c"
     break;
 
   case 14: /* decl_stmt: decl_var ENDLINE  */
-#line 141 "translate.y"
+#line 142 "translate.y"
                             { (yyval.node) = (yyvsp[-1].node); }
-#line 1466 "translate.tab.c"
+#line 1467 "translate.tab.c"
     break;
 
   case 15: /* decl_stmt: function_call ENDLINE  */
-#line 142 "translate.y"
+#line 143 "translate.y"
                                  { (yyval.node) = (yyvsp[-1].node); }
-#line 1472 "translate.tab.c"
+#line 1473 "translate.tab.c"
     break;
 
   case 16: /* stmt_block: OPENBLOCK stmts CLOSEBLOCK  */
-#line 146 "translate.y"
+#line 147 "translate.y"
           {
            (yyval.node) = create_block_node((yyvsp[-1].node_list));
            (yyval.node)->line = line_number;
           }
-#line 1481 "translate.tab.c"
+#line 1482 "translate.tab.c"
     break;
 
   case 17: /* stmt_if: IF expr stmt_block stmt_else  */
-#line 153 "translate.y"
+#line 154 "translate.y"
        {
         (yyval.node) = create_if_node((yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));
         (yyval.node)->line = line_number;
        }
-#line 1490 "translate.tab.c"
+#line 1491 "translate.tab.c"
     break;
 
   case 18: /* stmt_else: ELSE stmt_block  */
-#line 160 "translate.y"
+#line 161 "translate.y"
          {
           (yyval.node) = (yyvsp[0].node);
          }
-#line 1498 "translate.tab.c"
+#line 1499 "translate.tab.c"
     break;
 
   case 19: /* stmt_else: ELSE stmt_if  */
-#line 164 "translate.y"
+#line 165 "translate.y"
          {
           (yyval.node) = (yyvsp[0].node);
          }
-#line 1506 "translate.tab.c"
+#line 1507 "translate.tab.c"
     break;
 
   case 20: /* stmt_else: %empty  */
-#line 168 "translate.y"
+#line 169 "translate.y"
          {
           (yyval.node) = NULL;
          }
-#line 1514 "translate.tab.c"
+#line 1515 "translate.tab.c"
     break;
 
   case 21: /* stmt_switch: SWITCH expr OPENBLOCK case_list default_case CLOSEBLOCK  */
-#line 174 "translate.y"
+#line 175 "translate.y"
            {
             (yyval.node) = create_switch_node((yyvsp[-4].node), (yyvsp[-2].node_list), (yyvsp[-1].node));
             (yyval.node)->line = line_number;
            }
-#line 1523 "translate.tab.c"
+#line 1524 "translate.tab.c"
     break;
 
   case 22: /* case_list: %empty  */
-#line 181 "translate.y"
+#line 182 "translate.y"
          {
           (yyval.node_list) = NULL;
          }
-#line 1531 "translate.tab.c"
+#line 1532 "translate.tab.c"
     break;
 
   case 23: /* case_list: case_list case_stmt  */
-#line 185 "translate.y"
+#line 186 "translate.y"
          {
           (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node));
          }
-#line 1539 "translate.tab.c"
+#line 1540 "translate.tab.c"
     break;
 
   case 24: /* case_stmt: CASE expr DELIMCASE stmts stmt_break  */
-#line 191 "translate.y"
+#line 192 "translate.y"
          {
           (yyval.node) = create_case_node((yyvsp[-3].node), (yyvsp[-1].node_list), 0); 
           (yyval.node)->line = line_number;
          }
-#line 1548 "translate.tab.c"
+#line 1549 "translate.tab.c"
     break;
 
   case 25: /* default_case: %empty  */
-#line 198 "translate.y"
+#line 199 "translate.y"
             {
              (yyval.node) = NULL;
             }
-#line 1556 "translate.tab.c"
+#line 1557 "translate.tab.c"
     break;
 
   case 26: /* default_case: DEFAULT DELIMCASE stmts stmt_break  */
-#line 202 "translate.y"
+#line 203 "translate.y"
             {
              (yyval.node) = create_case_node(NULL, (yyvsp[-1].node_list), 1);
              (yyval.node)->line = line_number;
             }
-#line 1565 "translate.tab.c"
+#line 1566 "translate.tab.c"
     break;
 
   case 27: /* stmt_return: RETURNT expr ENDLINE  */
-#line 209 "translate.y"
+#line 210 "translate.y"
            {
             (yyval.node) = create_return_node((yyvsp[-1].node));
             (yyval.node)->line = line_number;
            }
-#line 1574 "translate.tab.c"
+#line 1575 "translate.tab.c"
     break;
 
   case 28: /* stmt_for: FOR expr COMMA unnary_expr stmt_block  */
-#line 216 "translate.y"
+#line 217 "translate.y"
          {
           (yyval.node) = create_for_node((yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node));
           (yyval.node)->line = line_number;
          }
-#line 1583 "translate.tab.c"
+#line 1584 "translate.tab.c"
     break;
 
   case 29: /* stmt_while: WHILE expr stmt_block  */
-#line 223 "translate.y"
+#line 224 "translate.y"
           {
             (yyval.node) = create_while_node((yyvsp[-1].node), (yyvsp[0].node));
             (yyval.node)->line = line_number;
           }
-#line 1592 "translate.tab.c"
+#line 1593 "translate.tab.c"
     break;
 
   case 30: /* stmt_break: BREAK ENDLINE  */
-#line 230 "translate.y"
+#line 231 "translate.y"
           {
             (yyval.node) = create_break_node();
             (yyval.node)->line = line_number;
           }
-#line 1601 "translate.tab.c"
+#line 1602 "translate.tab.c"
     break;
 
   case 31: /* stmt_continue: CONTINUE ENDLINE  */
-#line 237 "translate.y"
+#line 238 "translate.y"
              {
               (yyval.node) = create_continue_node();
               (yyval.node)->line = line_number;
              }
-#line 1610 "translate.tab.c"
+#line 1611 "translate.tab.c"
     break;
 
   case 32: /* stmts: %empty  */
-#line 243 "translate.y"
+#line 244 "translate.y"
                    { (yyval.node_list) = NULL; }
-#line 1616 "translate.tab.c"
+#line 1617 "translate.tab.c"
     break;
 
   case 33: /* stmts: stmts stmt  */
-#line 244 "translate.y"
+#line 245 "translate.y"
                   { (yyval.node_list) = append_to_list((yyvsp[-1].node_list), (yyvsp[0].node)); }
-#line 1622 "translate.tab.c"
+#line 1623 "translate.tab.c"
     break;
 
   case 34: /* stmt: decl_stmt  */
-#line 247 "translate.y"
+#line 248 "translate.y"
                 { (yyval.node) = (yyvsp[0].node); }
-#line 1628 "translate.tab.c"
+#line 1629 "translate.tab.c"
     break;
 
   case 35: /* stmt: stmt_if  */
-#line 248 "translate.y"
+#line 249 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1634 "translate.tab.c"
+#line 1635 "translate.tab.c"
     break;
 
   case 36: /* stmt: stmt_switch  */
-#line 249 "translate.y"
+#line 250 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1640 "translate.tab.c"
+#line 1641 "translate.tab.c"
     break;
 
   case 37: /* stmt: stmt_while  */
-#line 250 "translate.y"
+#line 251 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1646 "translate.tab.c"
+#line 1647 "translate.tab.c"
     break;
 
   case 38: /* stmt: stmt_for  */
-#line 251 "translate.y"
+#line 252 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1652 "translate.tab.c"
+#line 1653 "translate.tab.c"
     break;
 
   case 39: /* stmt: stmt_return  */
-#line 252 "translate.y"
+#line 253 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1658 "translate.tab.c"
+#line 1659 "translate.tab.c"
     break;
 
   case 40: /* stmt: stmt_break  */
-#line 253 "translate.y"
+#line 254 "translate.y"
                  { (yyval.node) = (yyvsp[0].node); }
-#line 1664 "translate.tab.c"
+#line 1665 "translate.tab.c"
     break;
 
   case 41: /* stmt: stmt_continue  */
-#line 254 "translate.y"
+#line 255 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1670 "translate.tab.c"
+#line 1671 "translate.tab.c"
     break;
 
   case 42: /* assignment: variable ASSIGN expr  */
-#line 258 "translate.y"
+#line 259 "translate.y"
           {
            (yyval.node) = create_assign_node((yyvsp[-2].node)->data.var_name, (yyvsp[0].node));
            (yyval.node)->line = line_number;
           }
-#line 1679 "translate.tab.c"
+#line 1680 "translate.tab.c"
     break;
 
   case 43: /* opt_assignment: %empty  */
-#line 265 "translate.y"
+#line 266 "translate.y"
               { 
                (yyval.node) = NULL; 
               }
-#line 1687 "translate.tab.c"
+#line 1688 "translate.tab.c"
     break;
 
   case 44: /* opt_assignment: ASSIGN expr  */
-#line 269 "translate.y"
+#line 270 "translate.y"
               { 
                (yyval.node) = (yyvsp[0].node); 
               }
-#line 1695 "translate.tab.c"
+#line 1696 "translate.tab.c"
     break;
 
   case 45: /* decl_var: type type_qualifier ID opt_assignment  */
-#line 275 "translate.y"
+#line 276 "translate.y"
         {
           (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[-3].type), (yyvsp[0].node));
           (yyval.node)->line = line_number;
         }
-#line 1704 "translate.tab.c"
+#line 1705 "translate.tab.c"
     break;
 
   case 46: /* decl_var: type ID opt_assignment  */
-#line 280 "translate.y"
+#line 281 "translate.y"
         {
           (yyval.node) = create_var_decl_node((yyvsp[-1].sval), (yyvsp[-2].type), (yyvsp[0].node));
           (yyval.node)->line = line_number;
         }
-#line 1713 "translate.tab.c"
+#line 1714 "translate.tab.c"
     break;
 
   case 51: /* expr: expr AROP term  */
-#line 295 "translate.y"
+#line 296 "translate.y"
     { 
      (yyval.node) = create_bin_arop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].arOp)); 
      (yyval.node)->line = line_number;
     }
-#line 1722 "translate.tab.c"
+#line 1723 "translate.tab.c"
     break;
 
   case 52: /* expr: expr RELOP term  */
-#line 300 "translate.y"
+#line 301 "translate.y"
     { 
      (yyval.node) = create_bin_relop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].relOp)); 
      (yyval.node)->line = line_number;
     }
-#line 1731 "translate.tab.c"
+#line 1732 "translate.tab.c"
     break;
 
   case 53: /* expr: expr LOGOP term  */
-#line 305 "translate.y"
+#line 306 "translate.y"
     { 
      (yyval.node) = create_bin_logop_node((yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-1].logOp)); 
      (yyval.node)->line = line_number;
     }
-#line 1740 "translate.tab.c"
+#line 1741 "translate.tab.c"
     break;
 
   case 54: /* expr: NOT expr  */
-#line 310 "translate.y"
+#line 311 "translate.y"
     { 
      (yyval.node) = create_unop_node((yyvsp[0].node), NOTOP); 
      (yyval.node)->line = line_number;
     }
-#line 1749 "translate.tab.c"
+#line 1750 "translate.tab.c"
     break;
 
   case 55: /* expr: term  */
-#line 314 "translate.y"
+#line 315 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1755 "translate.tab.c"
+#line 1756 "translate.tab.c"
     break;
 
   case 56: /* term: literal  */
-#line 317 "translate.y"
+#line 318 "translate.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1761 "translate.tab.c"
+#line 1762 "translate.tab.c"
     break;
 
   case 57: /* term: INT  */
-#line 319 "translate.y"
+#line 320 "translate.y"
     { 
      (yyval.node) = create_int_node((yyvsp[0].ival)); 
      (yyval.node)->line = line_number;
     }
-#line 1770 "translate.tab.c"
+#line 1771 "translate.tab.c"
     break;
 
   case 58: /* term: FLOAT  */
-#line 324 "translate.y"
+#line 325 "translate.y"
     { 
      (yyval.node) = create_float_node((yyvsp[0].fval)); 
      (yyval.node)->line = line_number;
     }
-#line 1779 "translate.tab.c"
+#line 1780 "translate.tab.c"
     break;
 
   case 59: /* term: variable  */
-#line 328 "translate.y"
+#line 329 "translate.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1785 "translate.tab.c"
+#line 1786 "translate.tab.c"
     break;
 
   case 60: /* term: bool  */
-#line 329 "translate.y"
+#line 330 "translate.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1791 "translate.tab.c"
+#line 1792 "translate.tab.c"
     break;
 
   case 61: /* term: function_call  */
-#line 330 "translate.y"
+#line 331 "translate.y"
                     { (yyval.node) = (yyvsp[0].node); }
-#line 1797 "translate.tab.c"
+#line 1798 "translate.tab.c"
     break;
 
   case 62: /* term: unnary_expr  */
-#line 331 "translate.y"
+#line 332 "translate.y"
                   { (yyval.node) = (yyvsp[0].node); }
-#line 1803 "translate.tab.c"
+#line 1804 "translate.tab.c"
     break;
 
   case 63: /* term: OPENBRACK expr CLOSEBRACK  */
-#line 332 "translate.y"
+#line 333 "translate.y"
                                 { (yyval.node) = (yyvsp[-1].node); }
-#line 1809 "translate.tab.c"
+#line 1810 "translate.tab.c"
     break;
 
   case 64: /* variable: ID accesses attributes  */
-#line 336 "translate.y"
+#line 337 "translate.y"
          {
           (yyval.node) = create_var_ref_node((yyvsp[-2].sval));
           (yyval.node)->line = line_number;
          }
-#line 1818 "translate.tab.c"
+#line 1819 "translate.tab.c"
     break;
 
   case 68: /* bool: TRUE  */
-#line 348 "translate.y"
+#line 349 "translate.y"
      {  
       (yyval.node) = create_bool_node(1);
       (yyval.node)->line = line_number;
      }
-#line 1827 "translate.tab.c"
+#line 1828 "translate.tab.c"
     break;
 
   case 69: /* bool: FALSE  */
-#line 353 "translate.y"
+#line 354 "translate.y"
      {
       (yyval.node) = create_bool_node(0);
       (yyval.node)->line = line_number;
      }
-#line 1836 "translate.tab.c"
+#line 1837 "translate.tab.c"
     break;
 
   case 70: /* function_call: CALLFUNC ID PARAMS OPENBRACK params CLOSEBRACK  */
-#line 360 "translate.y"
+#line 361 "translate.y"
              {
               (yyval.node) = create_func_call_node((yyvsp[-4].sval), (yyvsp[-1].node_list));
               (yyval.node)->line = line_number;
              }
-#line 1845 "translate.tab.c"
+#line 1846 "translate.tab.c"
     break;
 
   case 71: /* unnary_expr: MINUSONE variable  */
-#line 367 "translate.y"
+#line 368 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), MINUSONEOP);
             (yyval.node)->line = line_number;
           }
-#line 1854 "translate.tab.c"
+#line 1855 "translate.tab.c"
     break;
 
   case 72: /* unnary_expr: PLUSONE variable  */
-#line 372 "translate.y"
+#line 373 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), PLUSONEOP);
             (yyval.node)->line = line_number;
           }
-#line 1863 "translate.tab.c"
+#line 1864 "translate.tab.c"
     break;
 
   case 73: /* unnary_expr: DEREF variable  */
-#line 377 "translate.y"
+#line 378 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), DEREFOP);
             (yyval.node)->line = line_number;
           }
-#line 1872 "translate.tab.c"
+#line 1873 "translate.tab.c"
     break;
 
   case 74: /* unnary_expr: REF variable  */
-#line 382 "translate.y"
+#line 383 "translate.y"
           { 
             (yyval.node) = create_unop_node((yyvsp[0].node), REFOP);
             (yyval.node)->line = line_number;
           }
-#line 1881 "translate.tab.c"
+#line 1882 "translate.tab.c"
     break;
 
   case 75: /* arguments: %empty  */
-#line 388 "translate.y"
+#line 389 "translate.y"
                        { (yyval.param) = NULL; }
-#line 1887 "translate.tab.c"
+#line 1888 "translate.tab.c"
     break;
 
   case 76: /* arguments: argument  */
-#line 389 "translate.y"
+#line 390 "translate.y"
                     { (yyval.param) = (yyvsp[0].param); }
-#line 1893 "translate.tab.c"
+#line 1894 "translate.tab.c"
     break;
 
   case 77: /* argument: type ID  */
-#line 393 "translate.y"
+#line 394 "translate.y"
          {
           Param *param = create_param((yyvsp[0].sval), (yyvsp[-1].type));
           (yyval.param) = param;
          }
-#line 1902 "translate.tab.c"
+#line 1903 "translate.tab.c"
     break;
 
   case 78: /* argument: type ID COMMA argument  */
-#line 398 "translate.y"
+#line 399 "translate.y"
          {
           Param *param = create_param((yyvsp[-2].sval), (yyvsp[-3].type));
           link_params(param, (yyvsp[0].param));
           (yyval.param) = param;
          }
-#line 1912 "translate.tab.c"
+#line 1913 "translate.tab.c"
     break;
 
   case 79: /* params: %empty  */
-#line 404 "translate.y"
+#line 405 "translate.y"
                     { (yyval.node_list) = NULL; }
-#line 1918 "translate.tab.c"
+#line 1919 "translate.tab.c"
     break;
 
   case 80: /* params: param  */
-#line 405 "translate.y"
+#line 406 "translate.y"
               { (yyval.node_list) = (yyvsp[0].node_list); }
-#line 1924 "translate.tab.c"
+#line 1925 "translate.tab.c"
     break;
 
   case 81: /* param: expr  */
-#line 409 "translate.y"
+#line 410 "translate.y"
      { 
       (yyval.node_list) = append_to_list(NULL, (yyvsp[0].node)); 
      }
-#line 1932 "translate.tab.c"
+#line 1933 "translate.tab.c"
     break;
 
   case 82: /* param: expr COMMA param  */
-#line 413 "translate.y"
+#line 414 "translate.y"
      { 
       (yyval.node_list) = append_to_list((yyvsp[0].node_list), (yyvsp[-2].node)); 
      }
-#line 1940 "translate.tab.c"
+#line 1941 "translate.tab.c"
     break;
 
   case 83: /* type: TYPEINT  */
-#line 418 "translate.y"
+#line 419 "translate.y"
               { (yyval.type) = TYPE_INT; }
-#line 1946 "translate.tab.c"
+#line 1947 "translate.tab.c"
     break;
 
   case 84: /* type: TYPEFLOAT  */
-#line 419 "translate.y"
+#line 420 "translate.y"
                 { (yyval.type) = TYPE_FLOAT; }
-#line 1952 "translate.tab.c"
+#line 1953 "translate.tab.c"
     break;
 
   case 85: /* type: TYPEBOOL  */
-#line 420 "translate.y"
+#line 421 "translate.y"
                { (yyval.type) = TYPE_BOOL; }
-#line 1958 "translate.tab.c"
+#line 1959 "translate.tab.c"
     break;
 
   case 86: /* type: TYPECHAR  */
-#line 421 "translate.y"
+#line 422 "translate.y"
                { (yyval.type) = TYPE_CHAR; }
-#line 1964 "translate.tab.c"
+#line 1965 "translate.tab.c"
     break;
 
   case 87: /* type: TYPEVOID  */
-#line 422 "translate.y"
+#line 423 "translate.y"
                { (yyval.type) = TYPE_VOID; }
-#line 1970 "translate.tab.c"
+#line 1971 "translate.tab.c"
     break;
 
   case 88: /* type: TYPEDOUBLE  */
-#line 423 "translate.y"
+#line 424 "translate.y"
                  { (yyval.type) = TYPE_FLOAT; }
-#line 1976 "translate.tab.c"
+#line 1977 "translate.tab.c"
     break;
 
   case 89: /* type: TYPELONG  */
-#line 424 "translate.y"
+#line 425 "translate.y"
                { (yyval.type) = TYPE_INT; }
-#line 1982 "translate.tab.c"
+#line 1983 "translate.tab.c"
     break;
 
   case 90: /* type: TYPESHORT  */
-#line 425 "translate.y"
+#line 426 "translate.y"
                 { (yyval.type) = TYPE_INT; }
-#line 1988 "translate.tab.c"
+#line 1989 "translate.tab.c"
     break;
 
   case 91: /* type: type_enum  */
-#line 426 "translate.y"
+#line 427 "translate.y"
                 { (yyval.type) = TYPE_ENUM; }
-#line 1994 "translate.tab.c"
+#line 1995 "translate.tab.c"
     break;
 
   case 92: /* type: type_struct  */
-#line 427 "translate.y"
+#line 428 "translate.y"
                   { (yyval.type) = TYPE_STRUCT; }
-#line 2000 "translate.tab.c"
+#line 2001 "translate.tab.c"
     break;
 
   case 93: /* type: type_union  */
-#line 428 "translate.y"
+#line 429 "translate.y"
                  { (yyval.type) = TYPE_UNION; }
-#line 2006 "translate.tab.c"
+#line 2007 "translate.tab.c"
     break;
 
   case 113: /* literal: LITERALSTRING  */
-#line 475 "translate.y"
+#line 476 "translate.y"
        { 
         (yyval.node) = create_string_node((yyvsp[0].sval));
        }
-#line 2014 "translate.tab.c"
+#line 2015 "translate.tab.c"
     break;
 
   case 114: /* literal: LITERALCHAR  */
-#line 479 "translate.y"
+#line 480 "translate.y"
        { 
         (yyval.node) = create_char_node((yyvsp[0].cval));
        }
-#line 2022 "translate.tab.c"
+#line 2023 "translate.tab.c"
     break;
 
   case 115: /* literal: NULLT  */
-#line 483 "translate.y"
+#line 484 "translate.y"
        { 
         (yyval.node) = create_null_node(); 
        }
-#line 2030 "translate.tab.c"
+#line 2031 "translate.tab.c"
     break;
 
 
-#line 2034 "translate.tab.c"
+#line 2035 "translate.tab.c"
 
       default: break;
     }
@@ -2223,7 +2224,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 488 "translate.y"
+#line 489 "translate.y"
 
 
 /* Error reporting function */
@@ -2239,9 +2240,9 @@ int main() {
     current_table = global_table;
     yyparse();
     if (error_found) {
-        printf("\nCodigo sintaticamente incorreto.\n");
+        printf("\n\n"RED_TEXT"-- Codigo sintaticamente incorreto.--"RESET"\n");
     } else {
-        printf("\nCodigo sintaticamente correto.\n");
+        printf("\n\n"GREEN_TEXT"--Codigo sintaticamente correto.--"RESET"\n");
     }
     printf("\n");
     semantic_analysis(ast, current_table);
@@ -2258,7 +2259,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
   switch (node->type) {
     case AST_TYPE_VAR_DECL:
       if (lookup_symbol(current_table, node->data.var_decl.var_name)) {
-        printf("(Line %d) Semantic Error: Variable '%s' already declared in this scope.\n", node->line, node->data.var_decl.var_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Essencia "PINK_TEXT"'%s'"RESET" ja usada no escopo atual.\n\n", node->line, node->data.var_decl.var_name);
       }
 
       insert_symbol(current_table, node->data.var_decl.var_name, node->data.var_decl.var_type, NULL);
@@ -2267,22 +2268,22 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         semantic_analysis(node->data.var_decl.expr, current_table);
 
         if (node->data.var_decl.var_type != node->data.var_decl.expr->data_type) {
-          printf("(Linha %d) Semantic Error: Tipo incompativel com a variavel '%s' para inicializacao.\n", node->line, node->data.var_decl.var_name);
+          printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo incompativel com a essencia "PINK_TEXT"'%s'"RESET" para inicializacao.\n", node->line, node->data.var_decl.var_name);
         }
       }
       break;
     case AST_TYPE_FUNC:
       if (lookup_symbol(current_table, node->data.func.func_name)) {
-        printf("(Line %d) Semantic Error: Function '%s' already declared in this scope.\n", node->line, node->data.func.func_name);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Magia "GREEN_TEXT"'%s'"RESET" ja preparada neste escopo.\n", node->line, node->data.func.func_name);
       }
       insert_symbol(current_table, node->data.func.func_name, TYPE_FUNC, (void*)node->data.func.func);
       break;
     case AST_TYPE_FUNC_CALL:
       Symbol *func = lookup_symbol(current_table, node->data.func_call.func_name);
       if (func == NULL) {
-        printf("(Line %d) Semantic Error: Function '%s' not declared in this scope.\n", node->line, node->data.func_call.func_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Magia "GREEN_TEXT"'%s'"RESET" nao declarada nesse escopo.\n", node->line, node->data.func_call.func_name);
       } else if (func->type != TYPE_FUNC) {
-        printf("(Line %d) Semantic Error: '%s' is not a function.\n", node->line, node->data.func_call.func_name);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" "GREEN_TEXT"'%s'"RESET" nao e uma magia conhecida.\n", node->line, node->data.func_call.func_name);
       } else {
         Function *function = (Function*)func->value;
         Param *param = function->params;
@@ -2290,13 +2291,13 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         while (param != NULL && arg != NULL) {
           semantic_analysis(arg->node, current_table);
           if (param->type != arg->node->data_type) {
-            printf("(Line %d) Semantic Error: Type mismatch in function call.\n", node->line);
+            printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos de ingredientes incompativeis na conjuracao da magia.\n", node->line);
           }
           param = param->next;
           arg = arg->next;
         }
         if (param != NULL || arg != NULL) {
-          printf("(Line %d) Semantic Error: Number of arguments mismatch in function call.\n", node->line);
+          printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Numero de ingredientes incompativel.\n", node->line);
         }
       }
       break;
@@ -2304,10 +2305,10 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_arop.left, current_table);
       semantic_analysis(node->data.bin_arop.right, current_table);
       if (node->data.bin_arop.left->data_type != node->data.bin_arop.right->data_type) {
-        printf("(Linha %d) Semantic Error: Tipos incompativeis na operacao aritmetica.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao aritmetica.\n", node->line);
       }
       if ((node->data.bin_arop.left->data_type != TYPE_INT || node->data.bin_arop.right->data_type != TYPE_INT) && node->data.bin_arop.op == MOD) {
-        printf("(Linha %d) Semantic Error: Tipo invalido para operacao aritmetica.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo invalido para operacao aritmetica.\n", node->line);
       }
       node->data_type = node->data.bin_arop.left->data_type;
       break;
@@ -2315,7 +2316,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_relop.left, current_table);
       semantic_analysis(node->data.bin_relop.right, current_table);
       if (node->data.bin_relop.left->data_type != node->data.bin_relop.right->data_type) {
-        printf("(Line %d) Semantic Error: Type mismatch in binary relational operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao relacional.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
@@ -2323,26 +2324,26 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
       semantic_analysis(node->data.bin_logop.left, current_table);
       semantic_analysis(node->data.bin_logop.right, current_table);
       if (node->data.bin_logop.left->data_type != node->data.bin_logop.right->data_type) {
-        printf("(Line %d) Semantic Error: Type mismatch in binary logical operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao logica.\n", node->line);
       }
       node->data_type = TYPE_BOOL;
       break;
     case AST_TYPE_UNOP_NOT:
       semantic_analysis(node->data.unnop.expr, current_table);
       if (node->data.unnop.expr->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in unary logical operation.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo nao permitido para operador de negacao unario.\n", node->line);
       }
       break;
     case AST_TYPE_UNOP:
       semantic_analysis(node->data.unnop.expr, current_table);
       if (node->data.unnop.expr->data_type != TYPE_INT) {
-        printf("(Line %d) Semantic Error: Type mismatch in unary update operation.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na manipulacao de atualizao unaria.\n", node->line);
       }
       break;
     case AST_TYPE_VAR:
       Symbol *var = lookup_symbol(current_table, node->data.var_name);
       if (var == NULL) {
-        printf("(Line %d) Semantic Error: Variable '%s' not declared in this scope.\n", node->line, node->data.var_name);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Essencia "PINK_TEXT"'%s'"RESET" nao infundida neste escopo.\n", node->line, node->data.var_name);
       } else {
         node->data_type = var->type;
       }
@@ -2377,7 +2378,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_IF:
       semantic_analysis(node->data.if_node.condition, current_table);
       if (node->data.if_node.condition->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in if condition.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Erro de tipos durante ponderamento.\n", node->line);
       }
       semantic_analysis(node->data.if_node.body_branch, current_table);
       if (node->data.if_node.else_branch != NULL) {
@@ -2407,7 +2408,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_FOR:
       semantic_analysis(node->data.for_node.condition, current_table);
       if (node->data.for_node.condition->data_type != TYPE_BOOL) {
-        printf("(Line %d) Semantic Error: Type mismatch in for condition.\n", node->line);
+        printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Erro de tipos na fratura temporal.\n", node->line);
       }
       semantic_analysis(node->data.for_node.update, current_table);
       semantic_analysis(node->data.for_node.body, current_table);
@@ -2415,7 +2416,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
     case AST_TYPE_WHILE:
       semantic_analysis(node->data.while_node.condition, current_table);
       if (node->data.while_node.condition->data_type != TYPE_BOOL) {
-        printf("(Linha %d) Semantic Error: Tipos incompativeis no condicional do WHILE.\n", node->line);
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipos incompativeis na dilatacao temporal.\n", node->line);
       }
       semantic_analysis(node->data.while_node.body, current_table);
       break;
