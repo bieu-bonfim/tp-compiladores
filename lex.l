@@ -70,6 +70,16 @@ tipoBool Axioma[ ]
 tipoChar Runa[ ]
 tipoVoid Vazio[ ]
 
+/* Palavras reservadas */
+while Dilatar[ ]tempo[ ]enquanto[ ]
+for Fraturar[ ]tempo[ ]se[ ]
+if Ponderar[ ]se[ ]
+else Ou[ ]optar[ ]por[ ]
+switch Iniciar[ ]profecia[ ]de[ ]
+case Profetizar[ ]que[ ]se[ ]
+default Cumprir[ ]profecia
+goto Translocar[ ]para[ ]
+
 
 /* hierarquias e blocos */
 abre_bloco \_\/
@@ -81,15 +91,6 @@ delimitadorChar \"
 delimitadorCase \;
 
 
-/* Palavras reservadas */
-while Dilatar[ ]tempo[ ]enquanto[ ]
-for Fraturar[ ]tempo[ ]se[ ]
-if Ponderar[ ]se[ ]
-else Ou[ ]optar[ ]por[ ]
-switch Iniciar[ ]profecia[ ]de[ ]
-case Profetizar[ ]que[ ]se[ ]
-default Cumprir[ ]profecia
-goto Translocar[ ]para[ ]
 
 
 

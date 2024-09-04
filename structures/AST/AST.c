@@ -481,16 +481,18 @@ void print_node_type(ASTNode *node, int level) {
       printf("├──" "┬─{" YELLOW_TEXT "🫴  Expansao de Escopo "RESET"}\n");
       break;
     case AST_TYPE_BOOL:
-      printf("└─ Boolean Literal: %s\n", node->data.int_val ? "veritas" : "falsum");
+      printf("├──" "┬─{" "🔮 Axioma: " RED_TEXT "%s"RESET"\n", node->data.int_val ? "veritas" : "falsum");
       break;
     case AST_TYPE_NULL:
-      printf("└─ Null Literal\n");
+      printf("├──" "┬─{"PINK_TEXT"Vazio."RESET"\n");
       break;
     case AST_TYPE_STRING:
-      printf("└─ String Literal: %s\n", node->data.string_val);
+      printf("├──" "┬─{" "Escritura: %s\n", node->data.string_val);
       break;
     case AST_TYPE_SWITCH:
-      printf("└─ Switch\n");
+      printf("|\n");
+      print_indentation(level);
+      printf("├──" "┬─{"YELLOW_TEXT"🪬  Iniciar Profecia"RESET"}\n");
       if (node->data.switch_node.condition != NULL)
       {
         traverse_ast(node->data.switch_node.condition, level + 1);
@@ -506,7 +508,9 @@ void print_node_type(ASTNode *node, int level) {
       }
       break;
     case AST_TYPE_CASE:
-      printf("└─ Case\n");
+      printf("|\n");
+      print_indentation(level);
+      printf("├──" "┬─{" YELLOW_TEXT "Profetizar sobre: "RESET"}\n");
       if (node->data.case_node.case_expr != NULL)
       {
         traverse_ast(node->data.case_node.case_expr, level + 1);
