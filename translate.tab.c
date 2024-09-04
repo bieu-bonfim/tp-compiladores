@@ -2271,6 +2271,18 @@ void semantic_analysis(ASTNode *node, SymbolTable *table) {
         }
       }
       break;
+    case AST_TYPE_ASSIGN:
+      Symbol *sym = lookup_symbol(table, node->data.assign.var_name);
+      if (sym == NULL) {
+        // nao declarada
+      }
+
+      semantic_analysis(node->data.assign.expr, table);
+      if (node->data.assign.expr->data_type != sym->type) {
+        printf("(Linha %d) "PINK_TEXT"Erro Mistico:"RESET" Tipo incompativel com a essencia " PINK_TEXT "'%s'" RESET".\n", node->line, node->data.assign.var_name);
+      }
+
+      break;
     case AST_TYPE_FUNC:
       if (lookup_symbol(current_table, node->data.func.func_name)) {
         printf("(Line %d) "PINK_TEXT"Erro Mistico:"RESET" Magia "GREEN_TEXT"'%s'"RESET" ja preparada neste escopo.\n", node->line, node->data.func.func_name);
