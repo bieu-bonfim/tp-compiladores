@@ -142,26 +142,26 @@ void print_table(SymbolTable *table) {
         Symbol *current_symbol = table->table[i];
         while (current_symbol) {
             if (current_symbol->type == TYPE_INT) {
-              printf("│"BLACK_BG PINK_TEXT" %-14s "RESET BLACK_BG"│"PINK_TEXT" %-14s "RESET"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
+              printf("│"BLACK_BG PINK_TEXT" %-14s "RESET BLACK_BG"│"PINK_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
               printf(""BLACK_BG PINK_TEXT" %-14d "RESET"│\n" RESET, *(int *)current_symbol->value);
             } else if (current_symbol->type == TYPE_FLOAT) {
-                printf("│"BLACK_BG CYAN_TEXT" %-14s "RESET BLACK_BG "│"CYAN_TEXT" %-14s "RESET"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG CYAN_TEXT" %-14s "RESET BLACK_BG "│"CYAN_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
                 printf(BLACK_BG CYAN_TEXT" %-14.2f "RESET"│\n" RESET, *(float *)current_symbol->value);
             } else if (current_symbol->type == TYPE_DOUBLE) {
-                printf("│"BLACK_BG CYAN_TEXT" %-14s "RESET BLACK_BG"│"CYAN_TEXT" %-14s "RESET"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG CYAN_TEXT" %-14s "RESET BLACK_BG"│"CYAN_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
                 printf(BLACK_BG CYAN_TEXT" %-14.2f "RESET"│\n" RESET, *(double *)current_symbol->value);
             } else if (current_symbol->type == TYPE_CHAR) {
-                printf("│"BLACK_BG YELLOW_TEXT" %-14s "RESET BLACK_BG"│"YELLOW_TEXT" %-14s │"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG YELLOW_TEXT" %-14s "RESET BLACK_BG"│"YELLOW_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
                 printf(BLACK_BG YELLOW_TEXT" %-15c "RESET"│\n" RESET, *(char *)current_symbol->value);
             } else if (current_symbol->type == TYPE_BOOL) {
-                printf("│"BLACK_BG RED_TEXT" %-14s "RESET BLACK_BG"│"RED_TEXT" %-14s "RESET"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG RED_TEXT" %-14s "RESET BLACK_BG"│"RED_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
                 printf(BLACK_BG RED_TEXT" %-14s "RESET"│\n" RESET, bool_to_string(*(int *)current_symbol->value));
             } else if (current_symbol->type == TYPE_FUNC) {
-                printf("│"BLACK_BG GREEN_TEXT" %-14s "RESET BLACK_BG"│"GREEN_TEXT" %-14s │"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG GREEN_TEXT" %-14s "RESET BLACK_BG"│"GREEN_TEXT" %-14s "RESET BLACK_BG"│"RESET, current_symbol->name, type_to_string(current_symbol->type));
                 printf(BLACK_BG GREEN_TEXT" %-14s "RESET"│\n", "");                
                 print_function(*(Function *)current_symbol->value);
             } else {
-                printf("│"BLACK_BG" %-14s │ %-14s │"RESET, current_symbol->name, type_to_string(current_symbol->type));
+                printf("│"BLACK_BG" %-14s │ %-14s │"RESET BLACK_BG, current_symbol->name, type_to_string(current_symbol->type));
                 printf(" %-14s "RESET"│""\n", "");
             }
 
