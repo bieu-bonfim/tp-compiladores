@@ -103,7 +103,6 @@ llvm::Value* codegen(ASTNode* node) {
                     return nullptr;
             }
         }
-        // Adicione mais casos conforme necessário para lidar com outros tipos de nós da AST
         default:
             return nullptr;
     }
