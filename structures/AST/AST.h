@@ -92,6 +92,11 @@ typedef struct ASTNode {
     } data;
 
     struct ASTNodeList *children;
+
+    char *temp_var;
+    char *true_label;
+    char *false_label;
+    char *next_label;
 } ASTNode;
 
 typedef struct ASTNodeList {

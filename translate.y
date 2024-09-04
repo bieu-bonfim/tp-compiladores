@@ -9,6 +9,7 @@
 #include "structures/Operators.h"
 #include "structures/AST/AST.h"
 #include "structures/Types.h"
+#include "structures/TAC/TAC.h"
 
 extern int yyparse();
 extern int invalid_found;
@@ -33,6 +34,7 @@ void semantic_analysis(ASTNode *node, SymbolTable *table);
 #include "structures/Expression.h"
 #include "structures/Operators.h"
 #include "structures/Types.h"
+#include "structures/TAC/TAC.h"
 }
 
 %union {
@@ -504,8 +506,11 @@ int main() {
     }
     printf("\n");
     semantic_analysis(ast, current_table);
-    // traverse_ast(ast, 0);
+    traverse_ast(ast, 0);
     print_table(current_table);
+    TAC *teste = (TAC*)malloc(sizeof(TAC));
+    teste = generate_tac(ast, current_table);
+    print_tac(teste);
     return 0; 
 }
 

@@ -27,7 +27,6 @@ typedef enum {
     AST_TYPE_VAR_DECL,
     AST_TYPE_BLOCK,
     AST_TYPE_DECL,
-    AST_TYPE_STRUCT_DECL,
     AST_TYPE_BOOL,
     AST_TYPE_NULL,
     AST_TYPE_STRING,
@@ -35,7 +34,7 @@ typedef enum {
     AST_TYPE_CASE,
     AST_TYPE_SWITCH,
     AST_TYPE_DEFAULT,
-    AST_TYPE_UNOP_NOT
+    AST_TYPE_UNOP_NOT,
 } ASTNodeType;
 
 #endif
