@@ -117,7 +117,7 @@ adicionarUm Encantar[ ]
 subtrairUm Desencantar[ ]
 derreferenciar Alma[ ]de[ ]
 referenciar Lembrança[ ]de[ ]
-/* Pattern Action */ 
+/* Pattern Action */
 
 %% 
 \n             { printf("%s| %d | ", yytext, line_number+1); line_number++; }
@@ -165,8 +165,8 @@ referenciar Lembrança[ ]de[ ]
 {diferente} {printf("%s", yytext); yylval.relOp = NE; return RELOP; }
 {igualdade} {printf("%s", yytext); yylval.relOp = EQ; return RELOP; }
 
-{ou} {printf("%s", yytext); return OR; }
-{e} {printf("%s", yytext); return AND; }
+{ou} {printf("%s", yytext); yylval.logOp = OROP; return LOGOP; }
+{e} {printf("%s", yytext); yylval.logOp = ANDOP; return LOGOP; }
 {negado} {printf("%s", yytext); return NOT; }
 
 {tipoInt} {printf("%s", yytext); return TYPEINT; }
